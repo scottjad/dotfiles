@@ -589,3 +589,5 @@ bindkey -s "\C-o" "ranger-cd^m"
 . ~/.zsh/live-command-coloring.sh
 
 . ~/.zsh/secret
+
+sleep2="sudo /etc/acpi/sleep.sh sleep"
