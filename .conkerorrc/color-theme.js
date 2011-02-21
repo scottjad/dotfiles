@@ -35,7 +35,7 @@ function global_color_theme(name, key, styles) {
 }
 
 global_color_theme("dark", "K",
-                   [make_css_data_uri(['*:not(img) { background: #303030 ! important; color: #f6f3e8 !important; font-family: MonteCarlo !important; font-size: 10pt ! important;}',
+                   [make_css_data_uri(['*:not(img) { background: #303030 ! important; color: #f6f3e8 !important; font-family: GohuFont, Tamsyn !important; font-size: 10pt ! important;}',
                                        'p { line-height: 100% ! important; }',
                                        // 'code, pre { font-family: Envy Code R !important }',
                                        ':link, :link * { color: #8ac6f2 !important }',
