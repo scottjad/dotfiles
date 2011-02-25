@@ -51,6 +51,9 @@ global_color_theme("dark", "K",
 
                     make_css_data_uri(['.k { font-weight: bold ! important }', // keyword
                                        // named builtin? .nb named function .nf
+                    make_css_data_uri(['#current-entry { background-color: #888 !important;} .entry { background-color: #444 !important; }}'
+                                      ], $url_prefixes = ["http://www.google.com/reader","https://www.google.com/reader"]),
+                    
 
                                        // commented cause gh's clojure highlighting marks lots of the code with this
                                        '.nv { color: #ff5996 ! important } ', // function name/variable name
