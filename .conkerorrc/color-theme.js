@@ -35,8 +35,10 @@ function global_color_theme(name, key, styles) {
 }
 
 global_color_theme("dark", "K",
-                   [make_css_data_uri(['*:not(img) { background: #303030 ! important; color: #f6f3e8 !important; font-family: GohuFont, Tamsyn !important; font-size: 10pt ! important;}',
-                                       'p { line-height: 100% ! important; }',
+                   [make_css_data_uri(['*:not(img) { background: #303030 !important; color: #f6f3e8 !important; font-family: GohuFont, Tamsyn !important; font-size: 10pt !important; '
+                                       + ' -moz-border-bottom-colors: #444 #444 !important; -moz-border-top-colors: #444 #444  !important; -moz-border-right-colors: #444 #444  !important; -moz-border-left-colors: #444 #444  !important; -moz-box-shadow: 0 0 0 black !important; border-color: #444 !important; '
+                                       + ' }',
+                                       'p { line-height: 100% !important; }',
                                        // 'code, pre { font-family: Envy Code R !important }',
                                        ':link, :link * { color: #8ac6f2 !important }',
                                        ':visited, :visited * { color: #95e454 !important }',
