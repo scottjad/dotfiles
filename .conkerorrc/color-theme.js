@@ -49,12 +49,12 @@ global_color_theme("dark", "K",
                                        '.oZ-jd,.hF,.hG { background: red ! important;}' // make cursor red
                                       ], $domains = "mail.google.com"),
 
-                    make_css_data_uri(['.k { font-weight: bold ! important }', // keyword
-                                       // named builtin? .nb named function .nf
                     make_css_data_uri(['#current-entry { background-color: #888 !important;} .entry { background-color: #444 !important; }}'
                                       ], $url_prefixes = ["http://www.google.com/reader","https://www.google.com/reader"]),
                     
-
+                    make_css_data_uri(['.k { font-weight: bold ! important }', // keyword
+                                       'a, h1 {text-shadow: black 0px 0px 0px !important; }', // ugly shadows
+                                       // named builtin? .nb named function .nf
                                        // commented cause gh's clojure highlighting marks lots of the code with this
                                        '.nv { color: #ff5996 ! important } ', // function name/variable name
                                        '.s { color: #95e454 ! important } ', // string
@@ -62,7 +62,7 @@ global_color_theme("dark", "K",
                                        '.x { background-color: #444444 ! important }', // added/deleted portion
                                        '.gi, .gi .x { color: #1AFF84 ! important }', // inserted line
                                        '.gd, .gd .x { color: #ff0080 ! important }' // deleted line
-                                      ], $url_prefixes = "https://github.com")]);
+                                      ], $domains = "github.com")]);
 // global_color_theme("light", "L",
 //                    ['*:not(img) { background: #edebe8 ! important; color: #2c2d32 !important }',
 //                     ':link, :link * { color: #1856ba !important }',
