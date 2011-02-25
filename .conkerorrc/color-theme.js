@@ -43,9 +43,11 @@ global_color_theme("dark", "K",
                                        'em { background-color: #444444 ! important;}'
                                       ], $url_prefixes = ["http", "about"]),
 
-                    make_css_data_uri(['.vh { foreground: black; background: #FFF1A8 ! important;}',                       
+                    make_css_data_uri(['.vh { foreground: black; background: #FFF1A8 ! important;}',
+                                       '.TC { border-width: 0px ! important; }', // remove extra lines on inbox
+                                       '.xY { height: 10pt !important; }', // keep message list from being too tall
                                        '.oZ-jd,.hF,.hG { background: red ! important;}' // make cursor red
-                                      ], $url_prefixes = "https://gmail.com"),
+                                      ], $domains = "mail.google.com"),
 
                     make_css_data_uri(['.k { font-weight: bold ! important }', // keyword
                                        // named builtin? .nb named function .nf
