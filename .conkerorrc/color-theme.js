@@ -40,7 +40,7 @@ global_color_theme(
     [make_css_data_uri(
          ['*:not(img) { background: #303030 !important; '+
           'color: #f6f3e8 !important; '+
-          'font-family: MonteCarlo !important; '+
+          'font-family: GohuFont, Tamsyn !important; '+
           'font-size: 10pt !important; '+
           '-moz-border-bottom-colors: #444 #444 !important; '+
           '-moz-border-top-colors: #444 #444  !important; '+
@@ -53,15 +53,15 @@ global_color_theme(
           // 'code, pre { font-family: Envy Code R !important }',
           ':link, :link * { color: #8ac6f2 !important }',
           ':visited, :visited * { color: #95e454 !important }',
-          'em { background-color: #444444 ! important;}'
+          'em { background-color: #444444 !important;}'
          ], $url_prefixes = ["http", "about"]),
      
      make_css_data_uri(
          ['.vh { foreground-color: white; '+
-          'background-color: #444 ! important;}',
-          '.TC { border-width: 0px ! important; }', // remove extra lines on inbox
+          'background-color: #444 !important;}',
+          '.TC { border-width: 0px !important; }', // remove extra lines on inbox
           '.xY { height: 10pt !important; }', // keep message list from being too tall
-          '.oZ-jd,.hF,.hG { background: red ! important;}' // make cursor red
+          '.oZ-jd,.hF,.hG { background: red !important;}' // make cursor red
          ], $domains = "mail.google.com"),
 
      make_css_data_uri(
@@ -71,16 +71,17 @@ global_color_theme(
                              "https://www.google.com/reader"]),
      
      make_css_data_uri(
-         ['.k { font-weight: bold ! important }', // keyword
+         ['.k { font-weight: bold !important }', // keyword
           'a, h1 {text-shadow: black 0px 0px 0px !important; }', // ugly shadows
           // named builtin? .nb named function .nf
           // commented cause gh's clojure highlighting marks lots of the code with this
-          '.nv { color: #ff5996 ! important } ', // function name/variable name
-          '.s { color: #95e454 ! important } ', // string
-          '.c1 { color: #99968b ! important }', // comment
-          '.x { background-color: #444444 ! important }', // added/deleted portion
-          '.gi, .gi .x { color: #1AFF84 ! important }', // inserted line
-          '.gd, .gd .x { color: #ff0080 ! important }' // deleted line
+          '.nv { color: #ff5996 !important } ', // function name/variable name
+          '.s { color: #95e454 !important } ', // string
+          '.c1 { color: #99968b !important; '+
+          'font-style: normal !important; }', // comment
+          '.x { background-color: #444444 !important }', // added/deleted portion
+          '.gi, .gi .x { color: #1AFF84 !important }', // inserted line
+          '.gd, .gd .x { color: #ff0080 !important }' // deleted line
          ], $domains = "github.com")]);
 
 // global_color_theme("light", "L",
