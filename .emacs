@@ -24,6 +24,7 @@
 (add-hook 'text-mode-hook 'auto-fill-mode)
 (setq transient-mark-mode t)
 (delete-selection-mode t)
+(display-time-mode -1)
 
 (setq comment-style 'indent)
 (setq frame-title-format
@@ -42,7 +43,7 @@
 ;; C-u C-x C-f finds the file at point (doesn't seem to work)
 (setq ffap-require-prefix t)
 ;; so bit fonts split with vertical bar
-(setq split-height-threshold 150)
+(setq split-height-threshold 550)
 
 (require 'pos-tip)
 (setq pos-tip-foreground-color "white")
@@ -525,9 +526,13 @@ If no associated application, then `find-file' FILE."
 ;(load "~/.emacs-spring")
 (require 'gunmetal)
 (require 'folio)
+(require 'color-theme-folio-emacs)
 ;(color-theme-gunmetal)
 ;(color-theme-folio)
-(load "~/.emacs-colors")
+(add-to-list 'load-path "~/.elisp/solarized/emacs-color-theme-solarized/")
+(require 'color-theme-solarized)
+;;(color-theme-solarized-dark)
+; (load "~/.emacs-colors")
 
 ;;---------------------------------------------------------
 ;; yasnippet
@@ -707,6 +712,7 @@ If no associated application, then `find-file' FILE."
 
 (setq org-agenda-custom-commands
       '(("P" "Projects" tags "/!PROJECT" ((org-use-tag-inheritance nil)))
+        ("g" "Goals" todo "GOAL" ((org-agenda-todo-ignore-with-date nil)))
         ("s" "Started Tasks" todo "STARTED" ((org-agenda-todo-ignore-with-date nil)))
         ("Q" "Questions" tags "QUESTION" nil)
         ("w" "Tasks waiting on something" tags "WAITING" ((org-use-tag-inheritance nil)))
@@ -847,7 +853,7 @@ If no associated application, then `find-file' FILE."
 ;;---------------------------------------------------------
 ;; headings
 ;;---------------------------------------------------------
-(cmd my-insert-heading
+(cmd jsj-insert-heading
   (if (or (equal major-mode 'emacs-lisp-mode) (equal major-mode 'clojure-mode))
       (insert ";;---------------------------------------------------------
 ;; 
@@ -860,7 +866,7 @@ If no associated application, then `find-file' FILE."
       (insert "/* ------------------------------
 
    ------------------------------ */")))
-(bind "C-c h" my-insert-heading)
+(bind "C-c h" jsj-insert-heading)
 
 ;;-----------------------------------------------------------------------------
 ;; F2: files
@@ -915,22 +921,23 @@ If no associated application, then `find-file' FILE."
               ;; "Terminus-9"
               "MonteCarlo-10"
               ;; "ProFont-9"
-              ;; "Smooth-10"
               "GohuFont-9"
               "GohuFont-12"
-              ;; "Terminus-10"
-              "DejaVu Sans Mono-8"
+              "Terminus-12"
+              "Terminus-8"
+              ;; "DejaVu Sans Mono-8"
               "DejaVu Sans Mono-9"
               "DejaVu Sans Mono-10"
               ;; "DejaVu Sans Mono-28"
               ;; "DejaVu Sans Mono-10"
               ;; "DejaVu Sans Mono-12"
-              ;; "DejaVu Sans Mono-14"
+              "DejaVu Sans Mono-16"
               ;; "Envy Code R-12"
               ;; "Envy Code R-14"
               ;; "Courier 10 Pitch-13" ; 1 and l look the same
-              ;; "Inconsolata-16:medium"
-              ;; "Inconsolata-24:medium"
+              ;; "Inconsolata-14:medium"
+              "Inconsolata-18:medium"
+              "Inconsolata-24:medium"
               ;; "Liberation Mono-12"
               ;; "Liberation Mono-14"
               ;; "Monaco-12"
@@ -971,6 +978,7 @@ If no associated application, then `find-file' FILE."
 (bind "<f9> c" calendar)
 (bind "<f9> r" org-remember)
 (bind "<f9> g" gnus)
+(bind "<f9> n" notmuch)
 (bind "<f9> M-g" gnus-unplugged)
 
 
@@ -1140,7 +1148,26 @@ an .ics file that has been downloaded from Google Calendar "
         (sql-mysql-completion-init)))
 
 (require 'desktop)
-(add-to-list 'desktop-globals-to-save 'sql-mysql-schema)
+(setq desktop-globals-to-save
+      '((extended-command-history . 300)
+        (file-name-history        . 1000)
+        (grep-history             . 30)
+        (compile-history          . 30)
+        (minibuffer-history       . 500)
+        (query-replace-history    . 600)
+        (read-expression-history  . 60)
+        (regexp-history           . 60)
+        (regexp-search-ring       . 20)
+        (search-ring              . 20)
+        (shell-command-history    . 500)
+        sql-mysql-schema
+        desktop-missing-file-warning
+        tags-file-name
+        tags-table-list
+        register-alist))
+
+
+
 
 (cmd my-sql-mysql
    "Switch to buffer before popping."
@@ -1493,8 +1520,9 @@ arguments: BEG and END (region to sort)."
 
 (load "dired-x") ;; C-x C-j jump to current file in dired
 
-(cmd xsteve-ido-choose-from-recentf
+(defun xsteve-ido-choose-from-recentf ()
   "Use ido to select a recently opened file from the `recentf-list'"
+  (interactive)
   (let ((home (expand-file-name (getenv "HOME"))))
     (find-file
      (ido-completing-read "Recentf open: "
@@ -1503,7 +1531,7 @@ arguments: BEG and END (region to sort)."
                                   recentf-list)
                           nil t))))
 
-(bind "C-x f" xsteve-ido-choose-from-recentf)
+(global-set-key (kbd "C-x f") 'xsteve-ido-choose-from-recentf)
 
 (setq ibuffer-shrink-to-minimum-size t)
 (setq ibuffer-always-show-last-buffer nil)
@@ -1520,8 +1548,8 @@ arguments: BEG and END (region to sort)."
 (bind "<C-tab>" iflipb-next-buffer)
 (bind "<C-S-iso-lefttab>"  iflipb-previous-buffer)
 (define-key org-mode-map (kbd "<C-tab>") nil) ; unbind it in orgmode
-(bind "<f1>" iflipb-next-buffer)
-(bind "<S-f1>"  iflipb-previous-buffer)
+;; (bind "<f1>" iflipb-next-buffer)
+;; (bind "<S-f1>"  iflipb-previous-buffer)
 
 
 ;; (bind "C-x C-b" bs-show)
@@ -1627,7 +1655,6 @@ arguments: BEG and END (region to sort)."
 
 (define-key dired-mode-map [?%?h] 'hide-dot-files)
 
-(display-time-mode)
 (autoload 'js2-mode "js2-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 
@@ -1641,11 +1668,11 @@ arguments: BEG and END (region to sort)."
 (add-to-list 'ac-dictionary-directories "~/.elisp/auto-complete/dict")
 (ac-config-default)
 
-(cmd my-transpose-sexps
+(cmd jsj-transpose-sexps
   (transpose-sexps 1)
   (backward-sexp 2))
 
-(define-key lisp-mode-shared-map (kbd "C-M-T") 'my-transpose-sexps)
+(define-key lisp-mode-shared-map (kbd "C-M-T") 'jsj-transpose-sexps)
 
 (if running-windows
     (setq path-to-ctags "C:/cygwin/bin/ctags"))
@@ -1679,11 +1706,11 @@ arguments: BEG and END (region to sort)."
               (local-set-key (kbd "<f4>") 'server-edit)
               (local-set-key (kbd "M-k") 'server-edit))))
 
-(defun my-kill-buffer ()
+(defun jsj-kill-buffer ()
   (interactive) (kill-buffer (current-buffer)))
 
-(global-set-key (kbd "<f4>") 'my-kill-buffer)
-(global-set-key (kbd "M-k") 'my-kill-buffer)
+(global-set-key (kbd "<f4>") 'jsj-kill-buffer)
+(global-set-key (kbd "M-k") 'jsj-kill-buffer)
 
 ;(global-hl-line-mode)
 (require 'centered-cursor-mode)
@@ -1798,19 +1825,20 @@ Also moves point to the beginning of the text you just yanked."
 (bind "\M-P" yank-as-line-above)
 (bind "\M-p" yank-as-line-below)
 
-;; (defun my-open-line (&optional alt)
-;;   (interactive "p")
-;;   (cond ((= alt 1)  (progn (unless (bolp)
-;;                              (beginning-of-line))
-;;                            (newline)
-;;                            (forward-line -1)
-;;                            (indent-according-to-mode)))
-;;         ((= alt 2) (progn (unless (eolp)
-;;                             (end-of-line))
-;;                           (newline-and-indent)))
-;;         (t (open-line 1))))
+;;; similar to o and O in vim. Use M-1 C-o to go above and M-2 C-o to go
+;;; below. C-o is normal emacs behavior
+(defun jsj-open-line (&optional alt)
+  (interactive "P")
+  (case alt
+    (1 (beginning-of-line)
+       (newline)
+       (forward-line -1)
+       (indent-according-to-mode))
+    (2 (end-of-line)
+       (newline-and-indent))
+    (t (open-line 1))))
 
-;; (define-key global-map (kbd "C-o") 'my-open-line)
+(define-key global-map (kbd "C-o") 'jsj-open-line)
 
 ;;; Not sure this is useful
 (require 'org-velocity)
@@ -1982,6 +2010,7 @@ mozrepl to evaluate in browser"
 
 (define-key global-map [(control meta ?r)] 'org-capture)
 
+;;; _cool
 (bind "C-M-S-k" (lambda () (interactive) (kill-sexp -1)))
 
 (defun my-emms-playlist-total-time-below-point ()
@@ -2085,9 +2114,11 @@ mozrepl to evaluate in browser"
 (bind "<kp-subtract>" beginning-of-defun)
 (bind "<kp-add>" end-of-defun)
 
+(add-to-list 'load-path "~/.elisp/parenface")
 (require 'parenface)
 (set-face-foreground 'paren-face "#888")
 (add-hook 'clojure-mode-hook (paren-face-add-support clojure-font-lock-keywords))
+(add-hook 'slime-repl-mode-hook (paren-face-add-support clojure-font-lock-keywords))
 
 (add-to-list 'load-path "~/.elisp/google-weather-el")
 (require 'google-weather)
@@ -2187,8 +2218,6 @@ mozrepl to evaluate in browser"
           (lambda ()
             (ibuffer-switch-to-saved-filter-groups "default")))
 
-(bind "C-z" anything)
-
 ;;; insert or remove break point for clojure at point. Uses (break) which I
 ;;; defined for compojure bc swank.core/break doesn't work for me there.
 (defun jsj-insert-or-remove-break-point (&optional alt)
@@ -2218,21 +2247,23 @@ mozrepl to evaluate in browser"
                (next-line))
              (open-line 1)
              (beginning-of-line)
-             (insert "(println \"" word ":\" " word ")"))))
-  (indent-according-to-mode))
+             (insert "(println \"" (if (equal word "") "line" word)
+                     ":\" " (if (equal word "") (int-to-string (line-number-at-pos)) word) ")"))))
+  (indent-according-to-mode)) 
 
 (define-key clojure-mode-map  (kbd "C-c p") 'jsj-insert-or-remove-print)
+
 ;(add-hook 'text-mode-hook 'c-subword-mode)
 
 ;;; start search at top of buffer
 (bind "C-S-s" (lambda () (interactive) (beginning-of-buffer) (isearch-forward)))
 
 ;;; cause I hate switching package and then going to repl
-(defun slime-goto-current-ns ()
+(defun jsj-slime-goto-current-ns ()
   (interactive)
   (slime-repl-set-package (slime-current-package))
   (slime-switch-to-output-buffer))
-(bind "C-c C-S-z" slime-goto-current-ns)
+(bind "C-c C-S-z" jsj-slime-goto-current-ns)
 
 ;; (define-key slime-mode-map (kbd "C-M-x")
 ;;   (lambda ()
@@ -2242,7 +2273,7 @@ mozrepl to evaluate in browser"
 (add-to-list 'load-path "~/.elisp/elein")
 (require 'elein)
 
-(defun my-emms-show ()
+(defun jsj-emms-show ()
   ;; too slow when switchign several songs! expire option -t doesn't seem to work
   (shell-command (concat "notify-send -t 1000 -i gtk-info \""
                          (emms-track-description
@@ -2264,6 +2295,7 @@ mozrepl to evaluate in browser"
  '(ac-modes (quote (slime-repl-mode emacs-lisp-mode lisp-interaction-mode c-mode cc-mode c++-mode java-mode clojure-mode scala-mode scheme-mode ocaml-mode tuareg-mode perl-mode cperl-mode python-mode ruby-mode ecmascript-mode javascript-mode js-mode js2-mode php-mode css-mode makefile-mode sh-mode fortran-mode f90-mode ada-mode xml-mode sgml-mode)))
  '(ac-quick-help-delay 1.0)
  '(ahk-syntax-directory "c:/Program Files/AutoHotkey/Extras/Editors/Syntax")
+ '(anything-c-adaptive-history-length 500)
  '(appt-display-diary nil)
  '(appt-display-duration 5)
  '(appt-display-interval 5)
@@ -2278,7 +2310,6 @@ mozrepl to evaluate in browser"
  '(dired-dwim-target t)
  '(dired-listing-switches "-haAl")
  '(dired-recursive-deletes (quote always))
- '(display-time-mode t)
  '(display-time-world-list (quote (("America/Los_Angeles" "Pacific") ("America/Denver" "Mountain") ("America/Chicago" "Midwest") ("America/New_York" "Eastern") ("Pacific/Honolulu" "Hawaii") ("Europe/London" "London") ("Europe/Paris" "Paris") ("Europe/Berlin" "Berlin") ("Asia/Calcutta" "Bangalore") ("Asia/Tokyo" "Tokyo") ("Asia/Shanghai" "Shanghai") ("Australia/Sydney" "Sydney"))))
  '(ecb-gzip-setup (quote cons))
  '(ecb-layout-name "left13")
@@ -2315,7 +2346,7 @@ mozrepl to evaluate in browser"
  '(notmuch-search-oldest-first nil)
  '(notmuch-show-logo nil)
  '(nxhtml-skip-welcome t)
- '(org-agenda-files (quote ("~/org/birthdays.org" "~/org/workout.org" "~/org/recipes.org" "~/org/someday.org" "~/org/quotes.org" "~/org/todo.org" "~/org/calendar.org" "~/org/shopping.org")))
+ '(org-agenda-files (quote ("~/org/goals.org" "~/org/birthdays.org" "~/org/workout.org" "~/org/recipes.org" "~/org/someday.org" "~/org/quotes.org" "~/org/todo.org" "~/org/calendar.org" "~/org/shopping.org")))
  '(org-agenda-window-frame-fractions (quote (0.1 . 0.75)))
  '(org-atom-publish-content t)
  '(org-export-with-section-numbers nil)
@@ -2389,8 +2420,12 @@ mozrepl to evaluate in browser"
 ;;   (mapcar #'file-directory-p (split-string cdt-source-path ":"))
 ;;   (load-file (format "%s/ide/emacs/cdt.el" cdt-dir)))
 
-(require 'fuzzy)
-(turn-on-fuzzy-isearch)
+;; (require 'fuzzy)
+;; (turn-on-fuzzy-isearch)
+
+(add-to-list 'load-path "~/.elisp/flex-isearch/")
+(require 'flex-isearch)
+(flex-isearch-mode)
 
 (when (fboundp 'winner-mode)
   (winner-mode 1))
@@ -2508,11 +2543,11 @@ mozrepl to evaluate in browser"
                     (match-beginning 0) (match-end 0)
                     ,(cadr pair))
                    nil))))
-     `(("\\<fn\\>" ,(make-char 'greek-iso8859-7 107))
-       ("\\<comp\\>" ?∘)
-       ("\\<partial\\>" ?þ)
-       ("\\<complement\\>" ?¬)
-       ))))
+     ;; ,(make-char 'greek-iso8859-7 107)
+     `(("\\<fn \\>" "λ ")
+       ("\\<comp \\>" "∘ ")
+       ("\\<partial \\>" "þ ")
+       ("\\<complement \\>" "¬ ")))))
 
 ;; (define-key slime-mode-map (kbd "M-a") 'slime-beginning-of-defun)
 ;; (define-key slime-mode-map (kbd "M-e") 'slime-end-of-defun)
@@ -2652,7 +2687,7 @@ Otherwise, display it in another buffer."
   (interactive)
   (backward-up-list+)
   (forward-char))
-
+;;; _cool
 (define-key lisp-mode-shared-map (kbd "C-M-9") 'backward-up-list+-1)
 
 (defun up-list+-1 ()
@@ -2660,7 +2695,7 @@ Otherwise, display it in another buffer."
   (interactive)
   (up-list+)
   (backward-char))
-
+;;; _cool
 (define-key lisp-mode-shared-map (kbd "C-M-0") 'up-list+-1)
 
 (require 'flymake)
@@ -2708,12 +2743,8 @@ Otherwise, display it in another buffer."
 (add-to-list 'exec-path "~/src/scala-2.8.1.final/bin/")
 
 ;; Load the ensime lisp code...
-(add-to-list 'load-path "~/src/ensime_2.8.1-0.4.1/elisp/")
+(add-to-list 'load-path "~/src/ensime_2.8.1-0.4.2/elisp/")
 (require 'ensime)
-
-;; This step causes the ensime-mode to be started whenever
-;; scala-mode is started for a buffer. You may have to customize this step
-;; if you're not using the standard scala mode.
 (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
 
 (bind "M-S-s" paredit-split-sexp)
@@ -2729,20 +2760,19 @@ This is the same as using \\[set-mark-command] with the prefix argument."
 (global-set-key (kbd "M-`") 'jump-to-mark)
 
 ;;; more precise move keys
-;; (setq shift-select-mode nil)
+(setq shift-select-mode nil)
 
-;; (defun forward-word2 ()
-;;   (interactive)
-;;   (forward-word 2)
-;;   (backward-word))
-;; (bind "M-F" forward-word2)
+(defun forward-word2 ()
+  (interactive)
+  (forward-word 2)
+  (backward-word))
+(bind "M-F" forward-word2)
 
-;; (defun backward-word2 ()
-;;   (interactive)
-;;   (backward-word 2)
-;;   (forward-word))
-;; (bind "M-B" backward-word2)
-(global-set-key (kbd "C-;") 'anything)
+(defun backward-word2 ()
+  (interactive)
+  (backward-word 2)
+  (forward-word 1))
+(bind "M-B" backward-word2)
 
 ;; (add-to-list 'align-rules-list
 ;;              '(text-column-whitespace
@@ -2757,6 +2787,8 @@ This is the same as using \\[set-mark-command] with the prefix argument."
 (require 'align-cljlet)
 
 (global-set-key (kbd "M-a") 'ido-switch-buffer)
+(define-key org-mode-map (kbd "M-a") nil)
+(global-set-key (kbd "C-;") 'anything)
 
 (defun define-function ()
   (interactive)
@@ -2800,25 +2832,18 @@ This is the same as using \\[set-mark-command] with the prefix argument."
 
 ;; (global-set-key "\C-h" 'ehelp-command)
 
-(custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
-)
-
 ;; (require 'secrets)
 
-(add-to-list 'load-path "~/.elisp/workgroups.el/")
-(require 'workgroups)
-(setq wg-prefix-key (kbd "C-c w"))
-(workgroups-mode 1)
+;;; _cool
+;; (add-to-list 'load-path "~/.elisp/workgroups.el/")
+;; (require 'workgroups)
+;; (setq wg-prefix-key (kbd "C-c w"))
+;; (workgroups-mode 1)
 
 (setq display-buffer-reuse-frames t)
 
 (add-to-list 'load-path "~/.elisp/emacs-nexus/")
 (require 'nexus)
-
 
 (require 'doc-view)
 (setq doc-view-resolution 160)
@@ -2839,4 +2864,329 @@ This is the same as using \\[set-mark-command] with the prefix argument."
   (remove-hook 'isearch-mode-end-hook 'isearch-move-point-to-opposite-end))
 
 (define-key isearch-mode-map (kbd "<C-return>") 'isearch-exit-at-opposite-end)
+
+(defun try-expand-flexible-abbrev (old)
+  "Try to complete word using flexible matching.
+
+Flexible matching works by taking the search string and then
+interspersing it with a regexp for any character. So, if you try
+to do a flexible match for `foo' it will match the word
+`findOtherOtter' but also `fixTheBoringOrange' and
+`ifthisisboringstopreadingnow'.
+
+The argument OLD has to be nil the first call of this function, and t
+for subsequent calls (for further possible completions of the same
+string).  It returns t if a new completion is found, nil otherwise."
+  (if (not old)
+      (progn
+        (he-init-string (he-lisp-symbol-beg) (point))
+        (if (not (he-string-member he-search-string he-tried-table))
+            (setq he-tried-table (cons he-search-string he-tried-table)))
+        (setq he-expand-list
+              (and (not (equal he-search-string ""))
+                   (he-flexible-abbrev-collect he-search-string)))))
+  (while (and he-expand-list
+              (he-string-member (car he-expand-list) he-tried-table))
+    (setq he-expand-list (cdr he-expand-list)))
+  (if (null he-expand-list)
+      (progn
+        (if old (he-reset-string))
+        ())
+    (progn
+      (he-substitute-string (car he-expand-list))
+      (setq he-expand-list (cdr he-expand-list))
+      t)))
+
+(defun he-flexible-abbrev-collect (str)
+  "Find and collect all words that flex-matches STR.
+See docstring for `try-expand-flexible-abbrev' for information
+about what flexible matching means in this context."
+  (let ((collection nil)
+        (regexp (he-flexible-abbrev-create-regexp str)))
+    (save-excursion
+      (goto-char (point-min))
+      (while (search-forward-regexp regexp nil t)
+        ;; Is there a better or quicker way than using
+        ;; `thing-at-point' here?
+        (setq collection (cons (thing-at-point 'symbol) collection))))
+    collection))
+
+(defun he-flexible-abbrev-create-regexp (str)
+  "Generate regexp for flexible matching of STR.
+See docstring for `try-expand-flexible-abbrev' for information
+about what flexible matching means in this context."
+  (let ((word "\\w*-*"))
+    (concat "\\b" (mapconcat (lambda (x) (concat word (list x))) str "")
+            word "\\b")))
+
+(setq hippie-expand-try-functions-list
+      (cons 'try-expand-flexible-abbrev hippie-expand-try-functions-list))
+
+(defun flex-match? (text search)
+  (let ((re (mapconcat #'regexp-quote (split-string search "") ".*")))
+    (string-match re text)))
+
+(flex-match? "foo-bar" "f-b")
+
+;;; thanks thunk
+(defun flexible-yank ()
+  (interactive)
+  (insert (ido-completing-read "Select kill: " kill-ring)))
+
+(global-set-key (kbd "M-Y") 'flexible-yank)
+
+(require 'windmove)
+(windmove-default-keybindings)
+(setq windmove-wrap-around t)
+
+;; and the session
+(setq desktop-restore-eager 20
+      desktop-lazy-verbose nil)
+(desktop-save-mode 1)
+;; (add-hook 'auto-save-hook (lambda () (desktop-save-in-desktop-dir)))
+;; doesn't appear to work
+(setq desktop-clear-preserve-buffers
+      (remove "\\*scratch\\*" desktop-clear-preserve-buffers))
+
+(savehist-mode 1)
+
+;;; I wish ido would use ffap if given prefix arg. Make it so! Btw
+;;; ffap-require-prefix t and ido-use-filename-at-point t wouldn't do this
+(defun ido-find-file (&optional arg)
+  (interactive "p")
+  (let ((ido-use-filename-at-point (if (= arg 4) t nil)))
+    (ido-file-internal ido-default-file-method)))
+
+(setq org-modules '(org-habit))
+
+;;; searching for old or young would be \(old\|young\)
+
+;; (set-default-font "Inconsolata-18")
+
+;; (require 'hide-mode-line)
+;; (hide-mode-line)
+
+;;; emacswiki
+(load "regadhoc")
+(global-set-key "\C-xrj" 'regadhoc-jump-to-registers)
+(global-set-key "\C-x/" 'regadhoc-register)
+(setq regadhoc-register-char-list (list ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))
+
+;;; michael blais
+(defun slime-eval-at-register (reg)
+  "Take the cursor to a register's location and eval
+  the expression there. Useful for testing stuff without
+  having to 'go there' first."
+  (interactive "cEval at register: ")
+  (save-excursion
+    (jump-to-register reg)
+    (slime-eval-last-expression)))
+
+;; Note: slime-interactive-eval is also available on C-c :,
+;; so we override it for something that looks like C-x C-e.
+(define-key slime-mode-map "\C-c\C-e" 'slime-eval-at-register)
+
+
+
+(defun nm-eshell-pcomplete ()
+  (interactive)
+  (let ((ac-sources '(ac-source-pcomplete
+                      ac-source-filename)))
+    (auto-complete)))
+
+(defun nm-eshell-auto-complete ()
+  (interactive)
+  (let ((ac-sources '(ac-source-functions
+                      ac-source-variables
+                      ac-source-features
+                      ac-source-symbols
+                      ac-source-words-in-same-mode-buffers)))
+    (auto-complete)))
+
+(defun nm-eshell-mode-hook ()
+  (local-unset-key (kbd "M-?"))
+
+  (local-set-key (kbd "TAB") 'nm-eshell-pcomplete)
+  (local-set-key [tab] 'nm-eshell-pcomplete)
+
+  (local-set-key (kbd "M-TAB") 'nm-eshell-auto-complete)
+  (local-set-key [M-tab] 'nm-eshell-auto-complete))
+
+(add-hook 'eshell-mode-hook 'nm-eshell-mode-hook)
+
+;;; philhagelberg
+(defun esk-recentf-ido-find-file ()
+  "Find a recent file using ido."
+  (interactive)
+  (let ((file (ido-completing-read "Choose recent file: " recentf-list nil t)))
+    (when file
+      (find-file file))))
+
+(setq scpaste-http-destination "http://jaderholm.com/paste"
+      scpaste-scp-destination "jaderholm.com:www/jaderholm.com/paste")
+(autoload 'scpaste "scpaste" "Paste the current buffer." t nil)
+
+;;; erc
+(require 'erc)
+
+(add-hook 'erc-mode-hook
+          (lambda ()
+            (auto-fill-mode 0)
+            (setq erc-fill-column 70)
+            (setq erc-timestamp-format "[%H:%M] ")
+            (setq erc-fill-function 'erc-fill-static)
+            (setq erc-fill-prefix "          ")
+            (setq erc-fill-static-center 12)))
+
+(require 'pp)
+(defun ted-erc-fill-elisp ()
+  "If it appears to be elisp, pretty print region.
+ Otherwise, fall back to `erc-fill-variable'."
+  (let ((print-escape-newlines t)
+        (pp-escape-newlines t))
+    (goto-char (point-min))
+    (if (re-search-forward "Elisp: " nil t)
+        (let* ((start (point))
+               (end (progn (forward-sexp 1) (point)))
+               (psexp (pp-to-string
+                       (car
+                        (read-from-string
+                         (buffer-substring-no-properties
+                          start end))))))
+          (delete-region start end)
+          (insert "\n" psexp))
+      (erc-fill-variable))))
+
+(setq erc-fill-function 'ted-erc-fill-elisp)
+
+(and
+ (require 'erc-highlight-nicknames)
+ (add-to-list 'erc-modules 'highlight-nicknames)
+ (erc-update-modules))
+
+(add-to-list 'erc-modules 'scrolltobottom)
+
+(setq erc-hide-list '("JOIN" "PART" "QUIT" "NICK" "MODE"))
+
+;;; might speed up emacs saves
+(setq vc-handled-backends nil)
+
+(global-set-key (kbd "C-c ;") 'bury-buffer)
+
+;; (require 'highlight)
+;; (require 'zjl-hl)
+;; (zjl-hl-enable-global-all-modes)
+
+(require 'saveplace)
+(setq-default save-place t)
+
+;;; wanted emms to remember where I was, ended up doing it manually
+(add-hook 'emms-playlist-selection-changed-hook
+          (lambda ()
+            (setq emms-position (point))))
+
+(add-to-list 'desktop-globals-to-save 'emms-position)
+
+(defun emms-restore-position ()
+  "call this after loading your playlist. it will restore point
+to position it was at when you quit emacs last. needs desktop to
+be persisting emms-position"
+  (interactive)
+  (goto-char emms-position))
+
+(global-set-key (kbd "M-$") 'replace-string)
+(global-set-key (kbd "C-c s") 'replace-string)
+
+;;; make it more like vim I think, keep the char I zap to. like xemacs
+;;; zap-up-to-char
+(defadvice zap-to-char (after my-zap-to-char-advice (arg char) activate)
+  "Kill up to the ARG'th occurence of CHAR, and leave CHAR.
+  The CHAR is replaced and the point is put before CHAR."
+  (insert char)
+  (forward-char -1))
+
+(defun jump-to-char (arg char)
+  (interactive "p\ncJump to char: ")
+  (forward-char)
+  (let ((case-fold-search nil)); not sure if I want this
+    (search-forward (char-to-string char) nil nil arg))
+  (forward-char -1))
+
+(global-set-key (kbd "C-z") 'jump-to-char)
+
+;; (custom-set-variables
+;;  '(eol-mnemonic-dos "[dos]")
+;;  '(eol-mnemonic-unix "[unix]")
+;;  '(eol-mnemonic-mac "[mac]")
+;;  '(eol-mnemonic-undecided "[unknown]")
+;;  )
+
+(add-to-list 'default-mode-line-format
+             '((mark-active
+                (:eval (format "Selected: %d line(s), %d char(s) "
+                               (count-lines (region-beginning)
+                                            (region-end))
+                               (- (region-end) (region-beginning)))))))
+
+;;   (require 'scroll-mode-line-mode)
+;;   (scroll-mode-line-mode 1)
+
+(diminish 'yas/minor-mode)
+(diminish 'auto-complete-mode)
+(diminish 'global-highline-mode)
+;; (diminish 'view-mode)
+;; (diminish 'eldoc-mode)
+(diminish 'paredit-mode "par")
+
+;;; relativenumber like vim
+(global-linum-mode t)
+(setq linum-last-pos 0)
+
+(eval-after-load "linum"
+  '(defun linum-update (buffer)
+     "Update line numbers for all windows displaying BUFFER."
+     ;; this is only change but couldn't find better way to do it, tried
+     ;; linum-before-update-hook but it runs in an excursion so I couldn't get
+     ;; current line number
+     (setq linum-last-pos (line-number-at-pos))
+     (with-current-buffer buffer
+       (when linum-mode
+         (setq linum-available linum-overlays)
+         (setq linum-overlays nil)
+         (save-excursion
+           (mapc #'linum-update-window
+                 (get-buffer-window-list buffer nil 'visible)))
+         (mapc #'delete-overlay linum-available)
+         (setq linum-available nil)))))
+
+(defface linum-zero
+  '((t :foreground "grey10" :background "magenta" :weight bold))
+  "Face for displaying line number 0"
+  :group 'linum)
+
+(defface linum-top
+  '((t :foreground "grey80" :background "grey10"))
+  "Face for displaying line number 0"
+  :group 'linum)
+
+(defun linum-relativenumber-format (line-number)
+  (let ((diff (abs (- line-number linum-last-pos))))
+    (propertize (format "%3d" diff)
+                'face (cond ((zerop diff) 'linum-zero)
+                            ((eq 1 line-number) 'linum-top)
+                            (t 'linum)))))
+
+(setq linum-format 'linum-relativenumber-format)
+
+(setq notmuch-search-line-faces
+      '(("delete" . '(:foreground "red" :background "blue"))
+        ("unread" . '(:background "grey20"
+                                  ;:weight bold
+                                  ))))
+
+;; (benchmark-run (some code))
+
+;;; I wish there were a better way to add total line number
+(add-to-list 'default-mode-line-format
+             '((t (:eval (format "%d" (line-number-at-pos (point-max)))))) t)
 

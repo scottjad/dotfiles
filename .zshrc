@@ -13,7 +13,7 @@ function notify { if [[ -x "/usr/bin/notify-send" ]]; then; notify-send $@; fi }
 
 ## Hosts
 alias ssrn='sudo shutdown -r now'
-alias ssn='sudo sutdown now'
+alias ssn='sudo shutdown now'
 
 # short for say done
 alias sd='notify -t 2000 -i alert "Done"'
@@ -26,7 +26,8 @@ alias df='df -h'
 # Aliases
 alias create-tags='ctags -e -R *'
 alias cm="./configure && make"
-alias cmsmi="..configure && make && sudo make install"
+function mayberun() {if test -f $1; then $1; fi }
+alias bui="mayberun ./autogen.sh && mayberun ./configure && make; notify -t 3000 'build done'"
 alias smi='sudo make install && notify -t 3000 -i info "sudo make intall" "Done"'
 
 ## Lein
@@ -44,21 +45,7 @@ alias les='len "swank starting"; lein swank'
 
 ## Git
 alias g='git'
-alias ga='git add'
-alias gb='git branch'
-alias gba='git branch -a'
-alias go='git checkout'
-alias gom='go master'
 function gcl { git clone $1 && notify -t 3000 -i git "Git clone completed" "$1" }
-alias gc='git commit -v'
-alias gca='gc -a'
-alias gd='git diff | more'
-alias gp='git pull'
-alias gpu='git push'
-alias gt='git status'
-alias gl='git log'
-alias gl2='git log --pretty=format:"%h %s'
-alias gl3='git log --pretty=format:"%h %ad | %s%d [%an]" --graph --date=short'
 
 alias cx='chmod +x'
 alias rmr="mv -t ~/.local/share/Trash/files"
@@ -103,7 +90,7 @@ function rem {sudo apt-get remove -y $* && aptn "Removed $@"}
 compdef "_deb_packages installed" rem
 alias upd='sudo apt-get update'
 alias upg='sudo apt-get upgrade'
-alias updg='upd; upg; aptn "upgrade; update done"'
+alias updg='upd; upg; aptn "update/upgrade done"'
 alias arem='sudo apt-get autoremove -y'
 alias arep='sudo add-apt-repository'
 ## Windows apt-cyg
@@ -183,7 +170,7 @@ export PS1="
 # %{$fg_bold[magenta]%}%n%{$reset_color%}@%{$fg_bold[green]%}%m%{$reset_color%}:%{$fg_bold[yellow]%}%~%{$reset_color%}:%# "
 
 # export PS1="
-# %n@%{$fg_bold[magenta]%}%m%{$reset_color%}:%{$fg_bold[blue]%}%~%{$reset_color%}%# "
+# %{$fg_bold[yellow]$bg_bold[red]%}%n@%m%{$reset_color%}:%~%# "
 
 # export PS1="
 # %B%~%(?..[%?])%(#.#.) %b"
@@ -486,7 +473,9 @@ function search()
 
 bindkey -s "^x^f" $'ec '
  
-function myal-ls() { [[ -z $BUFFER ]] && BUFFER='ls' ; zle accept-line } ; zle -N myal-ls ; bindkey '^M' myal-ls
+function lsx() { [[ -z $BUFFER ]] && BUFFER='ls' ; zle accept-line } ; zle -N lsx ; bindkey '^M' lsx
+# alt-ret runs last command
+function runprev() { zle up-line-or-history ; zle accept-line } ; zle -N runprev ; bindkey '^[^M' runprev
 
 #function myal-updir() { if [[ -z $BUFFER ]] ; then BUFFER='..' ; zle accept-line ; else zle backward-delete-char ; fi } ; zle -N myal-updir ; bindkey '^?' myal-updir
 #function myal-home() { if [[ -z $BUFFER ]] ; then BUFFER='~' ; zle accept-line ; else zle backward-kill-word ; fi } ; zle -N myal-home ; bindkey '^J' myal-home
@@ -564,7 +553,8 @@ autoload -Uz vcs_info
 
 #precmd () { vcs_info }
 
-zstyle ':vcs_info:*' formats '(%s/%b)'
+zstyle ':vcs_info:*' formats '%r:%s:%b'
+zstyle ':vcs_info:*' enable git cvs svn hg bzr darcs
 
 alias redshift='redshift -l 38.87:-77.025'
 
@@ -586,8 +576,32 @@ function ranger-cd {
 bindkey -s "\C-o" "ranger-cd^m"
 
 
-. ~/.zsh/live-command-coloring.sh
+# . ~/.zsh/live-command-coloring.sh
 
 . ~/.zsh/secret
 
 sleep2="sudo /etc/acpi/sleep.sh sleep"
+
+alias dashboard='watch --interval=3600 dashboard.clj -a'
+
+# so s -x shows pids
+compdef s=screen
+
+# Meta-u to chdir to the parent directory
+bindkey -s '\eu' '^Ucd ..; ls^M'
+
+# If AUTO_PUSHD is set, Meta-p pops the dir stack
+bindkey -s '\ep' '^Upopd >/dev/null; dirs -v^M'
+
+# alt-s inserts sudo at beginning of line
+insert_sudo () { zle beginning-of-line; zle -U "sudo " }
+zle -N insert-sudo insert_sudo
+bindkey "^[s" insert-sudo
+
+alias cpv="rsync -poghb --backup-dir=/tmp/rsync -e /dev/null --progress --"
+
+# see what's bound: bindkey '^p'
+# or bindkey will show you what's bound to one key or all
+
+# make xdg-open uses what gnome-open does
+export DE="gnome"
