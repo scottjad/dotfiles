@@ -46,6 +46,7 @@ alias les='len "swank starting"; lein swank'
 ## Git
 alias g='git'
 function gcl { git clone $1 && notify -t 3000 -i git "Git clone completed" "$1" }
+alias gl='git log --pretty=format:"%h %ad | %s%d [%an]" --graph --date=short'
 
 alias cx='chmod +x'
 alias rmr="mv -t ~/.local/share/Trash/files"
@@ -93,6 +94,7 @@ alias upg='sudo apt-get upgrade'
 alias updg='upd; upg; aptn "update/upgrade done"'
 alias arem='sudo apt-get autoremove -y'
 alias arep='sudo add-apt-repository'
+
 ## Windows apt-cyg
 if [[ $(uname -o) == Cygwin ]] {
         alias open=cygstart
@@ -102,7 +104,6 @@ if [[ $(uname -o) == Cygwin ]] {
         alias ins='apt-cyg install'
         alias rem='apt-cyg remove'
         alias upd='apt-cyg update'
-
         alias lein='lein.bat'
 }
 
@@ -134,7 +135,6 @@ export RSYNC_RSH=/usr/bin/ssh
 export COLORTERM=yes
 # for bug w/ buttons in eclipse not clicking when compiz is running
 export GDK_NATIVE_WINDOWS=true
-
 export WORDCHARS='*?[]~=&;!#$%^(){}'
 # cdpath=(~)
 bindkey -e
@@ -322,6 +322,7 @@ precmd () {
 #     export RPS1="%t %{$fg_bold[yellow]%}$(parse_git_branch)%{$reset_color%} %{$fg_bold[red]%}%(?..[%?])%(#.#.)%{$reset_color%}%{$fg_bold[grey]%}"
 #     export RPS1="${vcs_info_msg_0_} $(parse_git_branch) %(?..[%?])%(#.#.)"
     export RPS1="${vcs_info_msg_0_} %(?..[%?])%(#.#.)"
+
 #         if [[ $code != "0" ]]; then
 #             echo ok
 #             export RPS1="$(parse_git_branch) %?"
@@ -580,7 +581,7 @@ bindkey -s "\C-o" "ranger-cd^m"
 
 . ~/.zsh/secret
 
-sleep2="sudo /etc/acpi/sleep.sh sleep"
+alias slp="sudo /etc/acpi/sleep.sh sleep"
 
 alias dashboard='watch --interval=3600 dashboard.clj -a'
 
@@ -588,13 +589,13 @@ alias dashboard='watch --interval=3600 dashboard.clj -a'
 compdef s=screen
 
 # Meta-u to chdir to the parent directory
-bindkey -s '\eu' '^Ucd ..; ls^M'
+# bindkey -s '\eu' '^Ucd ..; ls^M'
 
 # If AUTO_PUSHD is set, Meta-p pops the dir stack
 bindkey -s '\ep' '^Upopd >/dev/null; dirs -v^M'
 
 # alt-s inserts sudo at beginning of line
-insert_sudo () { zle beginning-of-line; zle -U "sudo " }
+insert_sudo () { zle beginning-of-line; zle -U "sudo "; zle end-of-line }
 zle -N insert-sudo insert_sudo
 bindkey "^[s" insert-sudo
 
@@ -605,3 +606,24 @@ alias cpv="rsync -poghb --backup-dir=/tmp/rsync -e /dev/null --progress --"
 
 # make xdg-open uses what gnome-open does
 export DE="gnome"
+
+alias -g ND='*(/om[1])' # newest directory
+alias -g NF='*(.om[1])' # newest file
+
+[[ -s "/home/scott/.rvm/scripts/rvm" ]] && source "/home/scott/.rvm/scripts/rvm"
+
+# Opens the github page for the current git repository in your browser
+function gh() {
+    giturl=$(git config --get remote.origin.url)
+    if [[ "$giturl" == "" ]]; then
+        echo "Not a git repository or no remote.origin.url set"
+        exit 1
+    fi
+    
+    giturl=${giturl/git\@github\.com\:/https://github.com/}
+    giturl=${giturl/\.git//}
+    echo $giturl
+    gnome-open $giturl
+}
+
+function git(){hub "$@"}

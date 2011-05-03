@@ -68,7 +68,6 @@
 
 (bind "C-c C-r" eval-region)
 
-
 ;;---------------------------------------------------------
 ;; Windows only settings
 ;;---------------------------------------------------------
@@ -120,7 +119,6 @@
   (define-key ido-completion-map "\C-t" 'ido-toggle-regexp) ; same as isearch
   ;(define-key ido-completion-map "\C-d" 'ido-enter-dired) ; now on by default
   )
-
 
 ;;---------------------------------------------------------
 ;; mpg123
@@ -383,13 +381,6 @@ If no associated application, then `find-file' FILE."
 (recentf-mode 1)
 
 ;;---------------------------------------------------------
-;; magit
-;;---------------------------------------------------------
-(add-to-list 'load-path "~/src/magit")
-(autoload 'magit-status "magit" nil t)
-(bind "C-x g" magit-status)
-
-;;---------------------------------------------------------
 ;; EMMS
 ;;---------------------------------------------------------
 (add-to-list 'load-path "~/.elisp/emms/lisp")
@@ -467,7 +458,6 @@ If no associated application, then `find-file' FILE."
 ;;       '(lambda ()
 ;;         (define-key anything-read-file-name-map "/" 'anything-read-file-name-follow-directory)))
 
-
 (require 'anything-etags)
 ;(setq anything-etags-enable-tag-file-dir-cache t)
 ;(setq anything-etags-cache-tag-file-dir "~/workspace/")
@@ -532,7 +522,7 @@ If no associated application, then `find-file' FILE."
 (add-to-list 'load-path "~/.elisp/solarized/emacs-color-theme-solarized/")
 (require 'color-theme-solarized)
 ;;(color-theme-solarized-dark)
-; (load "~/.emacs-colors")
+;; (load "~/.ecolors")
 
 ;;---------------------------------------------------------
 ;; yasnippet
@@ -666,18 +656,7 @@ If no associated application, then `find-file' FILE."
 ;; (setq remember-handler-functions '(org-remember-handler))
 (setq org-remember-store-without-prompt t)
 
-(setq org-remember-templates
-      '(("todo" ?t "* TODO %?" "~/org/todo.org" "Tasks")
-        ("calendar" ?c "* %?\n  %^t" "~/org/calendar.org" "Events")
-        ("phone-calls" ?p "* %T %?" "~/doc/phone-calls.org" "Phone Calls")
-        ("journal" ?j "* %U\n%?" "~/doc/personal/journal.org" "Journal")
-        ("music" ?m "* :%^{Field|song|artist|album} %^{Value} :%^{Field|song|artist|album} %^{Value}" "~/org/music.org" "Music to checkout")
-        ("movie" ?v "* %^{Movie name}" "~/org/movies.org" "Movies to see")
-        ("note" ?n "* %U\n  %?" "~/org/notes.org" "Notes")
-        ("food" ?f "* %U\n  - %?" "~/org/food.org" "Food")
-        ("programming" ?f "* %U\n  - %?" "~/org/programming.org" "Questions")
-        ("exercise" ?e "* %U\n  - %?" "~/org/exercise.org" "Exercise")
-        ("other" ?o "* %a\n%i")))
+
 
 (setq remember-all-handler-functions t)
 (setq remember-handler-functions
@@ -746,7 +725,6 @@ If no associated application, then `find-file' FILE."
               ("TODO" ("WAITING") ("CANCELLED"))
               ("STARTED" ("WAITING"))
               ("PROJECT" ("CANCELLED") ("PROJECT" . t)))))
-
 
 ;; Resume clocking tasks when emacs is restarted
 (setq org-clock-persistence-insinuate)
@@ -911,7 +889,6 @@ If no associated application, then `find-file' FILE."
 (bind "<f6> l" 'color-theme-active)
 (bind "<f6> n" 'linum-mode)
 
-
 ;;-----------------------------------------------------------------------------
 ;; F7:
 ;;-----------------------------------------------------------------------------
@@ -925,6 +902,8 @@ If no associated application, then `find-file' FILE."
               "GohuFont-12"
               "Terminus-12"
               "Terminus-8"
+              "Tamsyn-14"
+              "Fixedsys Excelsior 3.01-L2-12"
               ;; "DejaVu Sans Mono-8"
               "DejaVu Sans Mono-9"
               "DejaVu Sans Mono-10"
@@ -942,6 +921,7 @@ If no associated application, then `find-file' FILE."
               ;; "Liberation Mono-14"
               ;; "Monaco-12"
               ;; "Monaco-18"
+              "DejaVu Sans Mono-12"
               )
       font-length (length fonts))
 
@@ -980,7 +960,6 @@ If no associated application, then `find-file' FILE."
 (bind "<f9> g" gnus)
 (bind "<f9> n" notmuch)
 (bind "<f9> M-g" gnus-unplugged)
-
 
 ;;-----------------------------------------------------------------------------
 ;; F11:
@@ -1026,6 +1005,11 @@ If no associated application, then `find-file' FILE."
 ;; (bind "C-x g" egg-status)
 ;; (add-to-list 'load-path "~/src/egg")
 ;; (require 'egg)
+
+(autoload 'magit-status "magit" nil t)
+(bind "C-x g" magit-status)
+(add-to-list 'load-path "~/src/magit")
+(require 'magit)
 
 (cmd insert-local-variables-spec
   "Insert a minimal local variables spec for this buffer."
@@ -1092,7 +1076,6 @@ an .ics file that has been downloaded from Google Calendar "
 (add-hook 'js2-mode-hook 'javascript-moz-setup)
 ;; so run-mozilla is available w/o opening .js file
 (javascript-moz-setup)
-
 
 ;; (add-to-list 'load-path "~/.elisp/drew")
 ;; (require 'emacs-init)
@@ -1165,9 +1148,6 @@ an .ics file that has been downloaded from Google Calendar "
         tags-file-name
         tags-table-list
         register-alist))
-
-
-
 
 (cmd my-sql-mysql
    "Switch to buffer before popping."
@@ -1412,33 +1392,31 @@ arguments: BEG and END (region to sort)."
 
 (add-hook 'sldb-mode-hook 'sldb-font-lock)
 
-;; (autoload 'clojure-test-mode "clojure-test-mode" "Clojure test mode" t)
+(autoload 'clojure-test-mode "clojure-test-mode" "Clojure test mode" t)
 (add-hook 'clojure-mode-hook
           '(lambda ()
-             ;; (save-excursion
-             ;; (goto-char (point-min))
-             ;; (if (or (search-forward "(deftest" nil t)
-             ;;         (search-forward "(with-test" nil t))
-             ;; (clojure-test-mode t)
-
-             ;; (require 'clj-imports)
-             ;; (define-key clojure-mode-map (kbd "C-c i")
-             ;;   'clj-imports-insert-with-completion)
-             ;; (define-key clojure-mode-map (kbd "C-c C-n")
-             ;;   'clj-imports-eval-ns)
-
+             (save-excursion
+               (goto-char (point-min))
+               (if (or (search-forward "(deftest" nil t)
+                       (search-forward "(with-test" nil t))
+                   (clojure-test-mode t)
+                 ;; (require 'clj-imports)
+                 ;; (define-key clojure-mode-map (kbd "C-c i")
+                 ;;   'clj-imports-insert-with-completion)
+                 ;; (define-key clojure-mode-map (kbd "C-c C-n")
+                 ;;   'clj-imports-eval-ns)
+                 ))))
              
-))
-
 (defun backward-up-list+ ()
-  "Stupid backward-up-list doesn't work from inside a string and I got tired of having to move outside the string to use it."
+  "Stupid backward-up-list doesn't work from inside a string and
+I got tired of having to move outside the string to use it."
   (interactive)
   (if (in-string-p)
       (while (in-string-p)
         (backward-char))
     (backward-up-list)))
 
-(bind "C-M-u" backward-up-list+)
+(global-set-key (kbd "C-M-u") 'backward-up-list+)
 
 (defun up-list+ ()
   (interactive)
@@ -1447,10 +1425,13 @@ arguments: BEG and END (region to sort)."
         (forward-char))
     (up-list)))
 
-(defun move-to-parent ()
-  )
+(eval-after-load "paredit" '(define-key paredit-mode-map (kbd "C-M-n") nil))
+(global-set-key (kbd "C-M-n") 'up-list+)
+
 (defun eval-parent-sexp ()
-  "Cause sometimes you just want to eval just the immediate form. not the top level, but without going to the closing paren and evaling there."
+  "Cause sometimes you just want to eval just the immediate
+form. not the top level, but without going to the closing paren
+and evaling there."
   (interactive)
   (save-excursion
     ;; get out of string if in it
@@ -1465,22 +1446,20 @@ arguments: BEG and END (region to sort)."
 
 (setq slime-protocol-version nil)
 
-;; (require 'clojure-test-mode)
-
 ;;---------------------------------------------------------
 ;; Paredit
 ;;---------------------------------------------------------
 (require 'paredit)
 (dolist (i '(emacs-lisp-mode-hook lisp-mode-hook lisp-interaction-mode-hook clojure-mode-hook slime-repl-mode-hook))
   (add-hook i (lambda () (paredit-mode +1)
-                (local-set-key  "(" 'paredit-open-parenthesis)
-                (local-set-key  ")" 'paredit-close-parenthesis)
+                (local-set-key "(" 'paredit-open-parenthesis)
+                (local-set-key ")" 'paredit-close-parenthesis)
                 (local-set-key "[" 'paredit-open-parenthesis)
                 (local-set-key "]" 'paredit-close-parenthesis)
                 (local-set-key "{" 'paredit-open-curly)
                 (local-set-key "}" 'paredit-close-curly))))
 
-;;; cool! insert something above parent sexp
+;;; _cool! insert something above parent sexp
 (define-key paredit-mode-map (kbd "C-S-j")
   (lambda ()
     (interactive)
@@ -1550,7 +1529,6 @@ arguments: BEG and END (region to sort)."
 (define-key org-mode-map (kbd "<C-tab>") nil) ; unbind it in orgmode
 ;; (bind "<f1>" iflipb-next-buffer)
 ;; (bind "<S-f1>"  iflipb-previous-buffer)
-
 
 ;; (bind "C-x C-b" bs-show)
 
@@ -1772,7 +1750,7 @@ arguments: BEG and END (region to sort)."
 ;;; cool: C-u C-_ when a section is selected does selective undo on that region
 
 (require 'undo-tree)
-
+(global-set-key (kbd "C-?") 'undo-tree-visualize)
 ;;; yellow color
 ;;; http://www.adaic.com/standards/95lrm/html/RM-12-8.html
 ;;; bgcolor #fffff0
@@ -1955,7 +1933,6 @@ mozrepl to evaluate in browser"
              (autopair-mode)
              (set (make-local-variable 'tab-width) 2)))
 
-
 ;; (autoload 'slime-highlight-edits-mode "slime-highlight-edits")
 ;; (add-hook 'slime-mode-hook (lambda () (slime-highlight-edits-mode 1)))
 
@@ -1971,25 +1948,25 @@ mozrepl to evaluate in browser"
 
 (put 'narrow-to-region 'disabled nil)
 
-(defadvice slime-repl-emit (after sr-emit-ad activate)
-  (with-current-buffer (slime-output-buffer)
-    (add-text-properties slime-output-start slime-output-end
-                         '(font-lock-face slime-repl-output-face
-                                          rear-nonsticky (font-lock-face)))))
+;; (defadvice slime-repl-emit (after sr-emit-ad activate)
+;;   (with-current-buffer (slime-output-buffer)
+;;     (add-text-properties slime-output-start slime-output-end
+;;                          '(font-lock-face slime-repl-output-face
+;;                                           rear-nonsticky (font-lock-face)))))
 
-(defadvice slime-repl-insert-prompt (after sr-prompt-ad activate)
-  (with-current-buffer (slime-output-buffer)
-    (let ((inhibit-read-only t))
-      (add-text-properties slime-repl-prompt-start-mark (point-max)
-                           '(font-lock-face slime-repl-prompt-face
-                                            rear-nonsticky
-                                            (slime-repl-prompt
-                                             read-only
-                                             font-lock-face
-                                             intangible))))))
+;; (defadvice slime-repl-insert-prompt (after sr-prompt-ad activate)
+;;   (with-current-buffer (slime-output-buffer)
+;;     (let ((inhibit-read-only t))
+;;       (add-text-properties slime-repl-prompt-start-mark (point-max)
+;;                            '(font-lock-face slime-repl-prompt-face
+;;                                             rear-nonsticky
+;;                                             (slime-repl-prompt
+;;                                              read-only
+;;                                              font-lock-face
+;;                                              intangible))))))
 
 (defun slime-clojure-repl-setup ()
-  (when (string-equal "clojure" (slime-connection-name))
+  (when (string-match "clojure" (slime-connection-name))
     (message "Setting up repl for clojure")
     (when (slime-inferior-process)
       (slime-redirect-inferior-output))
@@ -1998,16 +1975,9 @@ mozrepl to evaluate in browser"
     (clojure-mode-font-lock-setup)
 
     (setq lisp-indent-function 'clojure-indent-function)
-
-    ;; (when (and (featurep 'paredit) paredit-mode (>= paredit-version 21))
-    ;;   (define-key slime-repl-mode-map "{" 'paredit-open-curly)
-    ;;   (define-key slime-repl-mode-map "}" 'paredit-close-curly))
-    ;; (slime-setup '(slime-fancy))
-
     ))
 
 (add-hook 'slime-repl-mode-hook 'slime-clojure-repl-setup)
-
 (define-key global-map [(control meta ?r)] 'org-capture)
 
 ;;; _cool
@@ -2095,7 +2065,7 @@ mozrepl to evaluate in browser"
 ;; ;; Default settings
 ;; (define-key ac-menu-map "\C-n" 'ac-next)
 ;; (define-key ac-menu-map "\C-p" 'ac-previous)
-(define-key ac-mode-map (kbd "C-c h") 'ac-last-quick-help)
+;; (define-key ac-mode-map (kbd "C-c h") 'ac-last-quick-help)
 (define-key ac-mode-map
   (kbd "C-c H")
   'ac-last-help)
@@ -2350,12 +2320,14 @@ mozrepl to evaluate in browser"
  '(org-agenda-window-frame-fractions (quote (0.1 . 0.75)))
  '(org-atom-publish-content t)
  '(org-export-with-section-numbers nil)
+ '(org-file-apps (quote ((auto-mode . emacs) ("\\.mm\\'" . default) ("\\.x?html?\\'" . default) ("\\.pdf\\'" . "zathura %s"))))
  '(org-log-repeat nil)
  '(recentf-max-menu-items 1000)
  '(scroll-bar-mode (quote right))
  '(session-locals-include (quote (overwrite-mode buffer-undo-list)))
  '(show-paren-mode t)
  '(slime-autodoc-delay 0.1)
+ '(slime-compilation-finished-hook (quote (slime-goto-first-note)))
  '(slime-complete-symbol*-fancy t)
  '(slime-complete-symbol-function (quote slime-fuzzy-complete-symbol))
  '(speedbar-hide-button-brackets-flag t)
@@ -2375,10 +2347,12 @@ mozrepl to evaluate in browser"
  '(work-timer-working-time 25))
 
 ;;; for audiobooks
-;; (setq emms-player-mplayer-parameters
-;;       '("-slave" "-quiet" "-really-quiet"
-;;         "-af" "scaletempo"
-;;         "-speed" "2.0"))
+(setq emms-player-mplayer-parameters
+      '("-slave" "-quiet" "-really-quiet"
+        "-ac" "mp3,"
+        ;; "-af" "scaletempo"
+        ;; "-speed" "2.0"
+        ))
 
 ;; (setq browse-url-browser-function 'w3m-browse-url)
 ;; (autoload 'w3m-browse-url "w3m" "Ask a WWW browser to show a URL." t)
@@ -2464,6 +2438,7 @@ mozrepl to evaluate in browser"
       (unless (and (boundp 'mark-active) mark-active)
         (push-mark nil t nil))
       (setq position (cdr (assoc selected-symbol name-and-pos)))
+      (pulse-momentary-highlight-one-line (point))
       (cond
        ((overlayp position)
         (goto-char (overlay-start position)))
@@ -2533,45 +2508,46 @@ mozrepl to evaluate in browser"
 (global-set-key (kbd "C-c k") 'delete-this-buffer-and-file)
 
 ;; symbols for some overlong function names
-(eval-after-load 'clojure-mode
-  '(font-lock-add-keywords
-    'clojure-mode
-    (mapcar
-     (lambda (pair)
-       `(,(car pair)
-         (0 (progn (compose-region
-                    (match-beginning 0) (match-end 0)
-                    ,(cadr pair))
-                   nil))))
-     ;; ,(make-char 'greek-iso8859-7 107)
-     `(("\\<fn \\>" "λ ")
-       ("\\<comp \\>" "∘ ")
-       ("\\<partial \\>" "þ ")
-       ("\\<complement \\>" "¬ ")))))
+;; (eval-after-load 'clojure-mode
+;;   '(font-lock-add-keywords
+;;     'clojure-mode
+;;     (mapcar
+;;      (lambda (pair)
+;;        `(,(car pair)
+;;          (0 (progn (compose-region
+;;                     (match-beginning 0) (match-end 0)
+;;                     ,(cadr pair))
+;;                    nil))))
+;;      ;; ,(make-char 'greek-iso8859-7 107)
+;;      `(
+;;        ;; ("\\<fn \\>" "λ ")
+;;        ("\\<comp \\>" "∘ ")
+;;        ("\\<partial \\>" "þ ")
+;;        ("\\<complement \\>" "¬ ")))))
 
 ;; (define-key slime-mode-map (kbd "M-a") 'slime-beginning-of-defun)
 ;; (define-key slime-mode-map (kbd "M-e") 'slime-end-of-defun)
 
-(defun clojure-jump-to-function-test ()
-  (interactive)
-  (flet ((maybe-create-test-namespace
-          (namespace)
-          (unless (clojure-find-package)
-            (goto-char (point-min))
-            (insert (format "(ns %s\n  (:use [%s] [clojure.test]))\n\n"
-                            (replace-regexp-in-string "\\(\\.\\)[^\\.]+$" ".test." namespace nil nil 1)
-                            namespace)))))
-    (let* ((fn (which-function))
-           (fn-name (if (listp fn) (first fn) fn))
-           (namespace (clojure-find-package)))
-      (clojure-jump-to-test)
-      (when fn-name
-        (goto-char (point-min))
-        (maybe-create-test-namespace namespace)
-        (unless (search-forward-regexp (format "(deftest test-%s[ \t\n]*" fn-name) nil t)
-          (goto-char (point-max))
-          (insert (format "\n\n(deftest test-%s\n  )" fn-name))
-          (goto-char (- (point) 1)))))))
+;; (defun clojure-jump-to-function-test ()
+;;   (interactive)
+;;   (flet ((maybe-create-test-namespace
+;;           (namespace)
+;;           (unless (clojure-find-package)
+;;             (goto-char (point-min))
+;;             (insert (format "(ns %s\n  (:use [%s] [clojure.test]))\n\n"
+;;                             (replace-regexp-in-string "\\(\\.\\)[^\\.]+$" ".test." namespace nil nil 1)
+;;                             namespace)))))
+;;     (let* ((fn (which-function))
+;;            (fn-name (if (listp fn) (first fn) fn))
+;;            (namespace (clojure-find-package)))
+;;       (clojure-jump-to-test)
+;;       (when fn-name
+;;         (goto-char (point-min))
+;;         (maybe-create-test-namespace namespace)
+;;         (unless (search-forward-regexp (format "(deftest test-%s[ \t\n]*" fn-name) nil t)
+;;           (goto-char (point-max))
+;;           (insert (format "\n\n(deftest test-%s\n  )" fn-name))
+;;           (goto-char (- (point) 1)))))))
 
 (global-set-key (kbd "<M-S-backspace>")
                 (lambda () (interactive)
@@ -2581,9 +2557,7 @@ mozrepl to evaluate in browser"
 (require 'org-protocol)
 (setq org-capture-templates
       (quote (("w" "web note" entry (file+headline "~/org/web.org" "Notes") "* Source: %u, %c\n  %i")
-              ("l" "scriptjure political or economic references" entry (file+headline "~/org/scripture-study.org" "Politics or Economic")
-               "* %c %^{Type|descriptive|prescriptive|other} %U\n  %i\n\n   Notes: %^{Notes}")
-              ("s" "scripture" entry (file+headline "~/org/scripture-study.org" "Notes") "* %c %U\n  %i")
+              ("s" "scripture" entry (file+headline "~/org/scripture-study.org" "Notes") "* %? %U\n%i")
               ("x" "co template" entry (file+headline "~/org/co.org" "co") "* %c\n" :immediate-finish 1)
               ("b" "book" entry (file+headline "~/www/org/truth.org" "Notes") "* %U\n  %?")
               ("t" "todo" entry (file+headline "~/org/todo.org" "Tasks") "* TODO %?")
@@ -2598,8 +2572,7 @@ mozrepl to evaluate in browser"
               ("e" "exercise" entry (file+headline "~/org/exercise.org" "Exercise") "* %U\n  - %?")
               ("o" "other" entry (file+headline "~/remember.org" "") "* %a\n%i"))))
 
-;; (add-to-list 'load-path "~/src/gnus/lisp/")
-;; (require 'gnus-load)
+(add-to-list 'load-path "~/src/gnus/lisp/")
 
 (add-to-list 'load-path "~/src/notmuch/emacs")
 (require 'notmuch)
@@ -2986,8 +2959,6 @@ about what flexible matching means in this context."
 ;; so we override it for something that looks like C-x C-e.
 (define-key slime-mode-map "\C-c\C-e" 'slime-eval-at-register)
 
-
-
 (defun nm-eshell-pcomplete ()
   (interactive)
   (let ((ac-sources '(ac-source-pcomplete
@@ -3014,17 +2985,9 @@ about what flexible matching means in this context."
 
 (add-hook 'eshell-mode-hook 'nm-eshell-mode-hook)
 
-;;; philhagelberg
-(defun esk-recentf-ido-find-file ()
-  "Find a recent file using ido."
-  (interactive)
-  (let ((file (ido-completing-read "Choose recent file: " recentf-list nil t)))
-    (when file
-      (find-file file))))
-
+(require 'scpaste)
 (setq scpaste-http-destination "http://jaderholm.com/paste"
       scpaste-scp-destination "jaderholm.com:www/jaderholm.com/paste")
-(autoload 'scpaste "scpaste" "Paste the current buffer." t nil)
 
 ;;; erc
 (require 'erc)
@@ -3121,12 +3084,12 @@ be persisting emms-position"
 ;;  '(eol-mnemonic-undecided "[unknown]")
 ;;  )
 
-(add-to-list 'default-mode-line-format
-             '((mark-active
-                (:eval (format "Selected: %d line(s), %d char(s) "
-                               (count-lines (region-beginning)
-                                            (region-end))
-                               (- (region-end) (region-beginning)))))))
+;; (add-to-list 'default-mode-line-format
+;;              '((mark-active
+;;                 (:eval (format "Selected: %d line(s), %d char(s) "
+;;                                (count-lines (region-beginning)
+;;                                             (region-end))
+;;                                (- (region-end) (region-beginning)))))))
 
 ;;   (require 'scroll-mode-line-mode)
 ;;   (scroll-mode-line-mode 1)
@@ -3160,12 +3123,12 @@ be persisting emms-position"
          (setq linum-available nil)))))
 
 (defface linum-zero
-  '((t :foreground "grey10" :background "magenta" :weight bold))
+  '((t :inherit linum :foreground "grey10" :background "magenta" :weight bold))
   "Face for displaying line number 0"
   :group 'linum)
 
 (defface linum-top
-  '((t :foreground "grey80" :background "grey10"))
+  '((t :inherit linum :foreground "grey80" :background "grey30" :weight bold))
   "Face for displaying line number 0"
   :group 'linum)
 
@@ -3187,6 +3150,147 @@ be persisting emms-position"
 ;; (benchmark-run (some code))
 
 ;;; I wish there were a better way to add total line number
-(add-to-list 'default-mode-line-format
-             '((t (:eval (format "%d" (line-number-at-pos (point-max)))))) t)
+;; (add-to-list 'mode-line-format
+;;              '((t (:eval (format "%d" (line-number-at-pos (point-max)))))))
+
+(setq eval-expression-print-length 50)
+
+;; Change cursor color according to mode; inspired by
+;; http://www.emacswiki.org/emacs/ChangingCursorDynamically
+;; valid values are t, nil, box, hollow, bar, (bar . WIDTH), hbar,
+;; (hbar. HEIGHT); see the docs for set-cursor-type
+(setq djcb-read-only-color       "gray")
+(setq djcb-read-only-cursor-type 'hbar)
+(setq djcb-overwrite-color       "red")
+(setq djcb-overwrite-cursor-type 'box)
+(setq djcb-normal-color          "yellow")
+(setq djcb-normal-cursor-type    'bar)
+ 
+(setq djcb-read-only-color       "yellow")
+(setq djcb-read-only-cursor-type 'box)
+(setq djcb-repl-color       "green")
+(setq djcb-repl-cursor-type 'box)
+(setq djcb-overwrite-color       "red")
+(setq djcb-overwrite-cursor-type 'box)
+(setq djcb-normal-color          "magenta")
+(setq djcb-normal-cursor-type    'box)
+
+(defun djcb-set-cursor-according-to-mode ()
+  "change cursor color and type according to some minor modes."
+
+  (cond
+   ((equal major-mode 'slime-repl-mode)
+    (set-cursor-color djcb-repl-color)
+    (setq cursor-type djcb-repl-cursor-type))
+   (buffer-read-only
+    (set-cursor-color djcb-read-only-color)
+    (setq cursor-type djcb-read-only-cursor-type))
+   (overwrite-mode
+    (set-cursor-color djcb-overwrite-color)
+    (setq cursor-type djcb-overwrite-cursor-type))
+   (t 
+    (set-cursor-color djcb-normal-color)
+    (setq cursor-type djcb-normal-cursor-type))))
+
+(add-hook 'post-command-hook 'djcb-set-cursor-according-to-mode)
+
+(require 'multiple-line-edit)
+(global-set-key "\C-c<" 'mulled/edit-leading-edges)
+(global-set-key "\C-c>" 'mulled/edit-trailing-edges)
+ 
+;; (require 'cursor-chg)
+;; (change-cursor-mode 1)
+;; (toggle-cursor-type-when-idle 1)
+
+;; (require 'pulse)
+;; (defun cedet-called-interactively-p ()
+;;   t)
+;; (pulse-toggle-integration-advice 1)
+
+;; (add-to-list 'load-path "~/src/riece-7.0.3/lisp/")
+;; (require 'riece)
+
+(require 're-builder)
+(setq reb-re-syntax 'string)
+
+;; (url-retrieve
+;;  "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
+;;  (lambda (s)
+;;    (end-of-buffer)
+;;    (eval-print-last-sexp)))
+
+(require 'pomodoro)
+
+;; (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+;; (require 'el-get)
+;; (setq el-get-sources
+;;       '(
+;;         ;; el-get
+;;         emacs-w3m
+;;         google-maps
+;;         nxhtml
+;;         yasnippet
+;;         emms
+;;         color-theme
+;;         nognus
+;;         ;; org
+;;         ;; clojure-mode
+;;         ;; coffee-mode
+;;         ;; ac-slime
+;;         ;; parenface
+;;         ;; flex-isearch
+;;         ;; shime
+;;         ;; scala-mode
+;;         ;; ensime
+;;         ;; workgroups
+;;         ;; tabbar
+;;         (:name magit
+;;                :after (lambda () (global-set-key (kbd "C-x g") 'magit-status)))))
+;; (el-get)
+
+;; (require 'tag)
+;; (require 'emms-tag-editor)
+
+;; (require 'vimpulse)
+;; (setq viper-mode t)
+;; (require 'viper)
+
+;; ;;; modal-mode
+;; (add-to-list 'load-path "~/.elisp/modal-mode/")
+;; (require 'modal-mode)
+;; (setq default-major-mode 'modal-fundamental-mode)
+;; (modal-mode 1)
+;; (when window-system
+;;   (modal-mode-line-background-mode 1))
+
+(require 'elisp-helpers)
+
+;; #9e6ffe
+;; #ffcb00
+;; #f7e500
+;; #fef796
+
+;;---------------------------------------------------------
+;; sudo-edit
+;;---------------------------------------------------------
+(defun sudo-edit (&optional arg)
+  (interactive "p")
+  (if (or arg (not buffer-file-name))
+      (find-file (concat "/sudo:root@localhost:" (ido-read-file-name "File: ")))
+    (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
+(bind "C-x C-r" sudo-edit)
+
+(custom-set-faces
+  ;; custom-set-faces was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ )
+
+;;---------------------------------------------------------
+;; durendal
+;;---------------------------------------------------------
+(add-to-list 'load-path "~/.elisp/durendal/")
+(require 'durendal)
+(durendal-enable-slime-repl-font-lock)
 
