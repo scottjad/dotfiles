@@ -22,6 +22,7 @@ create_selection_search("dictionary","d");
 create_selection_search("myspace","y");
 create_selection_search("amazon","a");
 create_selection_search("youtube","u");
+create_selection_search("maps","p");
 // create_selection_search("mp3","p");
 // create_selection_search("torrentz","o");
 
