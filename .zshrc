@@ -1,5 +1,6 @@
 # Scott's .zshrc
-path=(. ~/.gem/ruby/1.9.1/bin ~/src/msmtpq ~/src/emacs/bin ~/.cabal/bin ~/.gem/ruby/1.8/bin  /usr/local/share/perl/5.10.1/auto/share/dist/Cope $path /bin /usr/bin /usr/local/bin . /usr/X11R6/bin ~/bin ~/src/apt-cyg ~/src/ant/bin ~/src/dejour/bin ~/.cljr/bin )
+export CLOJURESCRIPT_HOME=~/src/clojurescript
+path=(. $CLOJURESCRIPT_HOME/bin ~/src/git-notify ~/src/youtube-dl ~/.gem/ruby/1.9.1/bin ~/src/msmtpq ~/src/emacs/bin ~/.cabal/bin ~/.gem/ruby/1.8/bin  /usr/local/share/perl/5.10.1/auto/share/dist/Cope $path /bin /usr/bin /usr/local/bin . /usr/X11R6/bin ~/bin ~/src/apt-cyg ~/src/ant/bin ~/src/dejour/bin ~/.cljr/bin )
 
 # menu
 zstyle ':completion:*' menu select=0
@@ -38,6 +39,7 @@ alias leu='lein uberjar; len "uberjar done"'
 alias lec='lein clean; len "clean done"'
 alias led='lein deps; len "dep done"'
 alias les='len "swank starting"; lein swank'
+alias les2='len "swank starting"; lein swank-clj'
 
 ## Maven
 # alias mvni='mvn clean install -Dmaven.test.skip=true'
@@ -47,7 +49,8 @@ alias les='len "swank starting"; lein swank'
 alias g='git'
 function gcl { git clone $1 && notify -t 3000 -i git "Git clone completed" "$1" }
 alias gl='git log --pretty=format:"%h %ad | %s%d [%an]" --graph --date=short'
-
+alias gst='git status'
+alias go='git co'
 alias cx='chmod +x'
 alias rmr="mv -t ~/.local/share/Trash/files"
 alias rmrf='rm -rf'
@@ -72,10 +75,11 @@ alias recent='ls -rl *(D.om[1,10])'
 alias irc2="irssi -c irc.freenode.net -n scottj"
 alias mpl='mplayer'
 #alias mp="mplayer -vo gl:yuv=2 -af scaletempo -speed 1.6"
-alias mp="mplayer -af scaletempo -speed 1.6"
+alias mp="mplayer -msgcolor -af scaletempo -speed 1.6"
 alias myspace="dlmsm"
 
 function w { wget -c $@ && notify -i info "Wget download completed" "$"}
+function a { aria2c -c $@ && notify -i info "aria2c download completed" "$"}
 alias mkdir='mkdir -p'
 alias mk='mkdir'
 function cdm {mkdir $1 ; cd $1}
@@ -159,11 +163,14 @@ parse_git_branch() {
 zle_highlight+=(special:fg=blue
     region:bg=blue,fg=white,bold
     default:bold # ,fg=yellow
-    isearch:bold,fg=red)
+    isearch:fg=magenta)
 
 # no color
+# export PS1="
+# %n@%m:%~:%# "
+
 export PS1="
-%n@%m:%~:%# "
+> "
 
 # with color
 # export PS1="
@@ -308,7 +315,7 @@ precmd () {
 	done
 	
 	if [ $elapsed -gt $max ]; then
-		notify -t 2000 -i alert "${PREEXEC_CMD:-Shell Command}" "finished ($elapsed secs)" 
+		notify -t 2000 -i warning "${PREEXEC_CMD:-Shell Command}" "finished ($elapsed secs)" 
 	fi
     # END notify long running cmds
     if [[ $HOST == "mamey" ]]; then
@@ -318,10 +325,16 @@ precmd () {
 	if [[ "$TERM" == "screen" ]]; then
 		echo -ne "\ekzsh $my_pwd\e\\"
     fi
+    # why always show hostname on local box?
+    # if [ -n "$SSH_TTY" ] || [ "$(who am i | cut -f2  -d\( | cut -f1 -d:)" != "" ]; then
+    if [ -n "$SSH_TTY" ]; then
+        MAYBE_HOSTNAME="%m"
+    fi
 #         code=$(print -P "%?")
 #     export RPS1="%t %{$fg_bold[yellow]%}$(parse_git_branch)%{$reset_color%} %{$fg_bold[red]%}%(?..[%?])%(#.#.)%{$reset_color%}%{$fg_bold[grey]%}"
 #     export RPS1="${vcs_info_msg_0_} $(parse_git_branch) %(?..[%?])%(#.#.)"
-    export RPS1="${vcs_info_msg_0_} %(?..[%?])%(#.#.)"
+    # export RPS1="${vcs_info_msg_0_} %(?..[%?])%(#.#.)"
+    export RPS1="%~ $MAYBE_HOSTNAME %(?..[%?])%(#.#.)"
 
 #         if [[ $code != "0" ]]; then
 #             echo ok
@@ -544,8 +557,8 @@ REPORTTIME=10
 alias flash32='mv ~/.mozilla/plugins- ~/.mozilla/plugins-flash-sucks'
 alias flash64='mv ~/.mozilla/plugins-flash-sucks ~/.mozilla/plugins'
 
-export JDK_HOME=/usr/lib/jvm/java-6-openjdk/
-export JAVA_HOME=/usr/lib/jvm/java-6-openjdk/
+# export JDK_HOME=/usr/lib/jvm/java-6-sun/
+# export JAVA_HOME=/usr/lib/jvm/java-6-sun/
 
 function forever { while true; do $*; done}
 
@@ -574,7 +587,8 @@ function ranger-cd {
     cd "$after"
   fi
 }
-bindkey -s "\C-o" "ranger-cd^m"
+# bindkey -s "\C-o" "ranger-cd^m"
+bindkey -s "\C-o" "emacsclient -n .^m"
 
 
 # . ~/.zsh/live-command-coloring.sh
@@ -589,15 +603,20 @@ alias dashboard='watch --interval=3600 dashboard.clj -a'
 compdef s=screen
 
 # Meta-u to chdir to the parent directory
-# bindkey -s '\eu' '^Ucd ..; ls^M'
+bindkey -s '\eu' '^U..^M'
 
 # If AUTO_PUSHD is set, Meta-p pops the dir stack
 bindkey -s '\ep' '^Upopd >/dev/null; dirs -v^M'
 
 # alt-s inserts sudo at beginning of line
-insert_sudo () { zle beginning-of-line; zle -U "sudo "; zle end-of-line }
+insert_sudo () { BUFFER="sudo $BUFFER"; zle end-of-line }
 zle -N insert-sudo insert_sudo
 bindkey "^[s" insert-sudo
+
+# insert_less () { zle beginning-of-line; zle -U "less "; zle accept-line }
+insert_less () { BUFFER="less $BUFFER"; zle end-of-line }
+zle -N insert-less insert_less
+bindkey "^[l" insert-less
 
 alias cpv="rsync -poghb --backup-dir=/tmp/rsync -e /dev/null --progress --"
 
@@ -610,7 +629,7 @@ export DE="gnome"
 alias -g ND='*(/om[1])' # newest directory
 alias -g NF='*(.om[1])' # newest file
 
-[[ -s "/home/scott/.rvm/scripts/rvm" ]] && source "/home/scott/.rvm/scripts/rvm"
+# [[ -s "/home/scott/.rvm/scripts/rvm" ]] && source "/home/scott/.rvm/scripts/rvm"
 
 # Opens the github page for the current git repository in your browser
 function gh() {
@@ -627,3 +646,4 @@ function gh() {
 }
 
 function git(){hub "$@"}
+
