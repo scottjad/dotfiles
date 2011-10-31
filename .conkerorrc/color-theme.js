@@ -113,7 +113,9 @@ global_color_theme(
           "#trends-selector,"+           // trends
           "#directory-selector,"+        // browse for stuff
           ".entry-actions,"+             // browse for stuff
-          '#gb'+                         // google bar
+          '#gb,'+                        // google bar
+          '#title-and-status-holder,'+   // all items, sort by
+          '.card-actions'+               // social links
           '{ display: none !important;}'
          ], $url_prefixes = ["http://www.google.com/reader",
                              "https://www.google.com/reader"]),
