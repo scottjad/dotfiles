@@ -4,7 +4,7 @@ register_user_stylesheet(
                        "font-size: 12px !important; }"+
                        "span.__conkeror_hint {"+
                        " line-height: 14px !important;"+
-                       // ' font-family: Dina !important; '+
+                       ' font-family: Dina !important; '+
                        // ' color: green !important; '+
                        " font-size: 12px !important;"+
                        "}\n"]));
@@ -52,6 +52,7 @@ global_color_theme(
                  // 'color: #686868 !important; '+
                  // 'font-family: GohuFont, Tamsyn !important; '+
                  'font-family: Dina !important; '+
+                 // 'font-family: Inconsolata !important; '+
                  // 'font-family: MonteCarlo !important; '+
                  // 'font-family: Terminus !important; '+
                  // 'font-family: Envy Code R !important; '+
@@ -64,10 +65,8 @@ global_color_theme(
                  'border-color: #444 !important; '+
                  'text-decoration: none !important;'+
                  ' }',
-             // 'p { line-height: 100% !important; }',
+             'p { line-height: 100% !important; }',
              'code, pre, code *, pre * { color: #f6f3e8 !important; background-color: #353535 !important; }',
-             ':link img { border: dashed 1px #008b8b !important; margin: 5px !important; }',
-             ':visited img { border: dashed 1px darkmagenta !important; margin: 5px !important; }',
              ':link, :link * {  color: #8ac6f2 !important}',
              ':visited, :visited * { color: #95e454 !important}',
              'h1,h2,h3,h4,h5,h6 { color: white !important}',
@@ -86,6 +85,9 @@ global_color_theme(
              'input[type="submit"]:hover { }',
              'input[type="submit"]:focus { }',
 
+             // youtube html5 player
+             'div#watch-video-container *, div#video-player-html5 * { background-color: transparent !important; }',
+
              'span.__conkeror_hint {'+
                  // 'background-color: #104e8b !important;'+
                  'color: white !important;'+
@@ -94,7 +96,9 @@ global_color_theme(
                  'font-size: 14px !important;'+
                  '}'
          ], $url_prefixes = ["http", "about"]),
-     
+
+     make_css_data_uri(['em { background-color: #444444 !important;}'], $url_prefixes = ["http://www.google.com/reader"]),
+
      make_css_data_uri(
          ['.vh { color: white; '+
           'background-color: #444 !important;}',
@@ -133,9 +137,15 @@ global_color_theme(
           ' { display: none !important;}'
          ], $domains = "mail.google.com"),
 
+          make_css_data_uri(
+         [':link img { border: dashed 1px #008b8b !important; margin: 5px !important; }',
+          ':visited img { border: dashed 1px darkmagenta !important; margin: 5px !important; }'
+         ], $domains = ["bbs.archlinux.org",
+                        "crunchbanglinux.org"]),
+
      make_css_data_uri(
          ['#entries { padding-left: 5px !important; padding-right: 5px !important; }', // don't add padding on left side
-          'div#current-entry div.card { border: solid 2px #555 !important;} ',
+          'div#current-entry div.card { border: solid 2px #777 !important;} ',
           '.entry { background-color: #444 !important; }',
           // hide
           '#viewer-footer, '+   // next prev buttons
@@ -173,7 +183,7 @@ global_color_theme(
          ], $domains = "github.com")]);
 
 global_color_theme("light", "L",
-                   [make_css_data_uri(['*:not(img) { background: #edebe8 ! important; color: #2c2d32 !important }',
+                   [make_css_data_uri(['*:not(img) { background: #edebe8 ! important; color: #2c2d32 !important; font-family: MonteCarlo !important; }',
                     ':link, :link * { color: #1856ba !important }',
                     ':visited, :visited * { color: #95e454 !important }'])]);
 

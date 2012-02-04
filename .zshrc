@@ -1,7 +1,9 @@
 # Scott's .zshrc
 export CLOJURESCRIPT_HOME=~/src/clojurescript
-path=(. $CLOJURESCRIPT_HOME/bin ~/src/git-notify ~/src/youtube-dl ~/.gem/ruby/1.9.1/bin ~/src/msmtpq ~/src/emacs/bin ~/.cabal/bin ~/.gem/ruby/1.8/bin  /usr/local/share/perl/5.10.1/auto/share/dist/Cope $path /bin /usr/bin /usr/local/bin . /usr/X11R6/bin ~/bin ~/src/apt-cyg ~/src/ant/bin ~/src/dejour/bin ~/.cljr/bin )
+path=(. ~/src/zathura ~/src/scala-2.9.1.final/bin ~/opt/ide/emacs/src ~/src/notmuch $CLOJURESCRIPT_HOME/bin ~/src/cljs-watch ~/src/git-notify ~/src/youtube-dl ~/.gem/ruby/1.9.1/bin ~/src/msmtpq ~/src/emacs/bin ~/.cabal/bin ~/.gem/ruby/1.8/bin  /usr/local/share/perl/5.10.1/auto/share/dist/Cope $path /bin /usr/bin /usr/local/bin . /usr/X11R6/bin ~/bin ~/src/apt-cyg ~/src/ant/bin ~/src/dejour/bin ~/.cljr/bin )
 
+INFOPATH=( ~/doc/info )
+export INFOPATH
 # menu
 zstyle ':completion:*' menu select=0
 zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
@@ -73,9 +75,7 @@ alias grep='grep --color -i'
 alias more='less'
 alias recent='ls -rl *(D.om[1,10])'
 alias irc2="irssi -c irc.freenode.net -n scottj"
-alias mpl='mplayer'
-#alias mp="mplayer -vo gl:yuv=2 -af scaletempo -speed 1.6"
-alias mp="mplayer -msgcolor -af scaletempo -speed 1.6"
+alias mp="mpl -speed 1.6 "
 alias myspace="dlmsm"
 
 function w { wget -c $@ && notify -i info "Wget download completed" "$"}
@@ -281,8 +281,8 @@ setopt share_history \
     auto_list \
     complete_in_word \
     auto_pushd \
-    extended_glob \
-    zle 
+    # extended_glob \ # so I don't have to escape ^ in HEAD^
+zle 
 
 
 
@@ -293,7 +293,7 @@ SAVEHIST=50000
 autoload -U url-quote-magic
 zle -N self-insert url-quote-magic
 
-notifyerr(){if [ "$?" -gt 0 ]; then notify -t 2000 -i error -u critical "Error" "${PREEXEC_CMD:-Shell Command}"; return -1; fi}
+notifyerr(){if [ "$?" -gt 0 ]; then notify -t 2000 -i error -u critical "${PREEXEC_CMD:-Shell Command}" "Error"; return -1; fi}
 
 # Screen title names
 precmd () {
@@ -314,9 +314,11 @@ precmd () {
 	    fi
 	done
 	
-	if [ $elapsed -gt $max ]; then
-		notify -t 2000 -i warning "${PREEXEC_CMD:-Shell Command}" "finished ($elapsed secs)" 
-	fi
+    if [ "${PREEXEC_CMD:-Shell Command}" != "s" ]; then
+	    if [ $elapsed -gt $max ]; then
+		    notify -t 2000 -i warning "${PREEXEC_CMD:-Shell Command}" "finished ($elapsed secs)" 
+	    fi
+    fi
     # END notify long running cmds
     if [[ $HOST == "mamey" ]]; then
         vcs_info
@@ -488,6 +490,8 @@ function search()
 bindkey -s "^x^f" $'ec '
  
 function lsx() { [[ -z $BUFFER ]] && BUFFER='ls' ; zle accept-line } ; zle -N lsx ; bindkey '^M' lsx
+function cdx() { [[ -z $BUFFER ]] && BUFFER='cd' ; zle accept-line } ; zle -N cdx ; bindkey '^[\\' cdx
+
 # alt-ret runs last command
 function runprev() { zle up-line-or-history ; zle accept-line } ; zle -N runprev ; bindkey '^[^M' runprev
 
@@ -550,7 +554,7 @@ unsetopt flowcontrol
 # async browsing, kinda
 function b {(sleep 600; conkeror "$*" ) &}
 
-#bindkey "\C-w" kill-region
+bindkey "\C-w" kill-region
 
 REPORTTIME=10
 
@@ -574,8 +578,9 @@ alias redshift='redshift -l 38.87:-77.025'
 
 alias consume='find -type f -name "*.mp3" | while read mp3; do mplayer -af scaletempo -speed 1.8 $mp3; done'
 
-alias col='setxkbmap us -variant colemak'
+alias col='setxkbmap us -variant colemak; '
 alias qwe='setxkbmap us'
+alias qwf='setxkbmap us'
 
 alias wgetdir='wget -r -nH -l1 -np'
 
@@ -602,8 +607,8 @@ alias dashboard='watch --interval=3600 dashboard.clj -a'
 # so s -x shows pids
 compdef s=screen
 
-# Meta-u to chdir to the parent directory
-bindkey -s '\eu' '^U..^M'
+# M-?to chdir to the parent directory (can't use M-u bc it's follow link in urxvt)
+# bindkey -s '\e.' '^U..^M'
 
 # If AUTO_PUSHD is set, Meta-p pops the dir stack
 bindkey -s '\ep' '^Upopd >/dev/null; dirs -v^M'
@@ -614,7 +619,7 @@ zle -N insert-sudo insert_sudo
 bindkey "^[s" insert-sudo
 
 # insert_less () { zle beginning-of-line; zle -U "less "; zle accept-line }
-insert_less () { BUFFER="less $BUFFER"; zle end-of-line }
+insert_less () { BUFFER="less $BUFFER"; zle end-of-line; zle expand-or-complete }
 zle -N insert-less insert_less
 bindkey "^[l" insert-less
 
@@ -629,7 +634,8 @@ export DE="gnome"
 alias -g ND='*(/om[1])' # newest directory
 alias -g NF='*(.om[1])' # newest file
 
-# [[ -s "/home/scott/.rvm/scripts/rvm" ]] && source "/home/scott/.rvm/scripts/rvm"
+alias load-rvm='source "/home/scott/.rvm/scripts/rvm"'
+# [[ -s "/$HOME/.rvm/scripts/rvm" ]] && . "/$HOME/.rvm/scripts/rvm"
 
 # Opens the github page for the current git repository in your browser
 function gh() {
@@ -647,3 +653,19 @@ function gh() {
 
 function git(){hub "$@"}
 
+insert_cat () { BUFFER="cat $BUFFER"; zle end-of-line; zle expand-or-complete }
+zle -N insert-cat insert_cat
+bindkey "^[;" insert-cat
+
+alias naut="nautilus --no-desktop"
+
+function hold_package {
+    sudo su -c 'echo $1 hold | dpkg --set-selections'
+}
+
+alias packages-installed="dpkg --get-selections"
+alias package-files="dpkg -L"
+
+fpath=(~/src/zsh-completions $fpath)
+
+# exec 2>>( while read X; do print "\e[91m${X}\e[0m" > /dev/tty; done & )
