@@ -1,0 +1,11 @@
+;; -*-lisp-*-
+(in-package :stumpwm)
+
+;;; Appearance
+(set-fg-color "black")
+(set-bg-color "white")
+(set-win-bg-color "black") ; used for emacs and terminals
+(set-border-color "black")
+(set-focus-color "yellow") ; yellow, gold
+(set-unfocus-color "black")
+
