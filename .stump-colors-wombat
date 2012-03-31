@@ -23,9 +23,10 @@
 ;; (set-unfocus-color "black")
 ;; (set-unfocus-color "gray25")
 
-;; (set-fg-color "grey95")
+(set-fg-color "grey95")
+;; (set-fg-color (make-color-hex "#8d7fb0")); 7e6eac
 ;; (set-fg-color "grey70")
-(set-fg-color (random-elt '("cyan" "hotpink" "magenta" "grey70" "grey95" "dodgerblue" "purple")))
+;; (set-fg-color (random-elt '("cyan" "hotpink" "magenta" "grey70" "grey95" "dodgerblue" "purple")))
 ;;(set-fg-color "green")
 
 (set-bg-color "grey13")
@@ -57,7 +58,7 @@
  ;; "MediumPurple3"
  ;; "magenta"
  ;; (make-color-hex "#876cbe")
- 
+ ;; (make-color-hex "#ae8451") ;; brown
  )
 
 ;; (set-any-color screen-float-focus-color "MediumPurple3")
@@ -79,3 +80,4 @@
 ;; (setq *mode-line-border-color* "grey20"
 ;;       *mode-line-foreground-color* "grey53"
 ;;       *mode-line-background-color* "grey13")
+

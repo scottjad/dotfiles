@@ -8,49 +8,43 @@
 
 (load-file "helpers")
 (load-file "swank")
-(load-file "echo-date")
 (load-file "vikeys")
 (load-file "groupkeys")
-
 (load (home ".stump-colors-wombat"))
 
 (load-module "notifications")
 (define-key *root-map* (kbd "N") '*notifications-map*)
 
 (load-file "mode-line")
-(load-file "gopen")
 (load-file "shifting")
 (load-file "defprog")
-(load-file "dictionary")
-(load-file "launch-common-apps")
-
 
 (group-rename (current-group) "1")
+(gnewbg "2")
+(gnewbg "3")
+(gnewbg-float "4")
 
-;(if-file-exists #'restore-from-file (str ".stump-desk-" *hostname*))
-;(if-file-exists #'restore-window-placement-rules (str ".stump-rules-" *hostname*))
-
-;;; running xmodmap from .xinitrc doesn't work
-(dotimes (_ 2) (run-shell-command "xmodmap ~/.Xmodmap" t))
+;; (if-file-exists #'restore-from-file (str ".stump-desk-" *hostname*))
+;; (if-file-exists #'restore-window-placement-rules (str ".stump-rules-" *hostname*))
 
 (setq *startup-message* "^1*^BStumpWM^b: not powered by bee-ant AI yet."
       *suppress-frame-indicator* t
       *debug-level* 0
       *input-completion-type* :fuzzy
       ;; :sloppy is broken I think, causes windows to lose focus when moving
-      *mouse-focus-policy* :click ; click, ignore, sloppy
-      *shell-program* (stumpwm::getenv "SHELL")
+      *mouse-focus-policy* :click       ; click, ignore, sloppy
+      ;; *shell-program* (stumpwm::getenv "SHELL")
+      ;; allow longer window titles
+      *window-format* "%m%n%s%100t"
+      *input-history-ignore-duplicates* t
+      ;; *new-window-preferred-frame* '(:empty :focused)
       )
 
 (defvar *terminal* "urxvtcd")
 
-;; (set-font "-xos4-terminus-medium-r-normal--14-140-72-72-c-80-iso8859-7")
 (set-font "-xos4-terminus-bold-r-normal--14-140-72-72-c-80-iso8859-7")
-;; (set-font "-gohu-gohufont-medium-r-normal--12-80-100-100-c-60-iso8859-1")
-;; (set-font "-*-montecarlo-medium-*-*")
-;; (set-font "-*-montecarlo-bold-*-*")
+;; (set-font "-xos4-terminus-medium-r-normal--14-140-72-72-c-80-iso8859-7")
 ;; (set-font "-*-terminus-*-*-*")
-
 
 (bind "I" "show-window-properties")
 (bind "b" "windowlist")
@@ -67,7 +61,6 @@
 (bind "C-t" "tag-window")
 (bind "C-M-t" "pull+push")
 
-(global "s-." "gopen")
 (global "s-C-f" "conkeror -f unfocus")
 (global "s-t" "echo-date")
 (global "s-a" "windowlist")
@@ -85,29 +78,19 @@
 (global "M-s-f" "exec conkeror $(xclip -o)")
 (defprog emacs "e" "emacs" '(:class "Emacs"))
 (defprog urxvt "c" *terminal* '(:class "URxvt"))
-(defprog irc "d" "urxvtcd -title irc -e ssh -t scott@jaderholm.com ~/bin/irc-run-or-raise" '(:title "irc"))
+(defprog irc "d" "urxvtcd -title irc -e irc-session" '(:title "irc"))
 (defprog firefox "x" "firefox" '(:class "Firefox"))
 (defprog google-chrome "g" "google-chrome" '(:class "Google-chrome"))
 (defprog zathura "z" "zathura" '(:class "Zathura"))
 (defprog mplayer "p" "mplayer" '(:class "mplayer2"))
 (defprog evolution "u" "evolution" '(:class "Evolution"))
-(defprog unison "w" "unison" '(:class "unison"))
+(defprog unison "w" "unison homel" '(:class "Unison"))
 (defprog org-capture "r" "emacsclient -e '(org-capture)'" '(:title "Capture"))
 
-;; (define-frame-preference "1"
-;;     (4 nil t :class "mplayer2")
-;;   (4 nil t :title "youtube"))
-
-;; allow longer window titles
-(setq *window-format* "%m%n%s%100t"
-      *input-history-ignore-duplicates* t)
-
-;; show local windows in frame when focusing on it. unfortunately the echo
-;; command is cropped when focused frame overlaps part of it's output.
-;; (defun local-list (from-frame to-frame)
-;;   (let ((*message-window-gravity* :bottom-left))
-;;     (run-commands "echo-frame-windows")))
-;; (add-hook *focus-frame-hook* 'local-list)
+(define-frame-preference "1"
+    (2 nil t :class "mplayer2")
+  (2 nil t :title "YouTube")
+  (2 nil t :class "Unison-gtk"))
 
 (defcommand echo-colors-brief () ()
   "Output a brief list of currently defined colors."
@@ -115,17 +98,9 @@
 BOLD ^B^0*black ^1*red ^2*green ^3*yellow ^4*blue ^5*magenta ^6*cyan ^7*white ^8*user ^9*user^n
 NONE ^0*black ^1*red ^2*green ^3*yellow ^4*blue ^5*magenta ^6*cyan ^7*white ^8*user ^9*user^n")))
 
-;; In what frame system try to open next window
-;; (setf *new-window-preferred-frame* '(:empty :focused))
-
 ;; (set-normal-gravity :center)
 ;; (set-maxsize-gravity :bottom)
 (set-transient-gravity :top) ;popups
-
-(define-frame-preference "1"
-    (4 nil t :class "mplayer2")
-  (4 nil t :title "YouTube")
-  (3 nil t :class "Unison-gtk"))
 
 ;; (defun emacs-display-compilation-buffer (window)
 ;;  (when (and (string= (window-class window) "Emacs")
@@ -139,12 +114,12 @@ NONE ^0*black ^1*red ^2*green ^3*yellow ^4*blue ^5*magenta ^6*cyan ^7*white ^8*u
 
 ;; (add-hook *deny-raise-request-hook* 'emacs-display-compilation-buffer))
 
-(dolist (i '("ml-wifi.sh" "ml-weather.sh" "ml-email.sh"
-             ;; "ml-volume.sh" "ml-dropbox.sh" "ml-sensors.sh"
-             "ml-clock.sh" "ml-trash.sh" "ml-quotes.sh" ))
-  (run-shell-command i))
+(defcommand echo-date () ()
+  "Display date highlighting the most important parts"
+  (message "^1*~a" (format-expand *time-format-string-alist*
+                                  "^B%l^b:%M:%S %p ^B%a^b %Y-%m-^B%e^b")))
 
-(defcommand fullscreen2 () ()
+(defcommand fullscreen-with-modeline () ()
   "fake version of fullscreen that retains border and mode-line"
   (let ((group-file (format nil "/tmp/stumpwm-group-~a" (group-name (current-group)))))
     (if (null (cdr (head-frames (current-group) (current-head))))
@@ -153,18 +128,19 @@ NONE ^0*black ^1*red ^2*green ^3*yellow ^4*blue ^5*magenta ^6*cyan ^7*white ^8*u
           (dump-group-to-file group-file)
           (only)))))
 
-(global "s-\\" "fullscreen2")
+(global "s-\\" "fullscreen-with-modeline")
 
-;; (defparameter *colors* (list "#8f8f8f"	;; dark grey
-;; 			     "#cc9393"  ;; zenburn red
-;; 			     "#7f9f7f"  ;; zenburn green
-;; 			     "#f0dfaf"  ;; tan
-;; 			     "#8cd0d3"  ;; blue
-;; 			     "#dc8cc3"  ;; magenta
-;; 			     "#93e0e3"  ;; cyan
-;; 			     "#dcdccc"  ;; white
-;; 			     "#dfaf8f"  ;; orange
-;; 			     ))
+;; (defparameter *colors*
+;;   (list "#8f8f8f" ;; dark grey
+;;         "#cc9393" ;; zenburn red
+;;         "#7f9f7f" ;; zenburn green
+;;         "#f0dfaf" ;; tan
+;;         "#8cd0d3" ;; blue
+;;         "#dc8cc3" ;; magenta
+;;         "#93e0e3" ;; cyan
+;;         "#dcdccc" ;; white
+;;         "#dfaf8f" ;; orange
+;;         ))
 
 (defcommand delete-other-windows () ()
   (let ((win (current-window)))
@@ -318,10 +294,10 @@ NONE ^0*black ^1*red ^2*green ^3*yellow ^4*blue ^5*magenta ^6*cyan ^7*white ^8*u
     (xtest:fake-key-event *display* shift-keycode nil)))
 
 (defun send-key-last-frame (key)
+  (focus-last-frame (current-group))
   (let ((scroll-keycode
          (xlib:keysym->keycodes *display*
                                 (keysym-name->keysym key))))
-    (focus-last-frame (current-group))
     (xtest:fake-key-event *display* scroll-keycode t)
     (xtest:fake-key-event *display* scroll-keycode nil)
     (focus-last-frame (current-group))))
@@ -334,17 +310,13 @@ NONE ^0*black ^1*red ^2*green ^3*yellow ^4*blue ^5*magenta ^6*cyan ^7*white ^8*u
   "Scroll up the last frame that had focus"
   (send-key-last-frame "Page_Up"))
 
-(defcommand scroll-last-up () ()
-  "Scroll up the last frame that had focus"
-  (send-key-last-frame "Page_Up"))
-
 (defcommand send-space-last () ()
   "Space space the last frame that had focus"
   (send-key-last-frame "space"))
 
 (global "s-s" "send-space-last")
 (global "s-v" "scroll-last-down")
-(global "s-5" "scroll-last-up")
+(global "s-b" "scroll-last-up")
 
 (load-file "transparency")
 (load-file "cons")
@@ -363,27 +335,13 @@ NONE ^0*black ^1*red ^2*green ^3*yellow ^4*blue ^5*magenta ^6*cyan ^7*white ^8*u
  
 ;; (bordeaux-threads:make-thread (lambda () (sleep foo) (update-mode-line)
 
-;; (defvar *last-clock-update* nil "When the mode-line was last updated for clock purposes")
-;; (defvar *clock-update-timer* nil)
-
-;; (defun been-sleeping? ()
-;;   (< 60 (- now *last-clock-update*)))
-
-;; (defun init-clock-update-timer ()
-;;   (setq *clock-update-timer*
-;;         (run-with-timer :secs (time-left-till-minute-change)
-;;                         :repeat 60
-;;                         :function (lambda ()
-;;                                     (if (been-sleeping?)
-;;                                         (progn (cancel-timer *clock-update-timer*)
-;;                                                (init-clock-update-timer))
-;;                                         (update-all-mode-lines))))))
-
 (load-file "wicd")
 ;; (setq *wicd-connection-display-status* t)
-(defcommand-alias wscan wicd-scan-and-connect)
-(bind "w" "wscan")
 
+(defcommand wicd-debug () ()
+   (setq *wicd-connection-display-status* (not *wicd-connection-display-status*)))
+
+(defcommand-alias wscan wicd-scan-and-connect)
 
 (load-module "pwsafe")
 (defcommand-alias pw pwsafe-menu)
@@ -395,13 +353,49 @@ NONE ^0*black ^1*red ^2*green ^3*yellow ^4*blue ^5*magenta ^6*cyan ^7*white ^8*u
 
 (bind "t" "color")
 
-(defun select-file (path)
-  (select-from-menu (current-screen)
-                    (mapcar #'namestring (list-directory path))
-                    "Select a file"))
+(defcommand fix-height () ()
+  "Resize the current frame height so that the current window's sides are
+touching the frame sides if the current window is of fixed proportions (e.g.
+mplayer)"
+  (let* ((window (current-window))
+         (maxsize (window-maxsize-p window)))
+    (when maxsize
+      (let* ((frame (window-frame window))
+             (frame-width (frame-width frame))
+             (frame-height (frame-height frame))
+             (new-height (truncate (/ frame-width maxsize)))
+             ;; not sure why it's too short w/o 15
+             (difference (+ 15 (- new-height frame-height))))
+        (resize 0 difference)))))
 
-(load-file "expand-frame")
-(load-file "bury-number")
+(defcommand fix-width () ()
+  "Resize the current frame width so that the current window's sides are
+touching the frame sides if the current window is of fixed proportions (e.g.
+mplayer)"
+  (let* ((window (current-window))
+         (maxsize (window-maxsize-p window)))
+    (when maxsize
+      (let* ((frame (window-frame window))
+             (frame-width (frame-width frame))
+             (frame-height (frame-height frame))
+             (new-width (truncate (* frame-height maxsize)))
+             ;; not sure why it's too short w/o 15
+             (difference (- new-width frame-width)))
+        (resize difference 0)))))
+
+(bind "x" "fix-height")
+(bind "X" "fix-width")
+
+(defcommand bury-number () ()
+  "Set window number of current window higher than any other window."
+  (let* ((highest-number (window-number
+                          (first (last (sort (all-windows)
+                                             #'< :key #'window-number))))))
+    (setf (window-number (current-window)) (1+ highest-number))
+    (repack-window-numbers)
+    (message "Window number buried")))
+
+(bind "u" "bury-number")
 
 ;;---------------------------------------------------------
 ;; hog frame
@@ -428,9 +422,158 @@ NONE ^0*black ^1*red ^2*green ^3*yellow ^4*blue ^5*magenta ^6*cyan ^7*white ^8*u
 ;;---------------------------------------------------------
 ;; kill window
 ;;---------------------------------------------------------
-(load-file "kill-window")
+(defun kill-window (menu)
+  (let* ((element (nth (menu-state-selected menu)
+                       (menu-state-table menu)))
+         (selected-window (second element)))
+    (menu-scroll-down menu)
+    (delete-window selected-window)))
+
+(defun select-window-from-menu (windows fmt)
+  (define-key *menu-map* (kbd "C-k") 'kill-window)
+  (let ((result (second (select-from-menu
+                         (current-screen)
+                         (mapcar (lambda (w)
+                                   (list (format-expand *window-formatters* fmt w) w))
+                                 windows)
+                         nil
+                         (or (position (current-window) windows) 0)))))
+    (undefine-key *menu-map* (kbd "C-k"))
+    result))
 
 ;;; exchange-direction
 
 (setq *stumpwm-started* t)
+
+(defcommand gopen (cmd) ((:rest "gnome-open "))
+  "gnome-open"
+  (run-prog *shell-program*
+            :args (list "-c" (str "gnome-open " cmd))
+            :wait nil))
+
+(global "s-." "gopen")
+
+;;; dictionary
+(defcommand dictionary (word) ((:rest "dictionary: "))
+  "conkeror"
+  (run-prog *shell-program*
+            :args (list "-c" (str "conkeror \"dictionary " word "\""))
+            :wait nil))
+
+(bind "d" "dictionary")
+
+(defun select-file (path)
+  (select-from-menu (current-screen)
+                    (mapcar #'file-namestring (list-directory path))
+                    "Select a file"))
+
+(defvar *dump-dir* (home ".layouts/"))
+
+(defcommand restore-layout () ()
+  (let ((choice (concat *dump-dir* (select-file *dump-dir*))))
+    (when choice
+      (restore-from-file choice))))
+
+(bind "l" "restore-layout")
+
+;; (defcommand dedicate-frame () ()
+;;   "never open window in this frame")
+
+;; (defcommand catchall-frame () ()
+;;   "open all windows here")
+
+(defcommand computer () ()
+  (run-shell-command "gnome-open computer:///"))
+
+(defcommand trash () ()
+  "Open the trash folder in file manager"
+  (run-shell-command "gnome-open trash:///"))
+
+(defcommand desktop () ()
+  "Open the Desktop folder in file manager"
+  (run-shell-command "gnome-open ~/Desktop"))
+
+(defcommand increase-volume () ()
+  "Increase the sound volume"
+  (run-shell-command "amixer sset PCM 5+ unmute"))
+
+(defcommand decrease-volume () ()
+  "Decrease the sound volume"
+  (run-shell-command "amixer sset PCM 5- unmute"))
+
+(defcommand mute () ()
+  "Set the sound to mute"
+  (run-shell-command "amixer sset PCM mute"))
+
+(bind "V" "increase-volume")
+(bind "v" "decrease-volume")
+(global "XF86AudioRaiseVolume" "increase-volume")
+(global "XF86AudioLowerVolume" "decrease-volume")
+(global "XF86AudioMute" "mute-volume")
+
+(defcommand unfocus-conkeror () ()
+  "Unfocus the conkeror window so that mouse is released from flash"
+  (run-shell-command "conkeror -f unfocus"))
+
+(global "s-Escape" "unfocus-conkeror")
+
+(defcommand next-song-pandora () ()
+  "Change to next song in pandora"
+  (run-shell-command "pianoctl +"))
+
+(defcommand previous-song-pandora () ()
+  "Change to previous song in pandora"
+  (run-shell-command "pianoctl -"))
+
+(defcommand answer () ()
+  "Answer phone call"
+  (run-shell-command "phone.sh answer"))
+
+(defcommand hangup () ()
+  "End phone call"
+  (run-shell-command "phone.sh terminate"))
+
+(defcommand notmuch () ()
+  "Launch or focus notmuch email client"
+  (run-shell-command "emacsclient -e '(notmuch)'"))
+
+(defcommand doubleclick () ()
+  "Double-click mouse button 1 at currently focused point"
+  (run-shell-command "/usr/bin/xte 'mouseup 2' 'mouseclick 1' 'mouseclick 1' &"))
+
+(defcommand groveshark () ()
+  "Launch grooveshark"
+  (run-shell-command "google-chrome http://listen.grooveshark.com/"))
+
+(defcommand wireless-restart () ()
+  "Restart wireless connection"
+  (run-shell-command "killall nm-applet; nm-applet"))
+
+(load-file "clock")
+
+(defcommand noppoo () ()
+  (run-shell-command "xmodmap ~/.Xmodmap; xmodmap ~/.Xmodmap; xmodmap ~/.Xmodmap-noppoo"))
+
+(defcommand keyboard () ()
+  (run-shell-command "xmodmap ~/.Xmodmap"))
+
+(defcommand qwerty () ()
+  (run-shell-command "setxkbmap us")
+  (noppoo))
+
+(defcommand colemak () ()
+  (run-shell-command "setxkbmap us -variant colemak; xmodmap ~/.Xmodmap-colemak")
+  (noppoo))
+
+(load-file "emms")
+
+(defcommand lock-screen () ()
+  (run-shell-command "gnome-screensaver-command -l"))
+
+(global "C-M-l" "lock-screen")
+
+(defvar *wireless-keymap* (make-sparse-keymap))
+(define-key *root-map* (kbd "w") '*wireless-keymap*)
+(define-key *wireless-keymap* (kbd "r") "wireless-restart")
+(define-key *wireless-keymap* (kbd "c") "wscan")
 
