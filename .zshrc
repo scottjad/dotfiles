@@ -1,6 +1,6 @@
 # Scott's .zshrc
 export CLOJURESCRIPT_HOME=~/src/clojurescript
-path=(. ~/src/zathura ~/src/scala-2.9.1.final/bin ~/opt/ide/emacs/src ~/src/notmuch $CLOJURESCRIPT_HOME/bin ~/src/cljs-watch ~/src/git-notify ~/src/youtube-dl ~/.gem/ruby/1.9.1/bin ~/src/msmtpq ~/src/emacs/bin ~/.cabal/bin ~/.gem/ruby/1.8/bin  /usr/local/share/perl/5.10.1/auto/share/dist/Cope $path /bin /usr/bin /usr/local/bin . /usr/X11R6/bin ~/bin ~/src/apt-cyg ~/src/ant/bin ~/src/dejour/bin ~/.cljr/bin )
+path=(. ~/src/play20 ~/src/zathura ~/src/scala-2.9.1.final/bin ~/opt/ide/emacs/src ~/src/notmuch $CLOJURESCRIPT_HOME/bin ~/src/cljs-watch ~/src/git-notify ~/src/youtube-dl ~/.gem/ruby/1.9.1/bin ~/src/msmtpq ~/src/emacs/bin ~/.cabal/bin ~/.gem/ruby/1.8/bin  /usr/local/share/perl/5.10.1/auto/share/dist/Cope $path /bin /usr/bin /usr/local/bin . /usr/X11R6/bin ~/bin ~/src/apt-cyg ~/src/ant/bin ~/src/dejour/bin ~/.cljr/bin )
 
 INFOPATH=( ~/doc/info )
 export INFOPATH
@@ -52,6 +52,9 @@ alias g='git'
 function gcl { git clone $1 && notify -t 3000 -i git "Git clone completed" "$1" }
 alias gl='git log --pretty=format:"%h %ad | %s%d [%an]" --graph --date=short'
 alias gst='git status'
+alias gba='git branch -all'
+alias gp='git pull'
+alias gl='git log'
 alias go='git co'
 alias cx='chmod +x'
 alias rmr="mv -t ~/.local/share/Trash/files"
@@ -391,7 +394,7 @@ clean () {
 }
 
 # Extract most types of archive
-ext() {
+extract() {
    if [[ -z "$1" ]]; then
       print -P "usage: \e[1;36mextract\e[1;0m < filename >"
       print -P "       Extract the file specified based on the extension"
@@ -527,7 +530,7 @@ fi
 alias bmk_reload='. $bmk_file'
 alias bmk_list="sort $bmk_file | awk 'BEGIN { FS = "'"[ =]" }; { printf("%-25s%s\n", $1, $2) }'"'"
 alias pg='ping google.com'
-
+alias pg1='ping -c 1 google.com'
 auth()
 {
 # ex: auth user@host ~/.ssh/id_rsa.pub
@@ -651,7 +654,7 @@ function gh() {
     gnome-open $giturl
 }
 
-function git(){hub "$@"}
+alias git="hub"
 
 insert_cat () { BUFFER="cat $BUFFER"; zle end-of-line; zle expand-or-complete }
 zle -N insert-cat insert_cat
@@ -669,3 +672,30 @@ alias package-files="dpkg -L"
 fpath=(~/src/zsh-completions $fpath)
 
 # exec 2>>( while read X; do print "\e[91m${X}\e[0m" > /dev/tty; done & )
+
+alias top="top -d 20 -u scott"
+alias dual-head-normal="xrandr --output LVDS --auto --output DVI-0 --auto --right-of LVDS --rotate normal"
+alias dual-head-rotate="xrandr --output LVDS --auto --output DVI-0 --auto --right-of LVDS --rotate left"
+alias one-head="xrandr --output LVDS --auto --output DVI-0 --off"
+
+autoload -Uz run-help-git
+alias ext="aunpack"
+
+export CONS_PLAYBACK_SPEED=1.0
+
+alias wireless-restart="killall nm-applet; nm-applet"
+alias grooveshark="google-chrome http://listen.grooveshark.com/"
+alias doubleclick="/usr/bin/xte 'mouseup 2' 'mouseclick 1' 'mouseclick 1' &"
+alias notmuch="emacsclient -e '(notmuch)'"
+alias hangup="phone.sh terminate"
+alias answer="phone.sh answer"
+alias previous-song-pandora="pianoctl -"
+alias next-song-pandora="pianoctl +"
+alias computer="gnome-open computer:///"
+alias trash="gnome-open trash:///"
+alias desktop="gnome-open ~/Desktop"
+alias increase-volume="amixer sset PCM 10+ unmute"
+alias decrease-volume="amixer sset PCM 10- unmute"
+alias mute="amixer sset PCM mute"
+
+setopt HIST_IGNORE_SPACE
