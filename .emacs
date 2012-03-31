@@ -23,7 +23,7 @@
 (auto-compression-mode t)
 (setq font-lock-maximum-decoration t)
 (add-hook 'text-mode-hook 'auto-fill-mode)
-(setq transient-mark-mode t)
+(setq transient-mark-mode nil)
 (delete-selection-mode t)
 (display-time-mode 0)
 
@@ -35,16 +35,19 @@
 (setq-default indent-tabs-mode nil)
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "conkeror")
-;(setq delete-by-moving-to-trash nil) ; slow
+(setq delete-by-moving-to-trash t) ; slow
 (setq read-buffer-completion-ignore-case t)
 (setq read-file-name-completion-ignore-case t)
 ;; nice parameter list hints for emacs-lisp
 (add-hook 'emacs-lisp-mode-hook 'eldoc-mode) 
 ;; M-x ielm if you want a emacs lisp repl
-;; C-u C-x C-f finds the file at point (doesn't seem to work)
-(setq ffap-require-prefix t)
+(setq ffap-require-prefix t) ;; C-u C-x C-f finds the file at point
 ;; so bit fonts split with vertical bar
 (setq split-height-threshold 550)
+
+;;; load libs
+;; (setq user-el-dir "~/.elisp")
+;; (mapc #'load (directory-files user-el-dir t "^[^#].*\\.el$"))
 
 (require 'pos-tip)
 (setq pos-tip-foreground-color "white")
@@ -187,12 +190,6 @@
 ;;---------------------------------------------------------
 (autoload 'css-mode "css-mode")
 (setq auto-mode-alist (cons '("\\.css\\'" . css-mode) auto-mode-alist))
-
-;;---------------------------------------------------------
-;; javascript
-;;---------------------------------------------------------
-(autoload 'javascript-mode "javascript" nil t)
-(add-to-list 'auto-mode-alist '("\\.js\\'" . javascript-mode))
 
 ;;---------------------------------------------------------
 ;; php
@@ -444,37 +441,35 @@ If no associated application, then `find-file' FILE."
 (autoload 'markdown-mode "markdown-mode.el"
    "Major mode for editing Markdown files" t)
 (add-to-list 'auto-mode-alist '("\\.\\(markdown\\|md\\)$" . markdown-mode))
-
-;;---------------------------------------------------------
-;; TSV
-;;---------------------------------------------------------
 (autoload 'tsv-mode "tsv-mode" "A mode to edit table like file" t)
 (autoload 'tsv-normal-mode "tsv-mode"
 "A minor mode to edit table like file" t)
 
 ;;---------------------------------------------------------
-;; anything
+;; TSV
 ;;---------------------------------------------------------
-(require 'anything)
-(bind "<f9> a" anything)
-(bind "C-c C-a" anything)
-(bind "M-X" anything)
-(require 'anything-config)
+
+;;---------------------------------------------------------
+;; helm
+;;---------------------------------------------------------
+(add-to-list 'load-path "~/.elisp/helm")
+(require 'helm)
+(require 'helm-config)
 
 (defun my-get-source-directory (path)
   "Please imlement me. Currently returns `path' inchanged."
   path)
 
-(defvar my-anything-c-source-file-search
+(defvar my-helm-c-source-file-search
   '((name . "File Search")
     (init . (lambda ()
-              (setq anything-default-directory
+              (setq helm-default-directory
                     default-directory)))
     (candidates . (lambda ()
                     (let ((args
                            (format "'%s' \\( -path \\*/.svn \\) -prune -o -iregex '.*%s.*' -print"
-                                   (my-get-source-directory anything-default-directory)
-                                   anything-pattern)))
+                                   (my-get-source-directory helm-default-directory)
+                                   helm-pattern)))
                     (start-process-shell-command "file-search-process" nil
                                    "find" args))))
     (type . file)
@@ -482,41 +477,41 @@ If no associated application, then `find-file' FILE."
     (delayed))
   "Source for searching matching files recursively.")
 
-;; (require 'anything-complete)
+;; (require 'helm-complete)
 ;; ;; Automatically collect symbols by 150 secs
-;; (anything-lisp-complete-symbol-set-timer 150)
-;; ;; replace completion commands with `anything'
-;; (anything-read-string-mode 1)
+;; (helm-lisp-complete-symbol-set-timer 150)
+;; ;; replace completion commands with `helm'
+;; (helm-read-string-mode 1)
 ;; ;; Bind C-o to complete shell history
-;; (anything-complete-shell-history-setup-key "\C-o")
-;; (add-hook 'anything-after-initialize-hook
+;; (helm-complete-shell-history-setup-key "\C-o")
+;; (add-hook 'helm-after-initialize-hook
 ;;       '(lambda ()
-;;         (define-key anything-read-file-name-map "/" 'anything-read-file-name-follow-directory)))
+;;         (define-key helm-read-file-name-map "/" 'helm-read-file-name-follow-directory)))
 
-;; (require 'anything-etags)
-;(setq anything-etags-enable-tag-file-dir-cache t)
-;(setq anything-etags-cache-tag-file-dir "~/workspace/")
+;; (require 'helm-etags)
+;(setq helm-etags-enable-tag-file-dir-cache t)
+;(setq helm-etags-cache-tag-file-dir "~/workspace/")
 
-(setq anything-sources
+(setq helm-sources
   (list
-    anything-c-source-buffers
-    anything-c-source-org-headline
-    anything-c-source-recentf
-    anything-c-source-emacs-commands
-    anything-c-source-emms-dired
-    anything-c-source-files-in-current-dir
-    anything-c-source-locate
-    anything-c-source-etags-select
-    anything-c-source-occur
-    anything-c-source-man-pages
-    anything-c-source-buffer-not-found
-    anything-c-source-imenu
-;    anything-apropos-sources
-    anything-c-source-calculation-result
-    anything-c-source-kill-ring
-    anything-c-source-fixme
-    anything-c-source-tracker-search
-    my-anything-c-source-file-search))
+    helm-c-source-buffers
+    helm-c-source-org-headline
+    helm-c-source-recentf
+;;     helm-c-source-emacs-commands
+    helm-c-source-emms-dired
+    helm-c-source-files-in-current-dir
+    helm-c-source-locate
+    helm-c-source-etags-select
+    helm-c-source-occur
+    helm-c-source-man-pages
+    helm-c-source-buffer-not-found
+    helm-c-source-imenu
+;    helm-apropos-sources
+    helm-c-source-calculation-result
+    helm-c-source-kill-ring
+    helm-c-source-fixme
+    helm-c-source-tracker-search
+    my-helm-c-source-file-search))
 
 ;;---------------------------------------------------------
 ;; Color theme
@@ -685,8 +680,8 @@ If no associated application, then `find-file' FILE."
 (autoload 'flyspell-delay-command "flyspell" "Delay on command." t)
 (autoload 'tex-mode-flyspell-verify "flyspell" "" t)
 (setq flyspell-delayed-commands
-      '(org-self-insert-command	org-delete-backward-char
-	org-backward-or-forward-delete-char org-delete-char))
+      '(org-self-insert-command org-delete-backward-char
+    org-backward-or-forward-delete-char org-delete-char))
 
 ;; ;; Nice for adding bold, italics, etc
 (add-hook 'org-load-hook
@@ -882,15 +877,15 @@ If no associated application, then `find-file' FILE."
 ;; headings
 ;;---------------------------------------------------------
 (cmd jsj-insert-heading
-     (if (or (equal major-mode 'emacs-lisp-mode) (equal major-mode 'clojure-mode))
+     (if (or (member major-mode '(emacs-lisp-mode clojure-mode lisp-mode scheme-mode)))
          (insert ";;---------------------------------------------------------
 ;; 
 ;;---------------------------------------------------------"))
-     (if (equal major-mode 'python-mode)
+     (if (member major-mode '(python-mode ruby-mode shell-mode))
          (insert "#----------------------------------------------------------
 #
 #----------------------------------------------------------"))
-     (if (or (equal major-mode 'css-mode) (equal major-mode 'javascript-mode))
+     (if (or (member major-mode '(css-mode java-mode javascript-mode js2-mode)))
          (insert "/* ------------------------------
 
    ------------------------------ */"))
@@ -951,23 +946,29 @@ If no associated application, then `find-file' FILE."
 ;;-----------------------------------------------------------------------------
 (setq font-counter 0)
 (setq fonts '("Envy Code R-10"
-              ;; "Envy Code R-12"
               "Dina-10:medium"
               "Dina-11:medium"
               "Dina-12:medium"
-              "Consolas-12"
+              "Consolas-14"
               ;; "Bitocra-8"
               "MonteCarlo-10"
               "ProFont-9"
+              "Boxxy-10"
               ;; "Fixed-10"
               ;; "Unifont-12"
               ;; "GohuFont-9"
               "GohuFont-12"
-              "Terminus-18:bold"
+              "Terminus-32:bold"
+              "Terminus-10:bold"
               "Terminus-10"
               "Terminus-8"
               "Tamsyn-12"
-              ;; "Fixedsys Excelsior 3.01-L2-12"
+              "Anonymous Pro"
+              "Crisp"
+              "Droid Sans Mono"
+              "mensch"
+              "smooth"
+              "Fixedsys Excelsior 3.01-L2-12"
               ;; "Ubuntu Mono-14"
               ;; "DejaVu Sans Mono-8"
               "DejaVu Sans Mono-9"
@@ -975,7 +976,10 @@ If no associated application, then `find-file' FILE."
               ;; "DejaVu Sans Mono-28"
               ;; "DejaVu Sans Mono-10"
               "DejaVu Sans-10"
+              "DejaVu Sans-16"
               "DejaVu Sans Mono-11"
+              "DejaVu Sans Mono-12"
+              "DejaVu Sans Mono-14"
               "DejaVu Sans Mono-16"
               ;; "Envy Code R-12"
               ;; "Envy Code R-14"
@@ -984,11 +988,13 @@ If no associated application, then `find-file' FILE."
 
               ;; "Inconsolata-12:medium"
               "Inconsolata-14:medium"
+              "Inconsolata-16:medium"
               "Inconsolata-18:medium"
               "Inconsolata-24:medium"
               ;; "Liberation Mono-12"
-              ;; "Liberation Mono-14"
-              ;; "Monaco-10"
+              "Liberation Mono-14"
+              "Liberation Mono-24"
+              ;; "Monaco-8"
               ;; "Monaco-18"
               ;; "DejaVu Sans Mono-12"
               ;; "DejaVu Sans Mono-30"
@@ -1143,19 +1149,17 @@ an .ics file that has been downloaded from Google Calendar "
 (autoload 'moz-minor-mode "moz" "MozRepl Minor Mode" t)
 ;; (cmd javascript-moz-setup (moz-minor-mode 1))
 ;; (add-hook 'javascript-mode-hook 'javascript-moz-setup)
-;; (add-hook 'espresso-mode-hook 'javascript-moz-setup)
-;; (add-hook 'js2-mode-hook 'javascript-moz-setup)
 ;; so run-mozilla is available w/o opening .js file
 (moz-minor-mode 1)
 ;; (add-to-list 'load-path "~/.elisp/drew")
 ;; (require 'emacs-init)
 
-(add-to-list 'load-path "~/.elisp/haskell-mode-2.4/")
+(add-to-list 'load-path "~/.elisp/haskell-mode/")
 
-(require 'haskell-mode)
-(load "~/.elisp/haskell-mode-2.4/haskell-site-file")
-(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-(add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+;; (require 'haskell-mode)
+;; (load "~/.elisp/haskell-mode/haskell-site-file")
+;; (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+;; (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
 
 (add-to-list 'auto-mode-alist '("\\.js\\'" . espresso-mode))
 (autoload 'espresso-mode "espresso" nil t)
@@ -1222,7 +1226,7 @@ an .ics file that has been downloaded from Google Calendar "
 (cmd my-sql-mysql
    "Switch to buffer before popping."
    (if (and (boundp 'sql-buffer)
-	    (buffer-live-p sql-buffer))
+        (buffer-live-p sql-buffer))
        (switch-to-buffer sql-buffer)
      (sql-mysql)))
 
@@ -1367,7 +1371,7 @@ arguments: BEG and END (region to sort)."
 ;; defines shortcut for the loccur of the previously found word
 (define-key global-map (kbd "C-S-o") 'loccur-previous-match)
 
-(require 'anything-grep)
+;; (require 'anything-grep)
 
 (autoload 'ack-same "full-ack" nil t)
 (autoload 'ack "full-ack" nil t)
@@ -1432,6 +1436,9 @@ arguments: BEG and END (region to sort)."
 (slime-local-connect sl7 4007)
 (slime-local-connect sl8 4008)
 (slime-local-connect sl9 4009)
+
+(slime-local-connect sl-stump 4006)
+(slime-local-connect sl-clojure 4005)
 
 ;; Clojure stack trace change
 (defface esk-clojure-trace-face
@@ -1658,14 +1665,14 @@ and evaling there."
   "Moves both current buffer and file it's visiting to DIR."
   (interactive "DNew directory: ")
   (let* ((name (buffer-name))
-	 (filename (buffer-file-name))
-	 (dir
+     (filename (buffer-file-name))
+     (dir
           (if (string-match dir "\\(?:/\\|\\\\)$")
               (substring dir 0 -1) dir))
-	 (newname (concat dir "/" name)))
+     (newname (concat dir "/" name)))
 
     (if (not filename)
-	(message "Buffer '%s' is not visiting a file!" name)
+    (message "Buffer '%s' is not visiting a file!" name)
       (progn (copy-file filename newname 1)
              (delete-file filename)
              (set-visited-file-name newname)
@@ -1771,7 +1778,7 @@ and evaling there."
 
 (when (require 'auto-mark nil t)
   (setq auto-mark-command-class-alist
-        '((anything . anything)
+        '((helm . helm)
           (goto-line . jump)
           (indent-for-tab-command . ignore)
           (undo . ignore)))
@@ -1837,9 +1844,9 @@ and evaling there."
     (require 'ido-hacks)))
 (ido-hacks-mode t)
 
-(require 'smex)
-(smex-initialize)
-(bind "M-x" smex)
+;; (require 'smex)
+;; (smex-initialize)
+;; (bind "M-x" smex)
 
 ;; (bind "M-X" execute-extended-command)
 ;; (bind "C-c C-c M-x" smex-major-mode-commands)
@@ -1975,8 +1982,8 @@ mozrepl to evaluate in browser"
 (add-hook 'term-mode-hook
           #'(lambda () (setq autopair-dont-activate t)))
 
-(bind "C-c t" multi-term-next)
-(bind "C-c T" multi-term)
+;; (bind "C-c t" multi-term-next)
+;; (bind "C-c T" multi-term)
 
 (eval-after-load 'clojure-mode
   '(define-clojure-indent (describe 'defun) (it 'defun)
@@ -2020,7 +2027,7 @@ mozrepl to evaluate in browser"
 (cmd delete-current-song
      (let* ((emms-show-format "%s")
             (song (emms-show))
-            (ok-to-delete "^/int/feel"))
+            (ok-to-delete "filteredfeelgood"))
        (if (string-match ok-to-delete song)
            (progn (move-file-to-trash song)
                   (message (concat "Deleted " song)))
@@ -2065,7 +2072,7 @@ mozrepl to evaluate in browser"
   in playlist and below point" (interactive) (let ((move-forward
          t)
         (total-playlist-time 0))
-    (save-excursion 		
+    (save-excursion         
       (while move-forward
         (setq total-playlist-time
               (+ total-playlist-time
@@ -2220,9 +2227,9 @@ mozrepl to evaluate in browser"
 ;; ;; and place a space around the label to make it looks less crowd
 ;; (defadvice tabbar-buffer-tab-label (after fixup_tab_label_space_and_flag activate)
 ;;   (setq ad-return-value
-;; 		(if (and (buffer-modified-p (tabbar-tab-value tab))
-;; 				 (buffer-file-name (tabbar-tab-value tab)))
-;; 			(concat " + " (concat ad-return-value " "))
+;;      (if (and (buffer-modified-p (tabbar-tab-value tab))
+;;               (buffer-file-name (tabbar-tab-value tab)))
+;;          (concat " + " (concat ad-return-value " "))
 ;;           (concat " " (concat ad-return-value " ")))))
 
 ;; ;; called each time the modification state of the buffer changed
@@ -2346,7 +2353,6 @@ mozrepl to evaluate in browser"
  '(ac-modes (quote (slime-repl-mode emacs-lisp-mode lisp-interaction-mode c-mode cc-mode c++-mode java-mode clojure-mode scala-mode scheme-mode ocaml-mode tuareg-mode perl-mode cperl-mode python-mode ruby-mode ecmascript-mode javascript-mode js-mode js2-mode php-mode css-mode makefile-mode sh-mode fortran-mode f90-mode ada-mode xml-mode sgml-mode)))
  '(ac-quick-help-delay 1.0)
  '(ahk-syntax-directory "c:/Program Files/AutoHotkey/Extras/Editors/Syntax")
- '(anything-c-adaptive-history-length 500)
  '(appt-display-diary nil)
  '(appt-display-duration 5)
  '(appt-display-interval 5)
@@ -2366,11 +2372,12 @@ mozrepl to evaluate in browser"
  '(ecb-layout-name "left13")
  '(ecb-options-version "2.32")
  '(emms-player-list (quote (emms-player-mplayer-playlist emms-player-mplayer)))
- '(emms-player-mplayer-command-name "/usr/bin/mplayer")
+ '(emms-player-mplayer-command-name "/home/scott/bin/mpl")
  '(emms-playlist-buffer-name "EMMS Playlist")
  '(emms-playlist-mode-center-when-go t)
  '(eshell-save-history-on-exit t)
  '(fill-column 79)
+ '(helm-c-adaptive-history-length 500)
  '(hfyview-quick-print-in-files-menu t)
  '(ido-create-new-buffer (quote always))
  '(ido-enable-flex-matching t)
@@ -2398,7 +2405,7 @@ mozrepl to evaluate in browser"
  '(notmuch-search-oldest-first nil)
  '(notmuch-show-logo nil)
  '(nxhtml-skip-welcome t)
- '(org-agenda-files (quote ("~/org/goals.org" "~/org/birthdays.org" "~/org/workout.org" "~/org/recipes.org" "~/org/someday.org" "~/org/quotes.org" "~/org/todo.org" "~/org/calendar.org" "~/org/shopping.org")))
+ '(org-agenda-files (quote ("~/org/books.org" "~/org/goals.org" "~/org/birthdays.org" "~/org/workout.org" "~/org/recipes.org" "~/org/someday.org" "~/org/quotes.org" "~/org/todo.org" "~/org/calendar.org" "~/org/shopping.org")))
  '(org-agenda-window-frame-fractions (quote (0.1 . 0.75)))
  '(org-atom-publish-content t)
  '(org-export-with-section-numbers nil)
@@ -2407,6 +2414,7 @@ mozrepl to evaluate in browser"
  '(org-return-follows-link t)
  '(recentf-max-menu-items 1000)
  '(recentf-max-saved-items nil)
+ '(regex-tool-backend (quote perl))
  '(scroll-bar-mode (quote right))
  '(session-locals-include (quote (overwrite-mode buffer-undo-list)))
  '(show-paren-mode t)
@@ -2557,7 +2565,7 @@ arg for fast."
 (global-set-key "\C-c." 'ido-goto-symbol)
 
 (require 'webjump)
-(global-set-key (kbd "<f2> w") 'webjump)
+;; (global-set-key (kbd "<f2> w") 'webjump)
 (setq webjump-sites (append '(("Java API" . [simple-query "www.google.com" "http://www.google.ca/search?hl=en&as_sitesearch=http://java.sun.com/javase/6/docs/api/&q=" ""])) webjump-sample-sites))
 
 (add-hook 'align-load-hook
@@ -2675,12 +2683,12 @@ arg for fast."
 
 (add-to-list 'load-path "~/src/gnus/lisp/")
 
-;; (add-to-list 'load-path "~/src/notmuch/emacs")
-;; (require 'notmuch)
-;; (setq mail-specify-envelope-from t
-;;       message-sendmail-envelope-from 'header
-;;       mail-envelope-from 'header)
-;; (load "~/.notmuch")
+(add-to-list 'load-path "~/src/notmuch/emacs")
+(require 'notmuch)
+(setq mail-specify-envelope-from t
+      message-sendmail-envelope-from 'header
+      mail-envelope-from 'header)
+
 
 (require 'javadoc-help)
 (bind "<f9> j" javadoc-lookup)
@@ -2805,10 +2813,10 @@ Otherwise, display it in another buffer."
   (resize-minibuffer-mode)
   (setq resize-minibuffer-window-exactly nil))
 
-(add-to-list 'load-path "~/src/shime")
-(require 'shime)
+;; (add-to-list 'load-path "~/src/shime")
+;; (require 'shime)
 
-(define-key haskell-mode-map [f5] 'shime-load-file)
+;; (define-key haskell-mode-map [f5] 'shime-load-file)
 ;;; commented till bother to come up with bindings that don't conflict w/ commenting
 ;; (define-key haskell-mode-map (kbd "C-c C-c") 'shime-cabal-build)
 ;; (define-key haskell-mode-map (kbd "C-c c") 'shime-cabal-ido)
@@ -2838,19 +2846,10 @@ This is the same as using \\[set-mark-command] with the prefix argument."
 
 ;;; more precise move keys
 (setq shift-select-mode nil)
+(require 'misc)
 
-(defun forward-word-beginning ()
-  (interactive)
-  (forward-word 2)
-  (backward-word))
-(global-set-key (kbd "M-F") 'forward-word-beginning)
-
-(defun backward-word-end ()
-  (interactive)
-  (backward-word 2)
-  (forward-word 1))
-
-(global-set-key (kbd "M-B") 'backward-word-end)
+(global-set-key (kbd "M-F") 'forward-to-word)
+(global-set-key (kbd "M-B") 'backward-to-word)
 
 ;; (add-to-list 'align-rules-list
 ;;              '(text-column-whitespace
@@ -2867,7 +2866,7 @@ This is the same as using \\[set-mark-command] with the prefix argument."
 (bind "M-a" ido-switch-buffer)
 
 (define-key org-mode-map (kbd "M-a") nil)
-(bind "C-;" anything)
+(bind "C-;" helm-mini)
 (bind "M-e" ido-find-file)
 
 ;; (define-key my-keys-minor-mode-map (kbd "C-.") 'other-window)
@@ -3076,6 +3075,8 @@ about what flexible matching means in this context."
 ;; so we override it for something that looks like C-x C-e.
 (define-key slime-mode-map "\C-c\C-e" 'slime-eval-at-register)
 
+;;; really need a slime-eval-last-register or slime-eval-last-expression
+
 (require 'scpaste)
 (setq scpaste-http-destination "http://jaderholm.com/paste"
       scpaste-scp-destination "jaderholm.com:www/jaderholm.com/paste")
@@ -3152,7 +3153,8 @@ be persisting emms-position"
 (global-set-key (kbd "C-c s") 'replace-string)
 
 ;;; make it more like vim I think, keep the char I zap to. like xemacs
-;;; zap-up-to-char
+;;; zap-up-to-char.
+;;; TODO replace with zap-up-to-char from misc.el
 (defadvice zap-to-char (after my-zap-to-char-advice (arg char) activate)
   "Kill up to the ARG'th occurence of CHAR, and leave CHAR.
   The CHAR is replaced and the point is put before CHAR."
@@ -3268,7 +3270,11 @@ be persisting emms-position"
    ;; doesn't work
    ((window-minibuffer-p (selected-window)) ; minibuffer
     (set-cursor-color "white")
-    (setq cursor-type 'hbar))
+    (setq cursor-type 'hbar)
+    ;; (set-cursor-color "grey40")
+    ;; (setq cursor-type 'box)
+
+    )
    ((equal major-mode 'image-mode)      ; images
     (setq cursor-type 'nil))
    (buffer-read-only                    ; read-only
@@ -3283,8 +3289,8 @@ be persisting emms-position"
      ;; "white"
      )
     (setq cursor-type
-          '(bar . 2)
-          ;; 'box
+          ;; '(bar . 2)
+          'box
           ))))
 
 (add-hook 'post-command-hook 'djcb-set-cursor-according-to-mode)
@@ -3316,9 +3322,15 @@ be persisting emms-position"
 
 (require 'pomodoro)
 
-;; something here turns on debug-on-error
 ;; (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
-;; (require 'el-get)
+
+;; (unless (require 'el-get nil t)
+;;   (with-current-buffer
+;;       (url-retrieve-synchronously
+;;        "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
+;;     (end-of-buffer)
+;;     (eval-print-last-sexp)))
+
 ;; (setq el-get-sources
 ;;       '(
 ;;         ;; el-get
@@ -3342,7 +3354,7 @@ be persisting emms-position"
 ;;         ;; tabbar
 ;;         (:name magit
 ;;                :after (lambda () (global-set-key (kbd "C-x g") 'magit-status)))))
-;; (el-get)
+;; (el-get 'sync)
 
 ;; (require 'tag)
 ;; (require 'emms-tag-editor)
@@ -3356,8 +3368,7 @@ be persisting emms-position"
 ;; (require 'modal-mode)
 ;; (setq default-major-mode 'modal-fundamental-mode)
 ;; (modal-mode 1)
-;; (when window-system
-;;   (modal-mode-line-background-mode 1))
+;; (when window-system (modal-mode-line-background-mode 1))
 ;; (define-key modal-cmd-intercept-map (kbd "/") 'isearch-forward)
 
 (require 'elisp-helpers)
@@ -3492,7 +3503,7 @@ because it doesn't mess with text on current line"
 (defun async-shell-command-no-output (command)
   (shell-command (concat command " &")))
 
-;; (anything-dired-bindings 1)
+;; (helm-dired-bindings 1)
 
 ;; (defun highlight-clojure-test-mode ()
 ;;   (interactive)
@@ -3660,52 +3671,15 @@ put cursor at (-> foo bar| tar) and use this."
 (require 'pwsafe)
 
 (setq pwsafe-keep-passwd t)
-(setq gnus-article-update-date-headers nil)
+
+
 (setq message-signature-insert-separator nil)
 
 (setq message-hidden-headers
       '(not "Subject" "Cc" "To" "Bcc"))
 
-(require 'gnus-article-treat-patch)
-(setq ft-gnus-article-patch-conditions
-      '( "^@@ -[0-9]+,[0-9]+ \\+[0-9]+,[0-9]+ @@" ))
-
-(setq gnus-summary-line-format"%U%R%z%I%(%-23,23f%) %B%s\n")
-(setq gnus-summary-same-subject "")
-;; (setq gnus-summary-make-false-root 'empty)
-(setq gnus-summary-make-false-root 'adopt)
-(setq gnus-thread-hide-subtree nil)
-
-(setq gnus-thread-indent-level 2)
-
-(setq-default
- ;; gnus-summary-line-format "%U%R%z %(%-12&user-date;  %-15,15f %* %B%s%)\n"
- gnus-summary-line-format "%U%R%z %(%* %I%S%-50=  %-20,20f  %-16,16&user-date;%)\n"
- gnus-user-date-format-alist '(((gnus-seconds-today)
-                                . "Today, %H:%M")
-                               ((+ 86400
-                                   (gnus-seconds-today))
-                                . "Yesterday, %H:%M")
-                               (604800 . "%A %H:%M")
-                               ((gnus-seconds-month)
-                                . "%A %d")
-                               ((gnus-seconds-year)
-                                . "%B %d")
-                               (t . "%b %d %Y"))
- ;; '((t . "%Y-%m-%d %H:%M"))
- gnus-summary-thread-gathering-function 'gnus-gather-threads-by-references
- gnus-thread-sort-functions '(gnus-thread-sort-by-date)
- gnus-sum-thread-tree-false-root ""
- gnus-sum-thread-tree-indent " "
- gnus-sum-thread-tree-leaf-with-other "├► "
- gnus-sum-thread-tree-root ""
- gnus-sum-thread-tree-single-leaf "╰► "
- gnus-sum-thread-tree-vertical "│"
- )
-
 (add-hook 'diff-mode-hook (lambda () (diff-auto-refine-mode 1)))
 
-(add-hook 'gnus-article-mode-hook 'gnus-article-unsplit-urls)
 ;; (setq custom-file “the-file-name.el”)
 
 (add-to-list 'auto-mode-alist '("\\.cljs\\'" . clojure-mode))
@@ -3755,7 +3729,8 @@ put cursor at (-> foo bar| tar) and use this."
 (require 'soy-mode)
 
 (require 'eval-sexp-fu)
-(eval-sexp-fu-flash-mode)
+(eval-sexp-fu-flash-mode 1)
+
 
 (setq inferior-lisp-program "script/repl")
 
@@ -3770,7 +3745,7 @@ put cursor at (-> foo bar| tar) and use this."
     (async-shell-command (concat "google-chrome file://"
                                  default-directory "samples/repl/index.html")))
   (insert "(require '[cljs.repl :as repl])
-           (require '[cljs.repl.browser :as browser]) 
+           (require '[cljs.repl.browser :as browser])
            (def env (browser/repl-env :port 8090))
            (repl/repl env)
            "))
@@ -3789,22 +3764,6 @@ put cursor at (-> foo bar| tar) and use this."
 (fixme-mode)
 ;; FIXME something
 ;; TODO something
- 
-;; (gnus-add-configuration
-;;  '(summary (horizontal 1.0
-;;                        (vertical 0.50 (group 1.0))
-;;                        (vertical 1.0 (summary 1.0 point)))))
-
-
-;; (gnus-add-configuration
-;;  '(article (horizontal 1.0
-;;                        (vertical 0.50 (summary 1.0 point))
-;;                        (vertical 1.0 (article 1.0)))))
-
-;; (gnus-add-configuration
-;;  '(reply (horizontal 1.0
-;;                        (vertical 0.50 (article 1.0))
-;;                        (vertical 1.0 (message 1.0 point)))))
 
 ;;  _cool  C-M-h brings up list of killring
 
@@ -3817,7 +3776,7 @@ put cursor at (-> foo bar| tar) and use this."
 ;;     ;; line and column
 ;;     "(" ;; '%02' to set to 2 chars at least; prevents flickering
 ;;       (propertize "%02l" 'face 'font-lock-type-face) ","
-;;       (propertize "%02c" 'face 'font-lock-type-face) 
+;;       (propertize "%02c" 'face 'font-lock-type-face)
 ;;     ") "
 
 ;;     ;; relative position, size of file
@@ -3851,7 +3810,7 @@ put cursor at (-> foo bar| tar) and use this."
 ;;     '(:eval (when buffer-read-only
 ;;               (concat ","  (propertize "RO"
 ;;                              'face 'font-lock-type-face
-;;                              'help-echo "Buffer is read-only"))))  
+;;                              'help-echo "Buffer is read-only"))))
 ;;     "] "
 
 ;;     ;; add the time, with the date and the emacs uptime in the tooltip
@@ -3864,10 +3823,6 @@ put cursor at (-> foo bar| tar) and use this."
 ;;     ;; minor-mode-alist  ;; list of minor modes
 ;;     "%-" ;; fill with '-'
 ;;     ))
-
-;; annoyingly loads undo-tree
-;; (add-to-list 'load-path "~/.elisp/evil/")
-;; (require 'evil)
 
 (defun delete-indentation-backward ()
   (interactive)
@@ -3899,8 +3854,8 @@ put cursor at (-> foo bar| tar) and use this."
 
 (setq sentence-end-double-space nil)
 
-(add-to-list 'load-path "~/src/clj/slamhound/")
-(require 'slamhound)
+;; (add-to-list 'load-path "~/src/clj/slamhound/")
+;; (require 'slamhound)
 
 (add-hook 'org-mode-hook
           (lambda ()
@@ -3954,6 +3909,8 @@ put cursor at (-> foo bar| tar) and use this."
   (newline)
   (insert ";=> "))
 
+;; M-x toggle-truncate-lines you are often looking for this as longlines-mode
+;; or line-wrap-mode
 (setq truncate-lines t)
 
 (add-to-list 'load-path "~/.elisp/projectile")
@@ -3974,8 +3931,12 @@ put cursor at (-> foo bar| tar) and use this."
 
 (require 'key-chord)
 (key-chord-mode 1)
-;; (key-chord-define-global "sc" 'scratch)
-(key-chord-define-global "gs" 'magit-status)
+(key-chord-define-global ";s" 'scratch)
+(key-chord-define-global ";g" 'magit-status)
+(load-file ".gnus.el")
+(bind "C-c C-l" 'jsj-gnus-fetch-group)
+;; (key-chord-define-global ";l" 'jsj-gnus-fetch-group)
+(setq key-chord-two-keys-delay 0.3)
 
 (require 'volatile-highlights)
 (volatile-highlights-mode t)
@@ -4020,10 +3981,61 @@ put cursor at (-> foo bar| tar) and use this."
 (global-set-key (kbd "C-<") 'mark-previous-like-this)
 (global-set-key (kbd "C->") 'mark-next-like-this)
 ;; like the other two, but takes an argument (negative is previous)
-(global-set-key (kbd "C-M-m") 'mark-more-like-this) 
+(global-set-key (kbd "C-M-m") 'mark-more-like-this)
 
 (require 'rename-sgml-tag)
 (define-key sgml-mode-map (kbd "C-c C-r") 'rename-sgml-tag)
 
 (load-file "~/.elisp/clojure-ignore-form.el/clojure-ignore-form.el")
 
+;; (load-file "~/.elisp/clojure-fancy.el")
+
+;;; argh, why doesn't parenface get run in this.
+(run-mode-hooks 'clojure-mode-hook)
+
+;;; clojure mode has no business messing up slime for CL
+(remove-hook 'slime-connected-hook 'clojure-slime-remote-file-name-hook)
+
+(when (fboundp 'winner-mode)
+  (winner-mode 1))
+
+;; (require 'highlight-parentheses)
+;; (define-globalized-minor-mode global-highlight-parentheses-mode
+;;   highlight-parentheses-mode
+;;   (lambda ()
+;;     (highlight-parentheses-mode t)))
+;; (global-highlight-parentheses-mode t)
+;; (setq hl-paren-colors '("yellow" "gold" "#777"))
+
+(add-to-list 'load-path "~/.elisp/ethan-wspace/lisp/")
+(require 'ethan-wspace)
+
+(add-to-list 'auto-mode-alist '("\\.jsx$" . js-mode))
+
+(add-to-list 'load-path "~/.elisp/emacs-calfw/")
+(require 'calfw)
+(require 'calfw-org)
+
+(bind "s-<next>" scroll-down-command)
+(bind "s-<prior>" scroll-up-command)
+
+(require 'shr)
+(require 'gnus)
+(setq mm-text-html-renderer 'shr)
+
+(require 'org-html)
+
+;; (add-to-list 'load-path "~/.elisp/evil/")
+;; (require 'evil)
+
+(add-to-list 'load-path "~/.elisp/ack-el")
+(require 'ack)
+
+(setq dired-deletion-confirmer (lambda (prompt) t)
+      dired-clean-up-buffers-too nil)
+
+(define-key dired-mode-map (kbd "r") 'dired-do-rename)
+(define-key dired-mode-map (kbd "c") 'dired-do-copy)
+(define-key dired-mode-map (kbd "b") 'dired-up-directory)
+
+(require 'regex-tool)
