@@ -1,0 +1,98 @@
+body {
+    margin: 0 !important;
+    background-image: url(http://subtlepatterns.com/patterns/groovepaper.png) !important;
+}
+
+body > center > table {
+    width: 100% !important;
+    background-color: transparent !important;
+}
+
+body > center > table > tbody > tr:first-child > td {
+    background-image: -webkit-linear-gradient(top, #f60, #f70) !important;
+    border-bottom: solid 1px #f60 !important;
+    box-shadow: 0 2px rgba(0,0,0,.1) !important;
+}
+
+body > center > table > tbody > tr:first-child > td > table {
+    padding: 10px !important;
+    margin: 0 auto !important;
+    width: 960px !important;
+}
+
+body > center > table > tbody > tr:first-child > td > table > tbody > tr > td:first-child {
+    padding-right: 10px !important;
+}
+
+.pagetop {
+    font-family: "Lucida Grande", "Segoe UI", Arial, Helvetica, sans-serif !important;
+    font-size: 14px !important;
+}
+
+/* a { */
+/*     font-weight: bold !important; */
+/* } */
+
+a:hover {
+    text-decoration: underline !important;
+}
+
+body > center > table > tbody > tr:nth-child(3) > td {
+    padding: 20px 0 !important;
+}
+
+body > center > table > tbody > tr:nth-child(3) > td > table {
+    width: 960px !important;
+    margin: 0 auto !important;
+}
+
+.title {
+    color: #ccc !important;
+    /* font-family: "Lucida Grande", "Segoe UI", Arial, Helvetica, sans-serif !important; */
+    /* font-size: 12px !important; */
+}
+
+/* body > center > table > tbody > tr:nth-child(3) > td > table > tbody > tr:first-child > td:nth-child(2).title > a { */
+/*     font-size: 18px !important; */
+/* } */
+
+.subtext {
+    height: 15px !important;
+    /* font-family: "Lucida Grande", "Segoe UI", Arial, Helvetica, sans-serif !important; */
+   vertical-align: top !important;
+}
+
+td, .comment, .default, .comhead, .yclinks, .dead {
+    /* font-family: "Lucida Grande", "Segoe UI", Arial, Helvetica, sans-serif !important; */
+}
+
+body > center > table > tbody > tr:nth-child(3) > td > form {
+    width: 960px !important;
+    margin: 0 auto !important;
+}
+
+td > center > table {
+    width: 940px !important;
+    background-color: white !important;
+    border: solid 1px #000 !important;
+}
+
+td > center > table td {
+    padding: 10px !important;
+}
+
+body > center > table > tbody > tr > td > table {
+    width: 960px !important;
+    margin: 0 auto !important;
+}
+
+.comment u, .comment u a, .comment u a:visited, .comment + p u, .comment + p u a, .comment + p u a:visited {
+    text-decoration: none  !important;
+    color: #777 !important;
+}
+
+.comment p, .comment + p {
+    margin: 8px 0 0 0 !important;
+    line-height: 16px !important;
+}
+

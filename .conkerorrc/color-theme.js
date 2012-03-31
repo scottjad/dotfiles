@@ -1,3 +1,7 @@
+/* ------------------------------
+ Make sure you press K to activate dark theme
+   ------------------------------ */
+
 register_user_stylesheet(
     make_css_data_uri(["select,option,input { color: #bbb !important; background-color: #333 !important; }"+
                        "code, pre { font-family: DejaVu Sans Mono !important; "+
@@ -5,6 +9,8 @@ register_user_stylesheet(
                        "span.__conkeror_hint {"+
                        " line-height: 14px !important;"+
                        ' font-family: Dina !important; '+
+                       // ' font-family: Tamsyn !important; '+
+                       // ' font-weight: normal !important;'+
                        // ' color: green !important; '+
                        " font-size: 12px !important;"+
                        "}\n"]));
@@ -52,6 +58,7 @@ global_color_theme(
                  // 'color: #686868 !important; '+
                  // 'font-family: GohuFont, Tamsyn !important; '+
                  'font-family: Dina !important; '+
+                 // 'font-family: DejaVu Sans !important; '+
                  // 'font-family: Inconsolata !important; '+
                  // 'font-family: MonteCarlo !important; '+
                  // 'font-family: Terminus !important; '+
@@ -201,4 +208,18 @@ global_color_theme("grey", "A",
 //                    [make_css_data_uri(['*:not(img) { background: #f5deb3 ! important; color: #000000 !important; font-family: GohuFont, Tamsyn !important; font-size: 10pt !important; }',
 //                     ':link, :link * { color: #005f87 !important }',
 //                     ':visited, :visited * { color: #d75f00 !important }'])]);
+
+site_css_dir = "~/.conkerorrc/site-css/";
+
+function site_css(filename, url_prefixes) {
+    var styles = read_text_file(make_file(site_css_dir+filename+".css"));
+    var stylesheet = make_css_data_uri([styles], $url_prefixes = url_prefixes);
+    register_user_stylesheet(stylesheet);
+    interactive("toggle-"+filename,"", function() {
+                    unregister_user_stylesheet(stylesheet);
+                });
+}
+
+site_css("hacker-news", ["http://news.ycombinator.com"]);
+// site_css("google-reader", ["http://www.google.com/reader"]);
 
