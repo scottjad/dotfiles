@@ -1,17 +1,26 @@
+;;; shifting extension
+;;; by Scott Jaderholm
+
+;;; overview: moves windows around sorting them by most recently accessed
+;;; starting from a user designated primary frame that includes the active
+;;; window. everytime you select a window it is placed in the primary frame and
+;;; other windows are shifted around the other frames. if you have fewer frames
+;;; than windows then all non-displayed windows will be placed in the primary
+;;; frame behind the active window.
 (in-package :stumpwm)
 
-(defun pref ()
-  "returns the preferred (main) frame"
-  (let ((maybe (first (last (tile-group-frame-tree (current-group))))))
+(defun primary-frame ()
+  "Returns the frame where the active window is placed"
+  (let ((frames (first (last (tile-group-current-frame (current-group))))))
     (if (consp maybe)
         (if (consp (second maybe))
             (first (second maybe))
             (first (last maybe)))
         maybe)))
 
-(defun in-pref? ()
-  "returns true if in the preferred frame"
-  (eq (pref)
+(defun in-primary-frame? ()
+  "returns true if in the primary-frame frame"
+  (eq (primary-frame)
       ;; current frame
       (tile-group-current-frame (current-group))))
 
@@ -37,14 +46,14 @@ in target"
         (win (window-in? frame)))
     (if win
         (if (no destination)
-            (pull-window win (pref))
+            (pull-window win (primary-frame))
             (when (not (eq target win))
               (let ((yeah (frame-window frame)))
                 (shift-window-from destination target)
                 (pull-window yeah destination)))))))
 
-(defun already-in-pref? (win)
-  (eq (window-frame win) (pref)))
+(defun already-in-primary-frame? (win)
+  (eq (window-frame win) (primary-frame)))
 
 (defun focus-matching-window
     (props &optional (all-groups *run-or-raise-all-groups*)
@@ -81,13 +90,13 @@ program"
      (if moving
          (let ((win (first-match ,props)))
            (if (no win)
-               (progn (shift-window-from (pref) win)
+               (progn (shift-window-from (primary-frame) win)
                                         ;(move-focus :right)
                       (run-shell-command ,cmd))
                (progn
-                 (unless (and (already-in-pref? win) (window-visible-p win))
-                   (shift-window-from (pref) win))
-                 (pull-window win (pref))
+                 (unless (and (already-in-primary-frame? win) (window-visible-p win))
+                   (shift-window-from (primary-frame) win))
+                 (pull-window win (primary-frame))
                  (focus win))))
          (if (first-match ,props t)
              (progn (focus-matching-window ,props)
