@@ -17,7 +17,7 @@ body > center > table > tbody > tr:first-child > td {
 body > center > table > tbody > tr:first-child > td > table {
     padding: 10px !important;
     margin: 0 auto !important;
-    width: 960px !important;
+    width: 90% !important;
 }
 
 body > center > table > tbody > tr:first-child > td > table > tbody > tr > td:first-child {
@@ -42,7 +42,7 @@ body > center > table > tbody > tr:nth-child(3) > td {
 }
 
 body > center > table > tbody > tr:nth-child(3) > td > table {
-    width: 960px !important;
+    width: 90% !important;
     margin: 0 auto !important;
 }
 
@@ -67,7 +67,7 @@ td, .comment, .default, .comhead, .yclinks, .dead {
 }
 
 body > center > table > tbody > tr:nth-child(3) > td > form {
-    width: 960px !important;
+    width: 90% !important;
     margin: 0 auto !important;
 }
 
@@ -82,7 +82,7 @@ td > center > table td {
 }
 
 body > center > table > tbody > tr > td > table {
-    width: 960px !important;
+    width: 90% !important;
     margin: 0 auto !important;
 }
 
@@ -96,3 +96,6 @@ body > center > table > tbody > tr > td > table {
     line-height: 16px !important;
 }
 
+table {
+   width: 600px !important;
+}
