@@ -23,8 +23,8 @@
 (auto-compression-mode t)
 (setq font-lock-maximum-decoration t)
 (add-hook 'text-mode-hook 'auto-fill-mode)
-(setq transient-mark-mode nil)
-(delete-selection-mode t)
+;; (setq transient-mark-mode nil)
+;; (delete-selection-mode t)
 (display-time-mode 0)
 
 (setq comment-style 'indent)
@@ -492,26 +492,26 @@ If no associated application, then `find-file' FILE."
 ;(setq helm-etags-enable-tag-file-dir-cache t)
 ;(setq helm-etags-cache-tag-file-dir "~/workspace/")
 
-(setq helm-sources
-  (list
-    helm-c-source-buffers
-    helm-c-source-org-headline
-    helm-c-source-recentf
-;;     helm-c-source-emacs-commands
-    helm-c-source-emms-dired
-    helm-c-source-files-in-current-dir
-    helm-c-source-locate
-    helm-c-source-etags-select
-    helm-c-source-occur
-    helm-c-source-man-pages
-    helm-c-source-buffer-not-found
-    helm-c-source-imenu
-;    helm-apropos-sources
-    helm-c-source-calculation-result
-    helm-c-source-kill-ring
-    helm-c-source-fixme
-    helm-c-source-tracker-search
-    my-helm-c-source-file-search))
+;; (setq helm-sources
+;;       (list
+;;     helm-c-source-buffers
+;;     helm-c-source-org-headline
+;;     helm-c-source-recentf
+;; ;;     helm-c-source-emacs-commands
+;;     helm-c-source-emms-dired
+;;     helm-c-source-files-in-current-dir
+;;     helm-c-source-locate
+;;     helm-c-source-etags-select
+;;     helm-c-source-occur
+;;     helm-c-source-man-pages
+;;     helm-c-source-buffer-not-found
+;;     helm-c-source-imenu
+;; ;    helm-apropos-sources
+;;     helm-c-source-calculation-result
+;;     helm-c-source-kill-ring
+;;     helm-c-source-fixme
+;;     helm-c-source-tracker-search
+;;     my-helm-c-source-file-search))
 
 ;;---------------------------------------------------------
 ;; Color theme
@@ -761,7 +761,31 @@ If no associated application, then `find-file' FILE."
          (org-agenda-ndays 1)
          (org-agenda-include-all-todo nil)
          (org-deadline-warning-days 180)
-         (org-agenda-time-grid nil)))))
+         (org-agenda-time-grid nil)))
+       ("A" "Tasks to Archive" tags "-REFILE/"
+        ((org-agenda-overriding-header "Tasks to Archive")
+         (org-agenda-skip-function 'bh/skip-non-archivable-tasks)))))
+
+(defun bh/skip-non-archivable-tasks ()
+  "Skip trees that are not available for archiving"
+  (save-restriction
+    (widen)
+    (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+      ;; Consider only tasks with done todo headings as archivable candidates
+      (if (member (org-get-todo-state) org-done-keywords)
+          (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
+                 (daynr (string-to-int (format-time-string "%d" (current-time))))
+                 (a-month-ago (* 60 60 24 (+ daynr 1)))
+                 (last-month (format-time-string "%Y-%m-" (time-subtract (current-time) (seconds-to-time a-month-ago))))
+                 (this-month (format-time-string "%Y-%m-" (current-time)))
+                 (subtree-is-current (save-excursion
+                                       (forward-line 1)
+                                       (and (< (point) subtree-end)
+                                            (re-search-forward (concat last-month "\\|" this-month) subtree-end t)))))
+            (if subtree-is-current
+                next-headline ; Has a date in this month or last month, skip it
+              nil))  ; available to archive
+        (or next-headline (point-max))))))
 
 (setq org-todo-state-tags-triggers
       (quote (("CANCELLED" ("CANCELLED" . t))
@@ -945,44 +969,44 @@ If no associated application, then `find-file' FILE."
 ;; F7:
 ;;-----------------------------------------------------------------------------
 (setq font-counter 0)
-(setq fonts '("Envy Code R-10"
-              "Dina-10:medium"
+(setq fonts '(
+              ;; "Envy Code R-10"
+              ;; "Dina-10:medium"
               "Dina-11:medium"
               "Dina-12:medium"
-              "Consolas-14"
               ;; "Bitocra-8"
-              "MonteCarlo-10"
-              "ProFont-9"
-              "Boxxy-10"
+              ;; "MonteCarlo-10"
+              ;; "ProFont-9"
+              ;; "Boxxy-10"
               ;; "Fixed-10"
               ;; "Unifont-12"
               ;; "GohuFont-9"
+              ;; "Ohsnap-10"
+              "Ohsnap.icons-12"
               "GohuFont-12"
-              "Terminus-32:bold"
-              "Terminus-10:bold"
-              "Terminus-10"
-              "Terminus-8"
-              "Tamsyn-12"
-              "Anonymous Pro"
-              "Crisp"
-              "Droid Sans Mono"
-              "mensch"
-              "smooth"
-              "Fixedsys Excelsior 3.01-L2-12"
+              ;; "Terminus-32:bold"
+              ;; "Terminus-10:bold"
+              "Terminus-14"
+              ;; "Terminus-8"
+              ;; "Tamsyn-12"
+              ;; "Anonymous Pro"
+              ;; "Crisp"
+              ;; "mensch"
+              ;; "smooth"
+              ;; "Fixedsys Excelsior 3.01-L2-12"
               ;; "Ubuntu Mono-14"
-              ;; "DejaVu Sans Mono-8"
+              "DejaVu Sans Mono-8"
               "DejaVu Sans Mono-9"
               "DejaVu Sans Mono-10"
               ;; "DejaVu Sans Mono-28"
               ;; "DejaVu Sans Mono-10"
-              "DejaVu Sans-10"
-              "DejaVu Sans-16"
-              "DejaVu Sans Mono-11"
+              ;; "DejaVu Sans-10"
+              ;; "DejaVu Sans-16"
+              ;; "DejaVu Sans Mono-11"
               "DejaVu Sans Mono-12"
-              "DejaVu Sans Mono-14"
+              ;; "DejaVu Sans Mono-14"
               "DejaVu Sans Mono-16"
-              ;; "Envy Code R-12"
-              ;; "Envy Code R-14"
+              "Consolas-12"
               ;; "Courier 10 Pitch-13" ; 1 and l look the same
               ;; "Verdana-12"
 
@@ -993,12 +1017,17 @@ If no associated application, then `find-file' FILE."
               "Inconsolata-24:medium"
               ;; "Liberation Mono-12"
               "Liberation Mono-14"
-              "Liberation Mono-24"
+              ;; "Liberation Mono-24"
               ;; "Monaco-8"
-              ;; "Monaco-18"
+              "Monaco-18"
               ;; "DejaVu Sans Mono-12"
               ;; "DejaVu Sans Mono-30"
-              ;; "Envy Code R-32"
+              "Envy Code R-12"
+              "Envy Code R-14"
+              "Envy Code R-18"
+              "Envy Code R-32"
+              ;; "Dina ttf 10px-24"
+              ;; "Droid Sans Mono-24"
               )
       font-length (length fonts))
 
@@ -1156,10 +1185,10 @@ an .ics file that has been downloaded from Google Calendar "
 
 (add-to-list 'load-path "~/.elisp/haskell-mode/")
 
-;; (require 'haskell-mode)
-;; (load "~/.elisp/haskell-mode/haskell-site-file")
-;; (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-;; (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+(require 'haskell-mode)
+(load "~/.elisp/haskell-mode/haskell-site-file")
+(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
 
 (add-to-list 'auto-mode-alist '("\\.js\\'" . espresso-mode))
 (autoload 'espresso-mode "espresso" nil t)
@@ -1593,7 +1622,8 @@ and evaling there."
 
 (require 'iflipb)
 ;(load "frazer-buffer")
-(setq iflipb-ignore-buffers '("*Messages*" "*Help*" "*Completions*" "TAGS"))
+(setq iflipb-ignore-buffers '(;; "*Messages*" "*Help*"
+                              "*Completions*" "TAGS"))
 (setq iflipb-always-ignore-buffers '("^ "))
 
 (setq iflipb-boring-buffer-filter 'my-bs-ignore-buffer)
@@ -1843,6 +1873,7 @@ and evaling there."
     (add-to-list 'load-path "~/.elisp/ido-hacks")
     (require 'ido-hacks)))
 (ido-hacks-mode t)
+(setq ido-hacks-highlight-flex-matches t)
 
 ;; (require 'smex)
 ;; (smex-initialize)
@@ -1913,13 +1944,14 @@ Also moves point to the beginning of the text you just yanked."
 
 (bind "C-h u" man)
 
-(cmd isearch-other-window
-     ;; thank you leo2007!
-     (save-selected-window
-       (other-window 1)
-       (isearch-forward)))
+(defun isearch-other-window ()
+  (interactive)
+  ;; thank you leo2007!
+  (save-selected-window
+    (other-window 1)
+    (isearch-forward)))
 
-(bind "C-M-S" isearch-other-window)
+(global-set-key (kbd "C-M-S") 'isearch-other-window)
 
 (bind "C-h F" customize-face)
 
@@ -2348,7 +2380,7 @@ mozrepl to evaluate in browser"
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ac-auto-show-menu 0.7)
+ '(ac-auto-show-menu 1.7)
  '(ac-delay 0.01)
  '(ac-modes (quote (slime-repl-mode emacs-lisp-mode lisp-interaction-mode c-mode cc-mode c++-mode java-mode clojure-mode scala-mode scheme-mode ocaml-mode tuareg-mode perl-mode cperl-mode python-mode ruby-mode ecmascript-mode javascript-mode js-mode js2-mode php-mode css-mode makefile-mode sh-mode fortran-mode f90-mode ada-mode xml-mode sgml-mode)))
  '(ac-quick-help-delay 1.0)
@@ -2358,7 +2390,6 @@ mozrepl to evaluate in browser"
  '(appt-display-interval 5)
  '(appt-message-warning-time 10)
  '(calendar-font-lock-keywords (quote (("\\(A\\(?:pril\\|ugust\\)\\|December\\|February\\|J\\(?:anuary\\|u\\(?:ly\\|ne\\)\\)\\|Ma\\(?:rch\\|y\\)\\|\\(?:Novem\\|Octo\\|Septem\\)ber\\) -?[0-9]+" . font-lock-type-face) ("S[au]" . font-lock-comment-face) ("Fr\\|Mo\\|S[au]\\|T[hu]\\|We" . font-lock-string-face))) t)
- '(clojure-mode-font-lock-comment-sexp t)
  '(clojure-mode-use-backtracking-indent t)
  '(column-number-mode t)
  '(completion-show-help nil)
@@ -2372,11 +2403,11 @@ mozrepl to evaluate in browser"
  '(ecb-layout-name "left13")
  '(ecb-options-version "2.32")
  '(emms-player-list (quote (emms-player-mplayer-playlist emms-player-mplayer)))
- '(emms-player-mplayer-command-name "/home/scott/bin/mpl")
+ '(emms-player-mplayer-command-name "mplayer")
  '(emms-playlist-buffer-name "EMMS Playlist")
  '(emms-playlist-mode-center-when-go t)
  '(eshell-save-history-on-exit t)
- '(fill-column 79)
+ '(fill-column 72)
  '(helm-c-adaptive-history-length 500)
  '(hfyview-quick-print-in-files-menu t)
  '(ido-create-new-buffer (quote always))
@@ -2450,7 +2481,7 @@ arg for fast."
         `("-slave" "-quiet" "-really-quiet"
           ;; "-volume" "100"
           "-ac" "mp3,"
-          ,@(when fast '("-af" "scaletempo" "-speed" "1.4")))))
+          ,@(when fast '("-af" "scaletempo" "-speed" "1.6")))))
 (emms-normal-speed)
 
 ;; (setq browse-url-browser-function 'w3m-browse-url)
@@ -2608,29 +2639,28 @@ arg for fast."
 (global-set-key (kbd "C-c k") 'delete-this-buffer-and-file)
 
 ;; symbols for some overlong function names
-(dolist (mode '(clojure-mode slime-repl-mode))
-  (eval-after-load mode `(font-lock-add-keywords
-                          ',mode
-                          (mapcar
-                           (lambda (pair)
-                             `(,(car pair)
-                               (0 (progn (compose-region (match-beginning 1)
-                                                         (match-end 1) ,(cadr pair))
-                                         nil))))
-                           `(("\\(#\\){" "∈")
-                             ("\\(#\\)(""ƒ")
-                             ("(\\(fn\\)[\[[:space:]]" "λ")
-                             ("(\\(comp\\)[\[[:space:]]" "∘")
-                             ("(\\(range\\)[\[[:space:]]" "ℝ")
-                             ("(\\(apply \+\\)[\[[:space:]]" "∑")
-                             ("(\\(Math/pi\\)[\[[:space:]]" "π")
-                             ("(\\(->\\)[\[[:space:]]" "→")
-                             ("(\\(partial\\)[\[[:space:]]" "þ")
-                             ("(\\(complement\\)[\[[:space:]]" "¬")
-                             ;; not working
-                             ("Math/pi[:space:]" "π")
-                             ("(\\(apply \+\\)[\[[:space:]]" "∑")
-)))))
+;; (dolist (mode '(clojure-mode slime-repl-mode))
+;;   (eval-after-load mode `(font-lock-add-keywords
+;;                           ',mode
+;;                           (mapcar
+;;                            (lambda (pair)
+;;                              `(,(car pair)
+;;                                (0 (progn (compose-region (match-beginning 1)
+;;                                                          (match-end 1) ,(cadr pair))
+;;                                          nil))))
+;;                            `(("\\(#\\){" "∈")
+;;                              ("\\(#\\)(""ƒ")
+;;                              ("(\\(fn\\)[\[[:space:]]" "λ")
+;;                              ("(\\(comp\\)[\[[:space:]]" "∘")
+;;                              ("(\\(range\\)[\[[:space:]]" "ℝ")
+;;                              ("(\\(apply \+\\)[\[[:space:]]" "∑")
+;;                              ("(\\(Math/pi\\)[\[[:space:]]" "π")
+;;                              ("(\\(->\\)[\[[:space:]]" "→")
+;;                              ("(\\(partial\\)[\[[:space:]]" "þ")
+;;                              ("(\\(complement\\)[\[[:space:]]" "¬")
+;;                              ;; not working
+;;                              ("Math/pi[:space:]" "π")
+;;                              ("(\\(apply \+\\)[\[[:space:]]" "∑"))))))
 
 ;; (define-key slime-mode-map (kbd "M-a") 'slime-beginning-of-defun)
 ;; (define-key slime-mode-map (kbd "M-e") 'slime-end-of-defun)
@@ -2675,8 +2705,9 @@ arg for fast."
               ("m" "music" entry (file+headline "~/org/music.org" "Music to checkout") "* %?")
               ("v" "movie" entry (file+headline "~/org/movies.org" "Movies to see") "* %?")
               ("n" "note" entry (file+headline "~/org/notes.org" "Notes") "* %U\n  %?")
-              ("f" "food" entry (file+headline "~/org/food.org" "Food") "* %t %?")
-              ("f" "programming" entry (file+headline "~/org/programming.org" "Questions") "* %U\n  - %?")
+              ("f" "food" entry (file+headline "~/org/food.org" "Food") "* %T %?")
+              ("i" "food" entry (file+headline "~/org/weight.org" "Weight") "* %T %?")
+              ;; ("f" "programming" entry (file+headline "~/org/programming.org" "Questions") "* %U\n  - %?")
               ("e" "exercise" entry (file+headline "~/org/exercise.org" "Exercise") "* %U\n  - %?")
               ("t" "trivia" entry (file+headline "~/trivia.org" "trivia") "* %a\n#+BEGIN_QUOTE\n%i\n#+END_QUOTE")
               ("o" "other" entry (file+headline "~/remember.org" "whatever") "* %a\n#+BEGIN_QUOTE\n%i\n#+END_QUOTE"))))
@@ -2822,13 +2853,13 @@ Otherwise, display it in another buffer."
 ;; (define-key haskell-mode-map (kbd "C-c c") 'shime-cabal-ido)
 
 ;;; need to move from opt on mamey to src on everything
-(add-to-list 'load-path "~/src/scala-2.8.1.final/misc/scala-tool-support/emacs/")
+(add-to-list 'load-path "~/src/scala-2.9.1.final/misc/scala-tool-support/emacs/")
 (require 'scala-mode-auto)
-(yas/load-directory "~/src/scala-2.8.1.final/misc/scala-tool-support/emacs/")
-(add-to-list 'exec-path "~/src/scala-2.8.1.final/bin/")
+(yas/load-directory "~/src/scala-2.9.1.final/misc/scala-tool-support/emacs/")
+(add-to-list 'exec-path "~/src/scala-2.9.1.final/bin/")
 
 ;; Load the ensime lisp code...
-(add-to-list 'load-path "~/src/ensime_2.8.1-0.4.2/elisp/")
+(add-to-list 'load-path "~/src/ensime/elisp")
 (require 'ensime)
 (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
 
@@ -2846,10 +2877,8 @@ This is the same as using \\[set-mark-command] with the prefix argument."
 
 ;;; more precise move keys
 (setq shift-select-mode nil)
-(require 'misc)
 
-(global-set-key (kbd "M-F") 'forward-to-word)
-(global-set-key (kbd "M-B") 'backward-to-word)
+(require 'misc) (global-set-key (kbd "M-F") 'forward-to-word) (global-set-key (kbd "M-B") 'backward-to-word)
 
 ;; (add-to-list 'align-rules-list
 ;;              '(text-column-whitespace
@@ -3197,51 +3226,9 @@ be persisting emms-position"
 
 ;;; relativenumber like vim
 ;; (global-linum-mode t)
-(setq linum-last-pos 0)
 
-(eval-after-load "linum"
-  '(defun linum-update (buffer)
-     "Update line numbers for all windows displaying BUFFER."
-     ;; this is only change but couldn't find better way to do it, tried
-     ;; linum-before-update-hook but it runs in an excursion so I couldn't get
-     ;; current line number
-     (setq linum-last-pos (line-number-at-pos))
-     (with-current-buffer buffer
-       (when linum-mode
-         (setq linum-available linum-overlays)
-         (setq linum-overlays nil)
-         (save-excursion
-           (mapc #'linum-update-window
-                 (get-buffer-window-list buffer nil 'visible)))
-         (mapc #'delete-overlay linum-available)
-         (setq linum-available nil)))))
-
-(defface linum-zero
-  '((t :inherit linum :foreground "grey10" :background "magenta" :weight bold))
-  "Face for displaying line number 0"
-  :group 'linum)
-
-(defface linum-top
-  '((t :inherit linum :foreground "grey80" :background "grey30" :weight bold))
-  "Face for displaying top line number"
-  :group 'linum)
-
-(defface linum-line
-  '((t :inherit linum :foreground "grey35" :background "grey10" :weight normal))
-  "Face for displaying absolute line number"
-  :group 'linum)
-
-(defun linum-relativenumber-format (line-number)
-  (let ((diff (abs (- line-number linum-last-pos))))
-    (concat (propertize (format "%5d" line-number)
-                        'face 'linum-line)
-            (propertize (format "%3d" diff)
-                        'face (cond ((zerop diff) 'linum-zero)
-                                    ((eq 1 line-number) 'linum-top)
-                                    (t 'linum))))))
-
-;; (setq linum-format 'dynamic)
-(setq linum-format 'linum-relativenumber-format)
+(add-to-list 'load-path "~/.elisp/linum-relativenumber")
+(require 'linum-relativenumber)
 
 (setq notmuch-search-line-faces
       '(("delete" . '(:foreground "red" :background "blue"))
@@ -3421,7 +3408,7 @@ be persisting emms-position"
        (indent-according-to-mode))
     (2 (end-of-line)
        (newline-and-indent))
-    (t (open-line 1))))
+    (t (save-excursion (paredit-newline)))))
 
 (define-key global-map (kbd "C-o") 'jsj-open-line)
 
@@ -3497,6 +3484,7 @@ because it doesn't mess with text on current line"
 
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
+;; mpd music client
 (add-to-list 'load-path "~/src/mingus")
 (autoload 'mingus "mingus-stays-home" nil t)
 
@@ -3910,7 +3898,7 @@ put cursor at (-> foo bar| tar) and use this."
   (insert ";=> "))
 
 ;; M-x toggle-truncate-lines you are often looking for this as longlines-mode
-;; or line-wrap-mode
+;; or line-wrapr-mode
 (setq truncate-lines t)
 
 (add-to-list 'load-path "~/.elisp/projectile")
@@ -3934,7 +3922,7 @@ put cursor at (-> foo bar| tar) and use this."
 (key-chord-define-global ";s" 'scratch)
 (key-chord-define-global ";g" 'magit-status)
 (load-file ".gnus.el")
-(bind "C-c C-l" 'jsj-gnus-fetch-group)
+(bind "C-c l" 'jsj-gnus-fetch-group)
 ;; (key-chord-define-global ";l" 'jsj-gnus-fetch-group)
 (setq key-chord-two-keys-delay 0.3)
 
@@ -3968,6 +3956,8 @@ put cursor at (-> foo bar| tar) and use this."
 ;; (cat-command)
 
 (add-to-list 'load-path "~/.elisp/mark-multiple.el/")
+(global-set-key (kbd "C-<") 'mark-previous-like-this)
+(global-set-key (kbd "C->") 'mark-next-like-this)
 
 (add-to-list 'load-path "~/.elisp/js2-refactor.el/")
 (require 'js2-refactor)
@@ -4007,8 +3997,8 @@ put cursor at (-> foo bar| tar) and use this."
 ;; (global-highlight-parentheses-mode t)
 ;; (setq hl-paren-colors '("yellow" "gold" "#777"))
 
-(add-to-list 'load-path "~/.elisp/ethan-wspace/lisp/")
-(require 'ethan-wspace)
+;; (add-to-list 'load-path "~/.elisp/ethan-wspace/lisp/")
+;; (require 'ethan-wspace)
 
 (add-to-list 'auto-mode-alist '("\\.jsx$" . js-mode))
 
@@ -4039,3 +4029,125 @@ put cursor at (-> foo bar| tar) and use this."
 (define-key dired-mode-map (kbd "b") 'dired-up-directory)
 
 (require 'regex-tool)
+(add-to-list 'load-path "~/.elisp/ruby-tools")
+(require 'ruby-tools)
+
+;; ;; Auto-revert-mode for version-controlled files
+;; (defadvice vc-find-file-hook (after auto-revert-mode-for-vc activate)
+;;   "vc-find-file-hook advice for activating auto-revert-mode"
+;;   (when vc-mode (auto-revert-mode 1)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
+(add-to-list 'load-path "~/.elisp/ace-jump-mode/")
+(require 'ace-jump-mode)
+(define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
+
+;; (add-to-list 'load-path "~/.elisp/erc-hl-nicks")
+;; (require 'erc-hl-nicks)
+
+;;; to use call M-x global-command-log-mode and M-x clm/open-command-log-buffer
+(add-to-list 'load-path "~/.elisp/command-log-mode/")
+(require 'command-log-mode)
+
+
+(add-to-list 'load-path "~/.elisp/hippie-expand-slime")
+(require 'hippie-expand-slime)
+(add-hook 'slime-mode-hook 'set-up-slime-hippie-expand)
+(add-hook 'slime-repl-mode-hook 'set-up-slime-hippie-expand)
+
+(define-key read-expression-map [(tab)] 'hippie-expand)
+
+;; (setq hippie-expand-try-functions-list
+;;       '(try-complete-file-name-partially
+;;         try-complete-file-name
+;;         try-expand-all-abbrevs
+;;         try-expand-list
+;;         try-expand-line
+;;         try-expand-dabbrev
+;;         try-expand-dabbrev-all-buffers
+;;         try-expand-dabbrev-from-kill
+;;         try-complete-lisp-symbol-partially
+;;         try-complete-lisp-symbol))
+
+;; (add-to-list 'load-path "~/.elisp/smart-tab/")
+;; (require 'smart-tab)
+;; (global-smart-tab-mode 1)
+
+;; (add-to-list 'load-path "~/.elisp/popwin-el/")
+;; (require 'popwin)
+;; (setq display-buffer-function 'popwin:display-buffer)
+
+;; (setq anything-samewindow nil)
+;; (push '("*helm mini*" :height 20) popwin:special-display-config)
+;; (push '("*Ido Completions*" :height 20) popwin:special-display-config)
+;; (push '(dired-mode :position top) popwin:special-display-config)
+
+
+(defadvice ac-expand-string (after kill-rest-of-symbol-ac-complete activate)
+  "removes rest of string after expansion. useful when you edit
+the middle of existing string using expansion this gets rid of
+the old tail."
+  (when (and (symbol-at-point)
+             (not (equal (save-excursion (end-of-thing 'symbol))
+                         (point))))
+    (save-excursion (kill-sexp))))
+
+
+(add-to-list 'load-path "~/.elisp/direx-el/")
+(require 'direx)
+
+(setq ediff-window-setup-function 'ediff-setup-windows-plain)
+(setq ediff-split-window-function 'split-window-horizontally)
+
+;; (add-to-list 'load-path "~/.elisp/sauron/")
+;; (require 'sauron)  
+
+(setq next-screen-context-lines 1)
+
+(defun emms-delete-go-next ()
+  (interactive)
+  (delete-current-song)
+  (emms-next))
+
+(defun emms-insert-progress ()
+  (interactive)
+  (save-excursion
+    (switch-to-buffer ".progress")
+    (goto-char (point-min))
+    (insert (emms-track-description
+             (emms-playlist-current-selected-track))
+            "\n")
+    
+    (message "progress updated")))
+
+(define-key emms-playlist-mode-map (kbd "<up>") 'emms-insert-progress)
+;; (define-key emms-playlist-mode-map (kbd "<down>") 'emms-delete-go-next)
+;; (define-key emms-playlist-mode-map (kbd "<right>") 'emms-next)
+
+(defun delete-region-and-yank (beg end)
+  (interactive "r")
+  (delete-region beg end)
+  (yank-pop)
+  (yank 2))
+
+(bind "C-M-y" delete-region-and-yank)
+
+(require 'magit-blame)
+
+(defun system-move-file-to-trash (file)
+  (shell-command (concat "/usr/bin/trash " (shell-quote-argument file))))
+
+;; C-u C-x g
+(setq magit-repo-dirs '("~/.elisp" "~/src" "~/code" "~/c01"))
+
+;; (add-hook 'ido-make-file-list-hook 'ido-sort-mtime)
+
+(add-to-list 'load-path "~/.elisp/emacs-async/")
+
+(eval-after-load "dired-aux"
+  '(require 'dired-async))
