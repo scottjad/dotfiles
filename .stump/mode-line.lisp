@@ -8,8 +8,9 @@
 (load-module "battery-portable")
 ;; (load-module "notifications")
 
-(dolist (i '("ml-wifi.sh" "ml-weather.sh"
-	     ;; "ml-email.sh"
+(dolist (i '("ml-wifi.sh"
+             "ml-weather.sh"
+             "ml-email.sh"
              ;; "ml-volume.sh" "ml-dropbox.sh" "ml-sensors.sh"
              ;; "ml-clock.sh"
              "ml-trash.sh" "ml-quotes.sh" ))
@@ -30,9 +31,9 @@
 
 ;; (defun top-programs)
 
-(setf *time-modeline-string* "%a %m-%d ^4*^B%l:%M^b^n %p")
+(setf *time-modeline-string* "%a %m-%e ^4*^B%l:%M^b^n %p") ; zero-pad day
 
-(setf stumpwm:*screen-mode-line-format*
+(setf *screen-mode-line-format*
       (list
        "[^B%n^b] " ; group num
        '(:eval (color-ping (read-ml-file ".ml-wifi")))
@@ -55,23 +56,25 @@
        ;; pomodoro
        '(:eval (read-ml-file ".ml-pomodoro-msg")) " "
        '(:eval (read-ml-file ".ml-pomodoro-time")) " "
-       '(:eval (read-ml-file ".ml-weather")) "F " ;; "°F "
+       '(:eval (read-ml-file ".ml-weather")) "°F " ;; "°F "
        ;; ;; volume
        ;; '(:eval (read-file ".mode-line-volume")) " "
-       "%c" ; cpu
+       "%f"
+       "%c"                 ; cpu
        ;; '(:eval (read-ml-file ".ml-sensors")) " "
        ;; "%M" ; mem
        "NET: %l" ; net
        ;; "%D" ; disk
-
+       ;; "Media: " '(:eval (read-ml-file ".ml-media")) " "       
+       ;; "Home: " '(:eval (read-ml-file ".ml-home")) " "       
        "Trash: " '(:eval (read-ml-file ".ml-trash")) " "
        ;; "^> %M %c" ;; I like %c but not working last time I tries it's cpu.lisp
-       ;; "%d"  ;; crappy default date
-       "%d"
+       ;; "»»»"
+       "%d" ;; crappy default date
        ;; '(:eval (string-right-trim '(#\Newline) (run-shell-command
-       ;;                                          ;; "date +'%a %m-%d ^4*^B%l:%M^b^n %p'|tr -d '\\n'"
-       ;;                                          ;; uses date command so time can be bold
-       ;;           "date +'%a %m-%d ^4*^B%l:%M^b^n %p'" t)))
+       ;; "date +'%a %m-%d ^4*^B%l:%M^b^n %p'|tr -d '\\n'"
+       ;; uses date command so time can be bold
+       ;; "date +'%a %m-%d ^4*^B%l:%M^b^n %p'" t)))
        ))
 
 (defcommand uaml () ()

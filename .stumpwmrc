@@ -43,8 +43,14 @@
 (defvar *terminal* "urxvtcd")
 
 (set-font "-xos4-terminus-bold-r-normal--14-140-72-72-c-80-iso8859-7")
+;; (set-font "-xos4-terminus-bold-r-normal--24-*")
 ;; (set-font "-xos4-terminus-medium-r-normal--14-140-72-72-c-80-iso8859-7")
 ;; (set-font "-*-terminus-*-*-*")
+;; (set-font "-*-dina-bold-r-*-*-13-*")
+;; (set-font "-*-dina-bold-r-*-*-16-*")
+;; (set-font "-*-ohsnap-medium-*-*-14-*")
+;; (set-font "-*-ohsnap.icons-bold-*-*-14-*")
+;; (set-font "-*-gohufont-bold-r-*-*-14-*")
 
 (bind "I" "show-window-properties")
 (bind "b" "windowlist")
@@ -74,7 +80,7 @@
 (global "s-;" "exec")
 (global "s-RET" "colon")
 
-(defprog conkeror "f" "conkeror" '(:class "Conkeror"))
+(defprog conkeror "f" "conkeror" '(:class "Conkeror") :rat t)
 (global "M-s-f" "exec conkeror $(xclip -o)")
 (defprog emacs "e" "emacs" '(:class "Emacs"))
 (defprog urxvt "c" *terminal* '(:class "URxvt"))
@@ -88,7 +94,8 @@
 (defprog org-capture "r" "emacsclient -e '(org-capture)'" '(:title "Capture"))
 
 (define-frame-preference "1"
-    (2 nil t :class "mplayer2")
+    (2 nil nil :class "mplayer2")
+  (3 nil nil :class "mplayer2")
   (2 nil t :title "YouTube")
   (2 nil t :class "Unison-gtk"))
 
@@ -99,7 +106,7 @@ BOLD ^B^0*black ^1*red ^2*green ^3*yellow ^4*blue ^5*magenta ^6*cyan ^7*white ^8
 NONE ^0*black ^1*red ^2*green ^3*yellow ^4*blue ^5*magenta ^6*cyan ^7*white ^8*user ^9*user^n")))
 
 ;; (set-normal-gravity :center)
-;; (set-maxsize-gravity :bottom)
+(set-maxsize-gravity :top) ;; windows (including some popups) that have maxsize
 (set-transient-gravity :top) ;popups
 
 ;; (defun emacs-display-compilation-buffer (window)
@@ -470,11 +477,23 @@ mplayer)"
 (defvar *dump-dir* (home ".layouts/"))
 
 (defcommand restore-layout () ()
-  (let ((choice (concat *dump-dir* (select-file *dump-dir*))))
+  (let ((choice (select-file *dump-dir*)))
     (when choice
-      (restore-from-file choice))))
+      (restore-from-file (concat *dump-dir* choice)))))
 
 (bind "l" "restore-layout")
+
+(defcommand play-video () ()
+  (let ((choice (select-from-menu (current-screen)
+                    (mapcar #'file-namestring
+                            (mapcar (lambda (file)
+                                      (if (directory-pathname-p file)
+                                          (list-directory file)
+                                          file))
+                             (list-directory (home "ext/tor/"))))
+                    "Select a file")))
+    (when choice
+      (restore-from-file (concat *dump-dir* choice)))))
 
 ;; (defcommand dedicate-frame () ()
 ;;   "never open window in this frame")
@@ -577,3 +596,12 @@ mplayer)"
 (define-key *wireless-keymap* (kbd "r") "wireless-restart")
 (define-key *wireless-keymap* (kbd "c") "wscan")
 
+(load-file "pavol-package")
+(load-file "pavol")
+(bind "v" "pavol-interactive")
+(global "XF86AudioRaiseVolume" "pavol-vol+")
+(global "XF86AudioLowerVolume" "pavol-vol-")
+(global "XF86AudioMute" "pavol-toggle-mute")
+
+(global "s-\\" "fullscreen")
+(bind "f" "fullscreen")

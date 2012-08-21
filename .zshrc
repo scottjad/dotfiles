@@ -1,6 +1,6 @@
 # Scott's .zshrc
 export CLOJURESCRIPT_HOME=~/src/clojurescript
-path=(. ~/src/play20 ~/src/zathura ~/src/scala-2.9.1.final/bin ~/opt/ide/emacs/src ~/src/notmuch $CLOJURESCRIPT_HOME/bin ~/src/cljs-watch ~/src/git-notify ~/src/youtube-dl ~/.gem/ruby/1.9.1/bin ~/src/msmtpq ~/src/emacs/bin ~/.cabal/bin ~/.gem/ruby/1.8/bin  /usr/local/share/perl/5.10.1/auto/share/dist/Cope $path /bin /usr/bin /usr/local/bin . /usr/X11R6/bin ~/bin ~/src/apt-cyg ~/src/ant/bin ~/src/dejour/bin ~/.cljr/bin )
+path=(. ~/src/zathura $CLOJURESCRIPT_HOME/bin ~/src/cljs-watch ~/src/git-notify ~/src/youtube-dl /usr/local/share/perl/5.10.1/auto/share/dist/Cope $path /bin /usr/bin /usr/local/bin /usr/X11R6/bin ~/bin )
 
 INFOPATH=( ~/doc/info )
 export INFOPATH
@@ -82,7 +82,7 @@ alias mp="mpl -speed 1.6 "
 alias myspace="dlmsm"
 
 function w { wget -c $@ && notify -i info "Wget download completed" "$"}
-function a { aria2c -c $@ && notify -i info "aria2c download completed" "$"}
+function a { aria2c -x 10 -s 10 --min-split-size=1M -c $@ && notify -i info "aria2c download completed" "$"}
 alias mkdir='mkdir -p'
 alias mk='mkdir'
 function cdm {mkdir $1 ; cd $1}
@@ -296,7 +296,7 @@ SAVEHIST=50000
 autoload -U url-quote-magic
 zle -N self-insert url-quote-magic
 
-notifyerr(){if [ "$?" -gt 0 ]; then notify -t 2000 -i error -u critical "${PREEXEC_CMD:-Shell Command}" "Error"; return -1; fi}
+notifyerr(){if [ "$?" -gt 0 ]; then notify -t 2000 -i error -h string:bgcolor:red -h string:fgcolor:yellow -u critical "${PREEXEC_CMD:-Shell Command}" "Error"; return -1; fi}
 
 # Screen title names
 precmd () {
@@ -614,7 +614,7 @@ compdef s=screen
 # bindkey -s '\e.' '^U..^M'
 
 # If AUTO_PUSHD is set, Meta-p pops the dir stack
-bindkey -s '\ep' '^Upopd >/dev/null; dirs -v^M'
+bindkey -s '^[p' '^Upopd >/dev/null; dirs -v^M'
 
 # alt-s inserts sudo at beginning of line
 insert_sudo () { BUFFER="sudo $BUFFER"; zle end-of-line }
@@ -638,7 +638,7 @@ alias -g ND='*(/om[1])' # newest directory
 alias -g NF='*(.om[1])' # newest file
 
 alias load-rvm='source "/home/scott/.rvm/scripts/rvm"'
-# [[ -s "/$HOME/.rvm/scripts/rvm" ]] && . "/$HOME/.rvm/scripts/rvm"
+[[ -s "/$HOME/.rvm/scripts/rvm" ]] && . "/$HOME/.rvm/scripts/rvm"
 
 # Opens the github page for the current git repository in your browser
 function gh() {
@@ -692,10 +692,33 @@ alias answer="phone.sh answer"
 alias previous-song-pandora="pianoctl -"
 alias next-song-pandora="pianoctl +"
 alias computer="gnome-open computer:///"
-alias trash="gnome-open trash:///"
+# alias trash="gnome-open trash:///"
 alias desktop="gnome-open ~/Desktop"
 alias increase-volume="amixer sset PCM 10+ unmute"
 alias decrease-volume="amixer sset PCM 10- unmute"
 alias mute="amixer sset PCM mute"
 
-setopt HIST_IGNORE_SPACE
+setopt HIST_IGNORE_SPACE HIST_IGNORE_DUPS
+
+# or M-0 M-.
+insert-first-word () { zle insert-last-word -- -1 1 }
+zle -N insert-first-word
+bindkey '^[_' insert-first-word
+
+alias aria2c-files="aria2c --bt-save-metadata --bt-metadata-only"
+
+alias aria2c-torrent="aria2c --bt-save-metadata --conf-path=/home/scott/.aria2/torrents.conf"
+
+bindkey -r '^[x'
+
+# source ~/src/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets cursor root)
+
+bindkey '^[b' emacs-backward-word
+bindkey '^[f' emacs-forward-word
+
+function mana { man -p "less -P '[ ,][ ]$1'" } 
+
+PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+
+eval `dircolors`

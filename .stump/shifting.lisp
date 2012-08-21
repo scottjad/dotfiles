@@ -74,10 +74,17 @@ in target"
            ;; other-matches is list of matches "after" the current
            ;; win, if current win matches. getting 2nd element means
            ;; skipping over the current win, to cycle through matches
+           (visible-matches (remove-if-not #'window-visible-p matches))
            (other-matches (member (current-window) matches))
            (win (if (> (length other-matches) 1)
                     (second other-matches)
-                    (first matches))))
+                    ;; (if (and visible-matches
+                    ;;          (not (equal (first visible-matches)
+                    ;;                      (current-window))))
+                    ;;     (first visible-matches)
+                    ;;     (first matches))
+                    (first matches)
+                    )))
       (if win
           (goto-win win)))))
 
@@ -100,5 +107,5 @@ program"
                  (focus win))))
          (if (first-match ,props t)
              (progn (focus-matching-window ,props)
-                    (if ,rat (rattopleft)))
+                    (if ,rat (ratbottomright)))
              (run-shell-command ,cmd)))))

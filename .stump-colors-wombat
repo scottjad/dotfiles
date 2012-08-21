@@ -49,14 +49,16 @@
  ;; "grey"
  ;; "dodgerblue"
  ;; "royalblue2"
- "deep pink"
+ ;; "deep pink"
  ;; "yellow"
  ;; "red"
  ;; "gold"
+ ;; "gold3"
  ;; "cyan"
  ;; "gray66"
- ;; "MediumPurple3"
+ "MediumPurple3"
  ;; "magenta"
+ 
  ;; (make-color-hex "#876cbe")
  ;; (make-color-hex "#ae8451") ;; brown
  )
@@ -65,6 +67,7 @@
 ;; (set-any-color screen-float-unfocus-color "grey10")
 
 ;; (setq *mode-line-border-color* "grey10")
+(setq *mode-line-border-color* "grey13")
 
 (setf
  ;; *mode-line-foreground-color* "cyan"
@@ -80,4 +83,3 @@
 ;; (setq *mode-line-border-color* "grey20"
 ;;       *mode-line-foreground-color* "grey53"
 ;;       *mode-line-background-color* "grey13")
-

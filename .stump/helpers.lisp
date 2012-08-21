@@ -21,8 +21,7 @@
       (funcall function file)))
 
 (defun read-file (file)
-  (with-open-file (stream file)
-    (read-line stream)))
+  (with-open-file (stream file) (read-line stream)))
 
 (defvar *stumpwm-started* nil)
 

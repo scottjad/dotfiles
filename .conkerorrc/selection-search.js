@@ -19,7 +19,7 @@ function create_selection_search(webjump, key) {
 create_selection_search("g","l");
 create_selection_search("lucky","/"); // _cool
 create_selection_search("wikipedia","w");
-create_selection_search("dictionary","d");
+// create_selection_search("dictionary","d");
 create_selection_search("myspace","y");
 create_selection_search("amazon","a");
 create_selection_search("youtube","u");

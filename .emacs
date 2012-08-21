@@ -49,6 +49,11 @@
 ;; (setq user-el-dir "~/.elisp")
 ;; (mapc #'load (directory-files user-el-dir t "^[^#].*\\.el$"))
 
+
+(add-to-list 'load-path "~/.elisp/use-package/")
+(require 'use-package)
+(setq use-package-verbose nil)
+
 (require 'pos-tip)
 (setq pos-tip-foreground-color "white")
 (setq pos-tip-background-color "black")
@@ -246,7 +251,7 @@
 ;;   (add-hook i (lambda ()
 ;;                 (highline-mode 1))))
 
-(global-hl-line-mode 1)
+;; (global-hl-line-mode 1)
 
 ;;---------------------------------------------------------
 ;; smooth-scrolling
@@ -421,7 +426,7 @@ If no associated application, then `find-file' FILE."
 (emms-standard)
 (emms-default-players)
 (add-to-list 'exec-path "C:/Program Files/VideoLAN/VLC")
-(setq emms-source-file-default-directory (file-truename "~/opt/music/iTunes/iTunes Music/"))
+(setq emms-source-file-default-directory (file-truename "/home/scott/"))
 (require 'emms-lyrics)
 (emms-lyrics 1)
 
@@ -974,27 +979,31 @@ If no associated application, then `find-file' FILE."
               ;; "Dina-10:medium"
               "Dina-11:medium"
               "Dina-12:medium"
-              ;; "Bitocra-8"
-              ;; "MonteCarlo-10"
-              ;; "ProFont-9"
-              ;; "Boxxy-10"
-              ;; "Fixed-10"
-              ;; "Unifont-12"
-              ;; "GohuFont-9"
-              ;; "Ohsnap-10"
+              "Bitocra-8"
+              "MonteCarlo-10"
+              "ProFont-9"
+              "Boxxy-12"
+              "M+ 1m-12:thin"
+              "M+ 1m-32:thin"
+              "mped-10"
+              "Fixed-10"
+              "Unifont-12"
+              "GohuFont-9"
+              "Ohsnap-10"
               "Ohsnap.icons-12"
               "GohuFont-12"
               ;; "Terminus-32:bold"
-              ;; "Terminus-10:bold"
+              "Terminus-10"
               "Terminus-14"
               ;; "Terminus-8"
-              ;; "Tamsyn-12"
-              ;; "Anonymous Pro"
-              ;; "Crisp"
-              ;; "mensch"
-              ;; "smooth"
-              ;; "Fixedsys Excelsior 3.01-L2-12"
-              ;; "Ubuntu Mono-14"
+              "Tamsyn-13"
+              "Anonymous Pro"
+              "Crisp"
+              "mensch"
+              "smooth"
+              "Fixedsys Excelsior 3.01-L2-12"
+              "Ubuntu Mono-12"
+              "Ubuntu Mono-14"
               "DejaVu Sans Mono-8"
               "DejaVu Sans Mono-9"
               "DejaVu Sans Mono-10"
@@ -1018,16 +1027,19 @@ If no associated application, then `find-file' FILE."
               ;; "Liberation Mono-12"
               "Liberation Mono-14"
               ;; "Liberation Mono-24"
-              ;; "Monaco-8"
+              "Monaco-8"
+              "Monaco-14"
               "Monaco-18"
               ;; "DejaVu Sans Mono-12"
               ;; "DejaVu Sans Mono-30"
-              "Envy Code R-12"
+              "EnvyPn-12"
+              "Envy Code R-10"
               "Envy Code R-14"
               "Envy Code R-18"
               "Envy Code R-32"
               ;; "Dina ttf 10px-24"
               ;; "Droid Sans Mono-24"
+              "Ubuntu Mono-32"
               )
       font-length (length fonts))
 
@@ -1109,12 +1121,12 @@ If no associated application, then `find-file' FILE."
 
 ;; (autoload 'egg-status "egg" nil t)
 ;; (bind "C-x g" egg-status)
-;; (add-to-list 'load-path "~/src/egg")
+;; (add-to-list 'load-path "~/.elisp/egg")
 ;; (require 'egg)
 
 (autoload 'magit-status "magit" nil t)
 (bind "C-x g" magit-status)
-(add-to-list 'load-path "~/src/magit")
+(add-to-list 'load-path "~/.elisp/magit")
 (require 'magit)
 
 (cmd insert-local-variables-spec
@@ -1176,8 +1188,8 @@ an .ics file that has been downloaded from Google Calendar "
 
 (autoload 'inferior-moz-mode "moz" "MozRepl Inferior Mode" t)
 (autoload 'moz-minor-mode "moz" "MozRepl Minor Mode" t)
-;; (cmd javascript-moz-setup (moz-minor-mode 1))
-;; (add-hook 'javascript-mode-hook 'javascript-moz-setup)
+;(cmd javascript-moz-setup (moz-minor-mode 1))
+(add-hook 'javascript-mode-hook 'javascript-moz-setup)
 ;; so run-mozilla is available w/o opening .js file
 (moz-minor-mode 1)
 ;; (add-to-list 'load-path "~/.elisp/drew")
@@ -1427,8 +1439,8 @@ arguments: BEG and END (region to sort)."
 ;;---------------------------------------------------------
 
 (require 'highlight-symbol)
-;; (highlight-symbol-mode 1)
-;; (add-hook 'clojure-mode-hook 'highlight-symbol-mode)
+(highlight-symbol-mode 1)
+(add-hook 'clojure-mode-hook 'highlight-symbol-mode)
 
 (cmd sync
      "Easier OrgMobile syncing"
@@ -1442,8 +1454,8 @@ arguments: BEG and END (region to sort)."
 (add-to-list 'load-path "~/.elisp/swank-clojure")
 
 (require 'clojure-mode)
-(add-to-list 'load-path "~/src/slime")
-(add-to-list 'load-path "~/src/slime/contrib")
+(add-to-list 'load-path "~/.elisp/slime")
+(add-to-list 'load-path "~/.elisp/slime/contrib")
 ;; (add-to-list 'load-path "~/src/swank-clj/slime")
 ;; (add-to-list 'load-path "~/src/swank-clj/slime/contrib")
 
@@ -1735,6 +1747,7 @@ and evaling there."
 
 (define-key dired-mode-map [?%?h] 'hide-dot-files)
 
+(add-to-list 'load-path "~/.elisp/js2-mode/")
 (autoload 'js2-mode "js2-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 
@@ -1800,7 +1813,7 @@ and evaling there."
 (global-set-key (kbd "M-k") 'jsj-kill-buffer)
 (global-set-key (kbd "M-K") 'jsj-kill-other-buffer)
 
-;(global-hl-line-mode)
+(global-hl-line-mode)
 (require 'centered-cursor-mode)
 (require 'hl-spotlight)
 ;(setq highline-vertical '(2 . 2))
@@ -2014,7 +2027,7 @@ mozrepl to evaluate in browser"
 (add-hook 'term-mode-hook
           #'(lambda () (setq autopair-dont-activate t)))
 
-;; (bind "C-c t" multi-term-next)
+(bind "C-c t" multi-term-next)
 ;; (bind "C-c T" multi-term)
 
 (eval-after-load 'clojure-mode
@@ -2056,14 +2069,15 @@ mozrepl to evaluate in browser"
 (bind "<f1>" contentswitch)
 (bind "M-S-SPC" (lambda () (interactive) (just-one-space 0)))
 
-(cmd delete-current-song
-     (let* ((emms-show-format "%s")
-            (song (emms-show))
-            (ok-to-delete "filteredfeelgood"))
-       (if (string-match ok-to-delete song)
-           (progn (move-file-to-trash song)
-                  (message (concat "Deleted " song)))
-         (message "Didn't delete %s because didn't match %s" song ok-to-delete))))
+(defun delete-current-song ()
+  (interactive)
+  (let* ((emms-show-format "%s")
+         (song (emms-show))
+         (ok-to-delete "feelgood"))
+    (if (string-match ok-to-delete song)
+        (progn (move-file-to-trash song)
+               (message (concat "Deleted " song)))
+      (message "Didn't delete %s because didn't match %s" song ok-to-delete))))
 
 (put 'narrow-to-region 'disabled nil)
 
@@ -2473,16 +2487,17 @@ mozrepl to evaluate in browser"
  '(work-timer-working-time 25))
 
 ;;; for audiobooks
-(defun emms-normal-speed (&optional fast)
+(defun emms-speed (speed)
   "Switch between normal and fast speed. No arg for normal, any
 arg for fast."
-  (interactive "p")
+  (interactive "sSpeed: ")
   (setq emms-player-mplayer-parameters
         `("-slave" "-quiet" "-really-quiet"
           ;; "-volume" "100"
+          "-ao" "alsa"
           "-ac" "mp3,"
-          ,@(when fast '("-af" "scaletempo" "-speed" "1.6")))))
-(emms-normal-speed)
+          "-af" "scaletempo"
+          "-speed" ,speed)))
 
 ;; (setq browse-url-browser-function 'w3m-browse-url)
 ;; (autoload 'w3m-browse-url "w3m" "Ask a WWW browser to show a URL." t)
@@ -2544,56 +2559,58 @@ arg for fast."
 ;(set-face-font 'default "-unknown-Envy Code R-normal-normal-normal-*-13-*-*-*-m-0-iso10646-1")
 ;;(set-default-font "Envy Code R-7") ;; doesn't work consistently ;(
 
-(defun ido-goto-symbol (&optional symbol-list)
-  "Refresh imenu and jump to a place in the buffer using Ido."
-  (interactive)
-  (unless (featurep 'imenu)
-    (require 'imenu nil t))
-  (cond
-   ((not symbol-list)
-    (let ((ido-mode ido-mode)
-          (ido-enable-flex-matching
-           (if (boundp 'ido-enable-flex-matching)
-               ido-enable-flex-matching t))
-          name-and-pos symbol-names position)
-      (unless ido-mode
-        (ido-mode 1)
-        (setq ido-enable-flex-matching t))
-      (while (progn
-               (imenu--cleanup)
-               (setq imenu--index-alist nil)
-               (ido-goto-symbol (imenu--make-index-alist))
-               (setq selected-symbol
-                     (ido-completing-read "Symbol? " symbol-names))
-               (string= (car imenu--rescan-item) selected-symbol)))
-      (unless (and (boundp 'mark-active) mark-active)
-        (push-mark nil t nil))
-      (setq position (cdr (assoc selected-symbol name-and-pos)))
-      (pulse-momentary-highlight-one-line (point))
-      (cond
-       ((overlayp position)
-        (goto-char (overlay-start position)))
-       (t
-        (goto-char position)))))
-   ((listp symbol-list)
-    (dolist (symbol symbol-list)
-      (let (name position)
-        (cond
-         ((and (listp symbol) (imenu--subalist-p symbol))
-          (ido-goto-symbol symbol))
-         ((listp symbol)
-          (setq name (car symbol))
-          (setq position (cdr symbol)))
-         ((stringp symbol)
-          (setq name symbol)
-          (setq position
-                (get-text-property 1 'org-imenu-marker symbol))))
-        (unless (or (null position) (null name)
-                    (string= (car imenu--rescan-item) name))
-          (add-to-list 'symbol-names name)
-          (add-to-list 'name-and-pos (cons name position))))))))
+;; (defun ido-goto-symbol (&optional symbol-list)
+;;   "Refresh imenu and jump to a place in the buffer using Ido."
+;;   (interactive)
+;;   (unless (featurep 'imenu)
+;;     (require 'imenu nil t))
+;;   (cond
+;;    ((not symbol-list)
+;;     (let ((ido-mode ido-mode)
+;;           (ido-enable-flex-matching
+;;            (if (boundp 'ido-enable-flex-matching)
+;;                ido-enable-flex-matching t))
+;;           name-and-pos symbol-names position)
+;;       (unless ido-mode
+;;         (ido-mode 1)
+;;         (setq ido-enable-flex-matching t))
+;;       (while (progn
+;;                (imenu--cleanup)
+;;                (setq imenu--index-alist nil)
+;;                (ido-goto-symbol (imenu--make-index-alist))
+;;                (setq selected-symbol
+;;                      (ido-completing-read "Symbol? " symbol-names))
+;;                (string= (car imenu--rescan-item) selected-symbol)))
+;;       (unless (and (boundp 'mark-active) mark-active)
+;;         (push-mark nil t nil))
+;;       (setq position (cdr (assoc selected-symbol name-and-pos)))
+;;       (pulse-momentary-highlight-one-line (point))
+;;       (cond
+;;        ((overlayp position)
+;;         (goto-char (overlay-start position)))
+;;        (t
+;;         (goto-char position)))))
+;;    ((listp symbol-list)
+;;     (dolist (symbol symbol-list)
+;;       (let (name position)
+;;         (cond
+;;          ((and (listp symbol) (imenu--subalist-p symbol))
+;;           (ido-goto-symbol symbol))
+;;          ((listp symbol)
+;;           (setq name (car symbol))
+;;           (setq position (cdr symbol)))
+;;          ((stringp symbol)
+;;           (setq name symbol)
+;;           (setq position
+;;                 (get-text-property 1 'org-imenu-marker symbol))))
+;;         (unless (or (null position) (null name)
+;;                     (string= (car imenu--rescan-item) name))
+;;           (add-to-list 'symbol-names name)
+;;           (add-to-list 'name-and-pos (cons name position))))))))
 
-(global-set-key "\C-c." 'ido-goto-symbol)
+;; (global-set-key "\C-c." 'ido-goto-symbol)
+(require 'idomenu)
+(global-set-key "\C-c." 'idomenu)
 
 (require 'webjump)
 ;; (global-set-key (kbd "<f2> w") 'webjump)
@@ -2714,8 +2731,8 @@ arg for fast."
 
 (add-to-list 'load-path "~/src/gnus/lisp/")
 
-(add-to-list 'load-path "~/src/notmuch/emacs")
-(require 'notmuch)
+;; (add-to-list 'load-path "~/src/notmuch/emacs")
+;; (require 'notmuch)
 (setq mail-specify-envelope-from t
       message-sendmail-envelope-from 'header
       mail-envelope-from 'header)
@@ -2854,14 +2871,14 @@ Otherwise, display it in another buffer."
 
 ;;; need to move from opt on mamey to src on everything
 (add-to-list 'load-path "~/src/scala-2.9.1.final/misc/scala-tool-support/emacs/")
-(require 'scala-mode-auto)
-(yas/load-directory "~/src/scala-2.9.1.final/misc/scala-tool-support/emacs/")
-(add-to-list 'exec-path "~/src/scala-2.9.1.final/bin/")
+;; (require 'scala-mode-auto)
+;; (yas/load-directory "~/src/scala-2.9.1.final/misc/scala-tool-support/emacs/")
+;; (add-to-list 'exec-path "~/src/scala-2.9.1.final/bin/")
 
 ;; Load the ensime lisp code...
-(add-to-list 'load-path "~/src/ensime/elisp")
-(require 'ensime)
-(add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
+;; (add-to-list 'load-path "~/src/ensime/elisp")
+;; (require 'ensime)
+;; (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
 
 (bind "M-S-s" paredit-split-sexp)
 (define-key paredit-mode-map  (kbd "M-S") 'paredit-split-sexp)
@@ -3256,11 +3273,11 @@ be persisting emms-position"
     (setq cursor-type 'box))
    ;; doesn't work
    ((window-minibuffer-p (selected-window)) ; minibuffer
-    (set-cursor-color "white")
-    (setq cursor-type 'hbar)
-    ;; (set-cursor-color "grey40")
-    ;; (setq cursor-type 'box)
-
+    ;; (set-cursor-color "white")
+    ;; (setq cursor-type 'hbar)
+    (set-cursor-color "grey40")
+    (setq cursor-type 'box)
+    
     )
    ((equal major-mode 'image-mode)      ; images
     (setq cursor-type 'nil))
@@ -3290,10 +3307,10 @@ be persisting emms-position"
 ;; (change-cursor-mode 1)
 ;; (toggle-cursor-type-when-idle 1)
 
-;; (require 'pulse)
-;; (defun cedet-called-interactively-p ()
-;;   t)
-;; (pulse-toggle-integration-advice 1)
+(require 'pulse)
+(defun cedet-called-interactively-p ()
+  t)
+(pulse-toggle-integration-advice 1)
 
 ;; (add-to-list 'load-path "~/src/riece-7.0.3/lisp/")
 ;; (require 'riece)
@@ -3346,6 +3363,7 @@ be persisting emms-position"
 ;; (require 'tag)
 ;; (require 'emms-tag-editor)
 
+;; (add-to-list 'load-path "~/.elisp/vimpulse/")
 ;; (require 'vimpulse)
 ;; (setq viper-mode t)
 ;; (require 'viper)
@@ -3485,7 +3503,7 @@ because it doesn't mess with text on current line"
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
 ;; mpd music client
-(add-to-list 'load-path "~/src/mingus")
+(add-to-list 'load-path "~/.elisp/mingus")
 (autoload 'mingus "mingus-stays-home" nil t)
 
 (defun async-shell-command-no-output (command)
@@ -4041,7 +4059,8 @@ put cursor at (-> foo bar| tar) and use this."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(diff-added ((t (:foreground "#729fcf"))))
+ '(diff-removed ((t (:foreground "#9e6ffe")))))
 
 (add-to-list 'load-path "~/.elisp/ace-jump-mode/")
 (require 'ace-jump-mode)
@@ -4088,14 +4107,14 @@ put cursor at (-> foo bar| tar) and use this."
 ;; (push '(dired-mode :position top) popwin:special-display-config)
 
 
-(defadvice ac-expand-string (after kill-rest-of-symbol-ac-complete activate)
-  "removes rest of string after expansion. useful when you edit
-the middle of existing string using expansion this gets rid of
-the old tail."
-  (when (and (symbol-at-point)
-             (not (equal (save-excursion (end-of-thing 'symbol))
-                         (point))))
-    (save-excursion (kill-sexp))))
+;; (defadvice ac-expand-string (after kill-rest-of-symbol-ac-complete activate)
+;;   "removes rest of string after expansion. useful when you edit
+;; the middle of existing string using expansion this gets rid of
+;; the old tail."
+;;   (when (and (symbol-at-point)
+;;              (not (equal (save-excursion (end-of-thing 'symbol))
+;;                          (point))))
+;;     (save-excursion (kill-sexp))))
 
 
 (add-to-list 'load-path "~/.elisp/direx-el/")
@@ -4147,7 +4166,56 @@ the old tail."
 
 ;; (add-hook 'ido-make-file-list-hook 'ido-sort-mtime)
 
-(add-to-list 'load-path "~/.elisp/emacs-async/")
+;; (add-to-list 'load-path "~/.elisp/emacs-async/")
 
-(eval-after-load "dired-aux"
-  '(require 'dired-async))
+;; (eval-after-load "dired-aux"
+;;   '(require 'dired-async))
+
+(defun revert-all-buffers ()
+  "Revert all non-modified buffers associated with a file.
+This is to update existing buffers after a Git pull of their underlying files."
+  (interactive)
+  (save-current-buffer
+    (mapc (lambda (b)
+            (set-buffer b)
+            (unless (or (null (buffer-file-name)) (buffer-modified-p))
+              (revert-buffer t t)
+              (message "Reverted %s\n" (buffer-file-name))))
+          (buffer-list))))
+
+;; Override the default command to support optinal network connection instead of
+;; always just starting an inferior process.
+(defadvice slime (around slime-auto-net-connect activate)
+  (if slime-default-is-connect
+      (save-window-excursion
+        (slime-connect slime-lisp-host slime-port)
+        (sleep-for 0 300))
+    ad-do-it))
+
+;; Automatically connect when disconnected.
+(setq slime-auto-connect 'always)
+
+;; Indicate that the default connection should be via the network, not an
+;; inferior process.
+(setq slime-default-is-connect t)
+
+(setq dired-async-use-native-commands t)
+
+
+(add-to-list 'load-path "~/.elisp/readline-complete.el")
+(require 'readline-complete)
+(add-to-list 'ac-modes 'shell-mode)
+
+(add-to-list 'load-path "~/.elisp/multiple-cursors.el/")
+(require 'multiple-cursors)
+(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+
+;; (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+;; (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+;; (global-set-key (kbd "kM-<") 'mc/mark-all-like-this)
+
+(add-to-list 'load-path "~/.elisp/test-case-mode/")
+(require 'test-case-mode)
+(add-hook 'find-file-hook 'enable-test-case-mode-if-test)
+(add-hook 'compilation-finish-functions
+          'test-case-compilation-finish-run-all)
