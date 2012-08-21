@@ -64,7 +64,6 @@ global_color_theme(
          // 'font-family: Envy Code R !important; '+
          // 'font-size: 10pt !important; '+
          'font-size: 12pt !important; '+
-         'padding: 1px !important;'+
          '-moz-border-bottom-colors: #444 #444 !important; '+
          '-moz-border-top-colors: #444 #444  !important; '+
          '-moz-border-right-colors: #444 #444  !important; '+
