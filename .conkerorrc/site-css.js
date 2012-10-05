@@ -10,5 +10,6 @@ function site_css(filename, url_prefixes) {
 }
 
 site_css("hacker-news", ["http://news.ycombinator.com"]);
+site_css("wikipedia", ["http://en.wikipedia.org"]);
 // site_css("google-reader", ["http://www.google.com/reader"]);
 
