@@ -1,5 +1,5 @@
 /* ------------------------------
- Make sure you press K to activate dark theme
+ Make sure you press D to activate dark theme
    ------------------------------ */
 
 register_user_stylesheet(
@@ -42,7 +42,7 @@ function global_color_theme(name, key, styles) {
 }
 
 global_color_theme(
-    "dark", "K",
+    "dark", "D",
     [make_css_data_uri(
         ['*:not(img) {'+
          // 'h1, h2, p, a, div, span, table, td, th tr, ul, li, strong, input, select, textarea, body {'+
