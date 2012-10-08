@@ -242,7 +242,7 @@
 ;; highline
 ;;---------------------------------------------------------
 ;; disabled bc caused flashing in ido in e24
-;; (require 'highline)
+(require 'highline)
 ;; (global-highline-mode 1)
 
 ;; (dolist (i '(emacs-lisp-mode-hook lisp-mode-hook lisp-interaction-mode-hook
@@ -309,7 +309,7 @@ the dired buffer."
 ;; like C-k but reverse, _cool
 ;;---------------------------------------------------------
 (cmd backwards-kill-line
-  (kill-region  (point) (progn (beginning-of-line) (point))))
+  (kill-region (point) (progn (beginning-of-line) (point))))
 (bind "C-c u" backwards-kill-line) ; C-u in zsh
 
 ;;---------------------------------------------------------
@@ -569,6 +569,8 @@ If no associated application, then `find-file' FILE."
 (require 'color-theme-desert)
 ;;(color-theme-solarized-dark) (color-theme-solarized-light)
 ;; (load "~/.ecolors")
+;; (add-to-list 'load-path "~/.elisp/naquadah-theme/")
+;; (require 'naquadah-theme)
 
 ;;---------------------------------------------------------
 ;; yasnippet
@@ -608,7 +610,7 @@ If no associated application, then `find-file' FILE."
                                (set-window-start (selected-window) old-window-start))
                      buf)))))
 
-;(add-hook 'after-save-hook 'pj/auto-recompile-file-always)
+;; (add-hook 'after-save-hook 'pj/auto-recompile-file-always)
 
 ;;---------------------------------------------------------
 ;; Org-mode
@@ -979,43 +981,37 @@ If no associated application, then `find-file' FILE."
               ;; "Dina-10:medium"
               "Dina-11:medium"
               "Dina-12:medium"
-              "Bitocra-8"
+              ;; "Bitocra-8"
               "MonteCarlo-10"
-              "ProFont-9"
+              ;; "ProFont-9"
               "Boxxy-12"
-              "M+ 1m-12:thin"
-              "M+ 1m-32:thin"
-              "mped-10"
+              ;; "M+ 1m-12:thin"
+              ;; "M+ 1m-32:thin"
+              ;; "mped-10"
               "Fixed-10"
-              "Unifont-12"
+              ;; "Unifont-12"
               "GohuFont-9"
-              "Ohsnap-10"
+              ;; "Ohsnap-10"
               "Ohsnap.icons-12"
               "GohuFont-12"
-              ;; "Terminus-32:bold"
+              "Terminus-32:bold"
               "Terminus-10"
-              "Terminus-14"
-              ;; "Terminus-8"
+              "Terminus-8"
               "Tamsyn-13"
-              "Anonymous Pro"
-              "Crisp"
-              "mensch"
-              "smooth"
-              "Fixedsys Excelsior 3.01-L2-12"
+              ;; "Anonymous Pro"
+              ;; "Crisp"
+              ;; "mensch"
+              ;; "smooth"
+              ;; "Fixedsys Excelsior 3.01-L2-12"
               "Ubuntu Mono-12"
               "Ubuntu Mono-14"
-              "DejaVu Sans Mono-8"
-              "DejaVu Sans Mono-9"
-              "DejaVu Sans Mono-10"
+              ;; "DejaVu Sans Mono-8"
+              ;; "DejaVu Sans Mono-9"
               ;; "DejaVu Sans Mono-28"
               ;; "DejaVu Sans Mono-10"
               ;; "DejaVu Sans-10"
               ;; "DejaVu Sans-16"
-              ;; "DejaVu Sans Mono-11"
-              "DejaVu Sans Mono-12"
-              ;; "DejaVu Sans Mono-14"
-              "DejaVu Sans Mono-16"
-              "Consolas-12"
+              ;; "Consolas-12"
               ;; "Courier 10 Pitch-13" ; 1 and l look the same
               ;; "Verdana-12"
 
@@ -1027,15 +1023,16 @@ If no associated application, then `find-file' FILE."
               ;; "Liberation Mono-12"
               "Liberation Mono-14"
               ;; "Liberation Mono-24"
-              "Monaco-8"
-              "Monaco-14"
-              "Monaco-18"
+              ;; "Monaco-8"
+              ;; "Monaco-14"
+              ;; "Monaco-18"
               ;; "DejaVu Sans Mono-12"
               ;; "DejaVu Sans Mono-30"
               "EnvyPn-12"
               "Envy Code R-10"
+              "Envy Code R-11"
               "Envy Code R-14"
-              "Envy Code R-18"
+              ;; "Envy Code R-18"
               "Envy Code R-32"
               ;; "Dina ttf 10px-24"
               ;; "Droid Sans Mono-24"
@@ -1059,8 +1056,13 @@ If no associated application, then `find-file' FILE."
     (set-default-font next-font)
     (message (concat "Changed font to `" next-font "`"))))
 
+(defun choose-font ()
+  (interactive)
+  (set-default-font (completing-read "Font: " fonts)))
+
 (bind "<f7>" (lambda () (interactive) (cycle-fonts 1)))
 (bind "S-<f7>" (lambda () (interactive) (cycle-fonts -1)))
+(bind "C-<f7>" choose-font)
 
 ;;-----------------------------------------------------------------------------
 ;; F8:
@@ -1197,10 +1199,20 @@ an .ics file that has been downloaded from Google Calendar "
 
 (add-to-list 'load-path "~/.elisp/haskell-mode/")
 
-(require 'haskell-mode)
-(load "~/.elisp/haskell-mode/haskell-site-file")
-(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-(add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+(use-package haskell-mode
+  :commands haskell-mode
+  :init
+  (add-to-list 'auto-mode-alist '("\\.l?hs$" . haskell-mode))
+  :config
+  (progn
+    (load "~/.elisp/haskell-mode/haskell-site-file")
+    (use-package inf-haskell)
+    (use-package hs-lint)
+    (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+    (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)))
+
+;; (require 'haskell-mode)
+;; (load "~/.elisp/haskell-mode/haskell-site-file")
 
 (add-to-list 'auto-mode-alist '("\\.js\\'" . espresso-mode))
 (autoload 'espresso-mode "espresso" nil t)
@@ -1438,9 +1450,9 @@ arguments: BEG and END (region to sort)."
 ;; Highlight symbol
 ;;---------------------------------------------------------
 
-(require 'highlight-symbol)
-(highlight-symbol-mode 1)
-(add-hook 'clojure-mode-hook 'highlight-symbol-mode)
+;; (require 'highlight-symbol)
+;; (highlight-symbol-mode 1)
+;; (add-hook 'clojure-mode-hook 'highlight-symbol-mode)
 
 (cmd sync
      "Easier OrgMobile syncing"
@@ -1796,7 +1808,7 @@ and evaling there."
             (when (current-local-map)
               (use-local-map (copy-keymap (current-local-map))))
             (when server-buffer-clients
-              (local-set-key (kbd "C-x k") 'server-edit)
+              ;; (local-set-key (kbd "C-x k") 'server-edit)
               (local-set-key (kbd "<f4>") 'server-edit)
               (local-set-key (kbd "M-k") 'server-edit))))
 
@@ -2027,7 +2039,7 @@ mozrepl to evaluate in browser"
 (add-hook 'term-mode-hook
           #'(lambda () (setq autopair-dont-activate t)))
 
-(bind "C-c t" multi-term-next)
+;; (bind "C-c t" multi-term-next)
 ;; (bind "C-c T" multi-term)
 
 (eval-after-load 'clojure-mode
@@ -2368,6 +2380,7 @@ mozrepl to evaluate in browser"
   (slime-repl-set-package (slime-current-package))
   (slime-switch-to-output-buffer))
 (bind "C-c C-S-z" jsj-slime-goto-current-ns)
+(bind "C-S-c C-S-z" jsj-slime-goto-current-ns)
 
 ;; (define-key slime-mode-map (kbd "C-M-x")
 ;;   (lambda ()
@@ -2487,17 +2500,31 @@ mozrepl to evaluate in browser"
  '(work-timer-working-time 25))
 
 ;;; for audiobooks
-(defun emms-speed (speed)
-  "Switch between normal and fast speed. No arg for normal, any
-arg for fast."
-  (interactive "sSpeed: ")
+(defvar emms-start-at nil)
+
+(defun emms-start-at (location)
+  (interactive "sLocation (ex. 1:00): ")
+  (setq emms-start-at `("-ss" ,location))
+  (update-emms-mplayer-params))
+
+(defun update-emms-mplayer-params ()
   (setq emms-player-mplayer-parameters
         `("-slave" "-quiet" "-really-quiet"
           ;; "-volume" "100"
+          ,@emms-start-at
           "-ao" "alsa"
           "-ac" "mp3,"
           "-af" "scaletempo"
-          "-speed" ,speed)))
+          "-speed" ,emms-speed)))
+
+(defvar emms-speed "1.00")
+
+(defun emms-speed (speed)
+  "Switch between normal and fast speed. No arg for normal, any
+arg for fast."
+  (interactive "sSpeed (ex. 1.5): ")
+  (setq emms-speed speed)
+  (update-emms-mplayer-params))
 
 ;; (setq browse-url-browser-function 'w3m-browse-url)
 ;; (autoload 'w3m-browse-url "w3m" "Ask a WWW browser to show a URL." t)
@@ -2714,7 +2741,9 @@ arg for fast."
               ("d" "pdf note" entry (file+headline "~/org/pdf.org" "Notes") "* PDF: %:description\n  %:initial")
               ("s" "scripture" entry (file+headline "~/org/scripture-study.org" "Notes") "* %? %U\n%i")
               ("x" "co template" entry (file+headline "~/org/co.org" "co") "* %c\n" :immediate-finish 1)
-              ("b" "book" entry (file+headline "~/www/org/truth.org" "Notes") "* %U\n  %?")
+              ("B" "buy" entry (file "~/org/buy.org") "* TODO %c\n" :immediate-finish 1)
+              ("r" "readlist" entry (file+datetree "~/org/readlist.org") "* TODO %c\n" :immediate-finish 1)
+              ;; ("b" "book" entry (file+headline "~/www/org/truth.org" "Notes") "* %U\n  %?")
               ("t" "todo" entry (file+headline "~/org/todo.org" "Tasks") "* TODO %?")
               ("c" "calendar" entry (file+headline "~/org/calendar.org" "Events") "* %?\n  %^t")
               ("p" "phone-calls" entry (file+headline "~/doc/phone-calls.org" "Phone Calls") "* %T %?")
@@ -2723,7 +2752,7 @@ arg for fast."
               ("v" "movie" entry (file+headline "~/org/movies.org" "Movies to see") "* %?")
               ("n" "note" entry (file+headline "~/org/notes.org" "Notes") "* %U\n  %?")
               ("f" "food" entry (file+headline "~/org/food.org" "Food") "* %T %?")
-              ("i" "food" entry (file+headline "~/org/weight.org" "Weight") "* %T %?")
+              ("i" "weight" entry (file+headline "~/org/weight.org" "Weight") "* %T %?")
               ;; ("f" "programming" entry (file+headline "~/org/programming.org" "Questions") "* %U\n  - %?")
               ("e" "exercise" entry (file+headline "~/org/exercise.org" "Exercise") "* %U\n  - %?")
               ("t" "trivia" entry (file+headline "~/trivia.org" "trivia") "* %a\n#+BEGIN_QUOTE\n%i\n#+END_QUOTE")
@@ -2796,9 +2825,9 @@ Otherwise, display it in another buffer."
                  (progn (backward-up-list)
                         (forward-char)
                         (symbol-at-point))))))
-    (pos-tip-show (if (equal major-mode 'emacs-lisp-mode)
-                      (ac-symbol-documentation s)
-                    (ac-slime-documentation (symbol-name s)))
+    (pos-tip-show (or (if (equal major-mode 'emacs-lisp-mode)
+                          (ac-symbol-documentation s)
+                        (ac-slime-documentation (symbol-name s))) "no docs")
                   'popup-tip-face
                   ;; 'alt-tooltip
                   (point)
@@ -2870,15 +2899,15 @@ Otherwise, display it in another buffer."
 ;; (define-key haskell-mode-map (kbd "C-c c") 'shime-cabal-ido)
 
 ;;; need to move from opt on mamey to src on everything
-(add-to-list 'load-path "~/src/scala-2.9.1.final/misc/scala-tool-support/emacs/")
-;; (require 'scala-mode-auto)
+(add-to-list 'load-path "~/src/scala-dist/tool-support/src/emacs/")
+(require 'scala-mode-auto)
 ;; (yas/load-directory "~/src/scala-2.9.1.final/misc/scala-tool-support/emacs/")
-;; (add-to-list 'exec-path "~/src/scala-2.9.1.final/bin/")
+(add-to-list 'exec-path "~/src/scala-2.9.2/bin/")
 
 ;; Load the ensime lisp code...
-;; (add-to-list 'load-path "~/src/ensime/elisp")
-;; (require 'ensime)
-;; (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
+(add-to-list 'load-path "~/.elisp/ensime/src/main/elisp")
+(require 'ensime)
+(add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
 
 (bind "M-S-s" paredit-split-sexp)
 (define-key paredit-mode-map  (kbd "M-S") 'paredit-split-sexp)
@@ -3279,7 +3308,7 @@ be persisting emms-position"
     (setq cursor-type 'box)
     
     )
-   ((equal major-mode 'image-mode)      ; images
+   ((member major-mode '(image-mode image-dired-display-image-mode))   ; images
     (setq cursor-type 'nil))
    (buffer-read-only                    ; read-only
     (set-cursor-color "yellow")
@@ -3318,22 +3347,17 @@ be persisting emms-position"
 (require 're-builder)
 (setq reb-re-syntax 'string)
 
-;; (url-retrieve
-;;  "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
-;;  (lambda (s)
-;;    (end-of-buffer)
-;;    (eval-print-last-sexp)))
-
 (require 'pomodoro)
 
 ;; (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
 ;; (unless (require 'el-get nil t)
-;;   (with-current-buffer
-;;       (url-retrieve-synchronously
-;;        "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
-;;     (end-of-buffer)
-;;     (eval-print-last-sexp)))
+;;   (url-retrieve
+;;    "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
+;;    (lambda (s)
+;;      (let (el-get-master-branch)
+;;        (goto-char (point-max))
+;;        (eval-print-last-sexp)))))
 
 ;; (setq el-get-sources
 ;;       '(
@@ -3684,7 +3708,7 @@ put cursor at (-> foo bar| tar) and use this."
 (setq message-hidden-headers
       '(not "Subject" "Cc" "To" "Bcc"))
 
-(add-hook 'diff-mode-hook (lambda () (diff-auto-refine-mode 1)))
+;; (add-hook 'diff-mode-hook (lambda () (diff-auto-refine-mode 1)))
 
 ;; (setq custom-file “the-file-name.el”)
 
@@ -3738,7 +3762,7 @@ put cursor at (-> foo bar| tar) and use this."
 (eval-sexp-fu-flash-mode 1)
 
 
-(setq inferior-lisp-program "script/repl")
+;; (setq inferior-lisp-program "script/repl")
 
 ;; (add-to-list 'load-path "~/.elisp/pretty-mode/")
 ;; (require 'pretty-mode)
@@ -3840,8 +3864,8 @@ put cursor at (-> foo bar| tar) and use this."
 
 ;; (add-to-list 'Info-directory-list "/home/scott/doc/info")
 
-(add-to-list 'load-path "~/.elisp/gist.el/")
-(require 'gist)
+;; (add-to-list 'load-path "~/.elisp/gist.el/")
+;; (require 'gist)
 
 (add-to-list 'load-path "~/.elisp/elisp-slime-nav/")
 (require 'elisp-slime-nav)
@@ -4063,8 +4087,9 @@ put cursor at (-> foo bar| tar) and use this."
  '(diff-removed ((t (:foreground "#9e6ffe")))))
 
 (add-to-list 'load-path "~/.elisp/ace-jump-mode/")
-(require 'ace-jump-mode)
-(define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
+(use-package ace-jump-mode
+  :bind ("C-." . ace-jump-mode))
+;; (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
 
 ;; (add-to-list 'load-path "~/.elisp/erc-hl-nicks")
 ;; (require 'erc-hl-nicks)
@@ -4135,7 +4160,7 @@ put cursor at (-> foo bar| tar) and use this."
 
 (defun emms-insert-progress ()
   (interactive)
-  (save-excursion
+  (save-window-excursion
     (switch-to-buffer ".progress")
     (goto-char (point-min))
     (insert (emms-track-description
@@ -4201,7 +4226,6 @@ This is to update existing buffers after a Git pull of their underlying files."
 
 (setq dired-async-use-native-commands t)
 
-
 (add-to-list 'load-path "~/.elisp/readline-complete.el")
 (require 'readline-complete)
 (add-to-list 'ac-modes 'shell-mode)
@@ -4212,10 +4236,33 @@ This is to update existing buffers after a Git pull of their underlying files."
 
 ;; (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 ;; (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-;; (global-set-key (kbd "kM-<") 'mc/mark-all-like-this)
+;; (global-set-key (kbd "M-<") 'mc/mark-all-like-this)
 
 (add-to-list 'load-path "~/.elisp/test-case-mode/")
 (require 'test-case-mode)
 (add-hook 'find-file-hook 'enable-test-case-mode-if-test)
 (add-hook 'compilation-finish-functions
           'test-case-compilation-finish-run-all)
+
+;; (add-to-list 'load-path "~/.elisp/nrepl.el/")
+;; (require 'nrepl)
+;; (setq nrepl-lein-command "lein2")
+
+(setq ido-auto-merge-delay-time 0.5)
+
+;; (add-to-list 'load-path "~/.elisp/tomorrow-theme/GNU Emacs/")
+;; (require 'color-theme-tomorrow)
+;; (color-theme-tomorrow-night-eighties)
+
+(add-to-list 'load-path "~/.elisp/color-theme-heroku/")
+(require 'color-theme-heroku)
+
+(setq ac-use-fuzzy t)
+
+(require 'hide-comnt)
+(bind "C-M-;" hide/show-comments-toggle)
+
+;; python mode, bind this to C-c C-d
+;; python-end-of-block
+;; C-c C-u is python-beginning-of-block
+

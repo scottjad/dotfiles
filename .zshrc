@@ -1,6 +1,6 @@
 # Scott's .zshrc
 export CLOJURESCRIPT_HOME=~/src/clojurescript
-path=(. ~/src/zathura $CLOJURESCRIPT_HOME/bin ~/src/cljs-watch ~/src/git-notify ~/src/youtube-dl /usr/local/share/perl/5.10.1/auto/share/dist/Cope $path /bin /usr/bin /usr/local/bin /usr/X11R6/bin ~/bin )
+path=(. ~/src/fasd ~/src/zathura $CLOJURESCRIPT_HOME/bin ~/src/cljs-watch ~/src/git-notify ~/src/youtube-dl /usr/local/share/perl/5.10.1/auto/share/dist/Cope $path /bin /usr/bin /usr/local/bin /usr/X11R6/bin ~/bin )
 
 INFOPATH=( ~/doc/info )
 export INFOPATH
@@ -91,6 +91,7 @@ function cdm {mkdir $1 ; cd $1}
 #alias sea='apt-cache search'
 sea() { apt-cache search $1 | grep -C 500 $1;}
 alias sea2='sea --names-only'
+seap() { apt-file search $1 | grep -C 500 $1; }
 alias aptn='notify -t 2000 -i debian "Apt-get"' 
 function ins {sudo apt-get install -y $* &&  aptn "Installed $@"} 
 compdef "_deb_packages uninstalled" ins
@@ -141,7 +142,7 @@ export PAGER=less
 export RSYNC_RSH=/usr/bin/ssh
 export COLORTERM=yes
 # for bug w/ buttons in eclipse not clicking when compiz is running
-export GDK_NATIVE_WINDOWS=true
+# export GDK_NATIVE_WINDOWS=true
 export WORDCHARS='*?[]~=&;!#$%^(){}'
 # cdpath=(~)
 bindkey -e
@@ -172,8 +173,11 @@ zle_highlight+=(special:fg=blue
 # export PS1="
 # %n@%m:%~:%# "
 
+# export PS1="
+# > "
+
 export PS1="
-> "
+%{$fg_bold[black]%}>%{$reset_color%} "
 
 # with color
 # export PS1="
@@ -296,7 +300,16 @@ SAVEHIST=50000
 autoload -U url-quote-magic
 zle -N self-insert url-quote-magic
 
-notifyerr(){if [ "$?" -gt 0 ]; then notify -t 2000 -i error -h string:bgcolor:red -h string:fgcolor:yellow -u critical "${PREEXEC_CMD:-Shell Command}" "Error"; return -1; fi}
+notifyerr(){
+    last_exit_code="$?";
+    if [ "$last_exit_code" -ne 0 -a "$last_exit_code" -ne 130 ]; then
+        command="$PREEXEC_CMD";
+        if [ "$command" != "htop" ]; then
+            notify -t 2000 -i error -h string:bgcolor:red -h string:fgcolor:yellow -u critical "${PREEXEC_CMD:-Shell Command}" "error $last_exit_code";
+            return -1;
+        fi
+    fi
+}
 
 # Screen title names
 precmd () {
@@ -318,8 +331,10 @@ precmd () {
 	done
 	
     if [ "${PREEXEC_CMD:-Shell Command}" != "s" ]; then
-	    if [ $elapsed -gt $max ]; then
-		    notify -t 2000 -i warning "${PREEXEC_CMD:-Shell Command}" "finished ($elapsed secs)" 
+	    if [ "$elapsed" -gt $max -a "$?" -ne 130 ]; then
+            if [ $PREEXEC_CMD ]; then
+		        notify -t 2000 -i warning "${PREEXEC_CMD:-Shell Command}" "finished ($elapsed secs)"
+            fi
 	    fi
     fi
     # END notify long running cmds
@@ -339,8 +354,8 @@ precmd () {
 #     export RPS1="%t %{$fg_bold[yellow]%}$(parse_git_branch)%{$reset_color%} %{$fg_bold[red]%}%(?..[%?])%(#.#.)%{$reset_color%}%{$fg_bold[grey]%}"
 #     export RPS1="${vcs_info_msg_0_} $(parse_git_branch) %(?..[%?])%(#.#.)"
     # export RPS1="${vcs_info_msg_0_} %(?..[%?])%(#.#.)"
-    export RPS1="%~ $MAYBE_HOSTNAME %(?..[%?])%(#.#.)"
-
+    # export RPS1="%~ $MAYBE_HOSTNAME %(?..[%?])%(#.#.)"
+    export RPS1="%{$fg_bold[black]%}%~ $MAYBE_HOSTNAME %{$fg[red]%}%(?..[%?])%(#.#.)%{$reset_color%}"
 #         if [[ $code != "0" ]]; then
 #             echo ok
 #             export RPS1="$(parse_git_branch) %?"
@@ -722,3 +737,10 @@ function mana { man -p "less -P '[ ,][ ]$1'" }
 PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
 
 eval `dircolors`
+
+alias feh="feh -B black -."
+
+# eval "$(fasd --init auto)"
+
+zle -N predict-on
+listen-later() { extract-audio.sh "$1"; mv "$1".mp3 $cons/listen/; trash "$1" }

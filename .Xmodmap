@@ -1,0 +1,45 @@
+! right alt as super
+keycode 108 = Super_R 
+
+!uncomment below when using colemak also
+remove mod1 = Super_R
+add mod4 = Super_R
+
+! caps as control
+remove lock = Caps_Lock
+add control = Caps_Lock 
+
+! original control as caps
+! remove control = Control_L
+! add lock = Control_L
+
+!keycode 66 = Control_L
+!add Control = Control_L
+
+!keycode 133 = Super_L
+!add mod4 = Super_L
+
+! bind control to hyper
+!remove control = Hyper_L
+!add mod3 = Hyper_L
+
+! keycode 134 = Hyper_R
+! remove mod4 = Hyper_L
+! add mod3 = Hyper_R
+
+!hyper
+! remove control = Control_L
+! add mod3 = Control_L
+
+! remove mod2 = Num_Lock
+
+! keycode 135 = Alt_R
+! add mod5 = Alt_R
+
+! keycode 134 = Hyper_R
+! add mod3 = Hyper_R
+
+! ()
+! keycode 18 = parenleft 9
+! keycode 19 = parenright 0
+

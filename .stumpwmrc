@@ -85,6 +85,7 @@
 (defprog emacs "e" "emacs" '(:class "Emacs"))
 (defprog urxvt "c" *terminal* '(:class "URxvt"))
 (defprog irc "d" "urxvtcd -title irc -e irc-session" '(:title "irc"))
+;; (global "s-d" nil)
 (defprog firefox "x" "firefox" '(:class "Firefox"))
 (defprog google-chrome "g" "google-chrome" '(:class "Google-chrome"))
 (defprog zathura "z" "zathura" '(:class "Zathura"))
@@ -94,10 +95,17 @@
 (defprog org-capture "r" "emacsclient -e '(org-capture)'" '(:title "Capture"))
 
 (define-frame-preference "1"
-    (2 nil nil :class "mplayer2")
+    (0 t nil :class "Conkeror")
+  (0 nil nil :class "Emacs")
+  (0 t nil :role "browser")
+  (2 nil nil :class "mplayer2")
   (3 nil nil :class "mplayer2")
-  (2 nil t :title "YouTube")
-  (2 nil t :class "Unison-gtk"))
+  (3 nil t :title "YouTube")
+  (2 nil t :title "irc")
+  (2 nil t :class "Unison"))
+
+(define-frame-preference "3"
+    (0 nil t :title "screen stumpwm"))
 
 (defcommand echo-colors-brief () ()
   "Output a brief list of currently defined colors."
@@ -241,6 +249,7 @@ NONE ^0*black ^1*red ^2*green ^3*yellow ^4*blue ^5*magenta ^6*cyan ^7*white ^8*u
 	      (focus-window window)))
 
 (global "s-SPC" "globally-previous")
+(global "M-TAB" nil)
 
 (defcommand force-redisplay () ()
   "Like redisplay, only resizing to 1x1"
@@ -322,6 +331,8 @@ NONE ^0*black ^1*red ^2*green ^3*yellow ^4*blue ^5*magenta ^6*cyan ^7*white ^8*u
   (send-key-last-frame "space"))
 
 (global "s-s" "send-space-last")
+;; C-s-v and M-s-v won't work for some reason, so I had to make due with
+;; these
 (global "s-v" "scroll-last-down")
 (global "s-b" "scroll-last-up")
 
@@ -429,7 +440,7 @@ mplayer)"
 ;;---------------------------------------------------------
 ;; kill window
 ;;---------------------------------------------------------
-(defun kill-window (menu)
+(defun my-kill-window (menu)
   (let* ((element (nth (menu-state-selected menu)
                        (menu-state-table menu)))
          (selected-window (second element)))
@@ -605,3 +616,5 @@ mplayer)"
 
 (global "s-\\" "fullscreen")
 (bind "f" "fullscreen")
+
+;; (global "s-A" "switch-irc-channel")
