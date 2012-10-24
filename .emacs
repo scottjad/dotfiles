@@ -761,7 +761,7 @@ If no associated application, then `find-file' FILE."
          (org-agenda-time-grid nil)
          (org-agenda-prefix-format " %12:t ")
          (org-agenda-include-all-todo nil)
-         (org-agenda-repeating-timekstamp-show-all t)
+         ;; (org-agenda-repeating-timestamp-show-all t)
          (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))))
        ("u" "Upcoming deadlines (6 months)" agenda ""
         ((org-agenda-skip-function '(org-agenda-skip-entry-if 'notdeadline))
@@ -983,23 +983,24 @@ If no associated application, then `find-file' FILE."
               "Dina-12:medium"
               ;; "Bitocra-8"
               "MonteCarlo-10"
-              ;; "ProFont-9"
+              "ProFont-9"
+              "Proggy Clean-10"
               "Boxxy-12"
               ;; "M+ 1m-12:thin"
               ;; "M+ 1m-32:thin"
               ;; "mped-10"
               "Fixed-10"
-              ;; "Unifont-12"
+              "Unifont-12"
               "GohuFont-9"
               ;; "Ohsnap-10"
               "Ohsnap.icons-12"
               "GohuFont-12"
               "Terminus-32:bold"
-              "Terminus-10"
+              "Terminus-12"
               "Terminus-8"
               "Tamsyn-13"
               ;; "Anonymous Pro"
-              ;; "Crisp"
+              "Crisp"
               ;; "mensch"
               ;; "smooth"
               ;; "Fixedsys Excelsior 3.01-L2-12"
@@ -1589,9 +1590,10 @@ and evaling there."
 ;;---------------------------------------------------------
 ;; clojure refactoring
 ;;---------------------------------------------------------
-(add-to-list 'load-path "~/src/clojure-refactoring/")
+(add-to-list 'load-path "~/.elisp/clojure-refactoring/src/clojure_refactoring/payload/")
 (require 'clojure-refactoring-mode)
-(global-set-key (kbd "C-c e") 'clojure-refactoring-ido)
+;; (global-set-key (kbd "C-c e") 'clojure-refactoring-ido)
+(global-set-key (kbd "C-c e") 'clojure-refactoring-prompt)
 
 (global-set-key (kbd "<f8>")
                 (lambda () (interactive)
@@ -2123,7 +2125,7 @@ mozrepl to evaluate in browser"
     ))
 
 (add-hook 'slime-repl-mode-hook 'slime-clojure-repl-setup)
-(define-key global-map [(control meta ?r)] 'org-capture)
+(bind "C-M-r" org-capture)
 
 (defun my-emms-playlist-total-time-below-point ()
   "Calculates the total time taken for all the tracks currently
@@ -2463,7 +2465,7 @@ mozrepl to evaluate in browser"
  '(notmuch-search-oldest-first nil)
  '(notmuch-show-logo nil)
  '(nxhtml-skip-welcome t)
- '(org-agenda-files (quote ("~/org/books.org" "~/org/goals.org" "~/org/birthdays.org" "~/org/workout.org" "~/org/recipes.org" "~/org/someday.org" "~/org/quotes.org" "~/org/todo.org" "~/org/calendar.org" "~/org/shopping.org")))
+ '(org-agenda-files (quote ("~/org/strangeloop.org" "~/org/books.org" "~/org/goals.org" "~/org/birthdays.org" "~/org/workout.org" "~/org/recipes.org" "~/org/someday.org" "~/org/quotes.org" "~/org/todo.org" "~/org/calendar.org" "~/org/shopping.org")))
  '(org-agenda-window-frame-fractions (quote (0.1 . 0.75)))
  '(org-atom-publish-content t)
  '(org-export-with-section-numbers nil)
@@ -3105,8 +3107,8 @@ about what flexible matching means in this context."
 (desktop-save-mode 1)
 ;; (add-hook 'auto-save-hook (lambda () (desktop-save-in-desktop-dir)))
 ;; doesn't appear to work
-(setq desktop-clear-preserve-buffers
-      (remove "\\*scratch\\*" desktop-clear-preserve-buffers))
+;; (setq desktop-clear-preserve-buffers
+;;       (remove "\\*scratch\\*" desktop-clear-preserve-buffers))
 
 (savehist-mode 1)
 
@@ -3336,10 +3338,11 @@ be persisting emms-position"
 ;; (change-cursor-mode 1)
 ;; (toggle-cursor-type-when-idle 1)
 
-(require 'pulse)
-(defun cedet-called-interactively-p ()
-  t)
-(pulse-toggle-integration-advice 1)
+;; slows stuff down
+;; (require 'pulse)
+;; (defun cedet-called-interactively-p ()
+;;   t)
+;; (pulse-toggle-integration-advice 1)
 
 ;; (add-to-list 'load-path "~/src/riece-7.0.3/lisp/")
 ;; (require 'riece)
@@ -4238,11 +4241,11 @@ This is to update existing buffers after a Git pull of their underlying files."
 ;; (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 ;; (global-set-key (kbd "M-<") 'mc/mark-all-like-this)
 
-(add-to-list 'load-path "~/.elisp/test-case-mode/")
-(require 'test-case-mode)
-(add-hook 'find-file-hook 'enable-test-case-mode-if-test)
-(add-hook 'compilation-finish-functions
-          'test-case-compilation-finish-run-all)
+;; (add-to-list 'load-path "~/.elisp/test-case-mode/")
+;; (require 'test-case-mode)
+;; (add-hook 'find-file-hook 'enable-test-case-mode-if-test)
+;; (add-hook 'compilation-finish-functions
+;;           'test-case-compilation-finish-run-all)
 
 ;; (add-to-list 'load-path "~/.elisp/nrepl.el/")
 ;; (require 'nrepl)
@@ -4266,3 +4269,93 @@ This is to update existing buffers after a Git pull of their underlying files."
 ;; python-end-of-block
 ;; C-c C-u is python-beginning-of-block
 
+
+;;---------------------------------------------------------
+;; anything
+;;---------------------------------------------------------
+(require 'anything)
+(bind "<f9> a" anything)
+(bind "C-c C-a" anything)
+(bind "M-X" anything)
+(require 'anything-config)
+
+(defun my-get-source-directory (path)
+  "Please imlement me. Currently returns `path' inchanged."
+  path)
+
+(defvar my-anything-c-source-file-search
+  '((name . "File Search")
+    (init . (lambda ()
+              (setq anything-default-directory
+                    default-directory)))
+    (candidates . (lambda ()
+                    (let ((args
+                           (format "'%s' \\( -path \\*/.svn \\) -prune -o -iregex '.*%s.*' -print"
+                                   (my-get-source-directory anything-default-directory)
+                                   anything-pattern)))
+                    (start-process-shell-command "file-search-process" nil
+                                   "find" args))))
+    (type . file)
+    (requires-pattern . 4)
+    (delayed))
+  "Source for searching matching files recursively.")
+
+;; (require 'anything-complete)
+;; ;; Automatically collect symbols by 150 secs
+;; (anything-lisp-complete-symbol-set-timer 150)
+;; ;; replace completion commands with `anything'
+;; (anything-read-string-mode 1)
+;; ;; Bind C-o to complete shell history
+;; (anything-complete-shell-history-setup-key "\C-o")
+;; (add-hook 'anything-after-initialize-hook
+;;       '(lambda ()
+;;         (define-key anything-read-file-name-map "/" 'anything-read-file-name-follow-directory)))
+
+
+;; (require 'anything-etags)
+;;(setq anything-etags-enable-tag-file-dir-cache t)
+;;(setq anything-etags-cache-tag-file-dir "~/workspace/")
+
+(setq anything-sources
+  (list
+    anything-c-source-buffers
+    anything-c-source-org-headline
+    anything-c-source-recentf
+    anything-c-source-emacs-commands
+    anything-c-source-emms-dired
+    anything-c-source-files-in-current-dir
+    anything-c-source-locate
+    anything-c-source-etags-select
+    anything-c-source-occur
+    anything-c-source-man-pages
+    anything-c-source-buffer-not-found
+    anything-c-source-imenu
+;    anything-apropos-sources
+    anything-c-source-calculation-result
+    anything-c-source-kill-ring
+    anything-c-source-fixme
+    my-anything-c-source-file-search))
+(require 'anything-grep)
+(bind "C-z" anything)
+
+
+(setq magit-diff-refine-hunk 'all)
+
+(require 'rotate-text)
+
+(add-to-list 'load-path "~/.elisp/dictionary-el/")
+(require 'dictionary)
+(bind "C-c d" dictionary-search)
+(defun odds (a b)
+  "convert ratio given on betting sites to a percentage chance of
+winning. It's slightly off because it doesn't take into account
+he bookie's cut."
+  (interactive "nA: \nnB: ")
+  (let ((percent (/ (float b) (+ a b))))
+    (if (called-interactively-p 'interactive )
+        (message (format "%f" percent))
+      percent)))
+
+;; (require 'lusty-explorer)
+
+(define-key slime-mode-map (kbd "C-c C-s") nil)
