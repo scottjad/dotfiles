@@ -183,6 +183,7 @@ global_color_theme(
           "#message-area-container div.goog-inline-block { display: none !important: }",
           "div.section-minimize { display: none !important; }",
           '.entry { background-color: #444 !important; }',
+          'div.item-star-active { background: transparent url(http://www.google.com/reader/ui/3904077461-entry-action-icons.png) no-repeat !important; background-position: -64px -33px !important;}',
           // hide
           '#viewer-footer, '+   // next prev buttons
           '#chrome-header, '+   // tag name, expanded/list
