@@ -8,12 +8,14 @@ register_user_stylesheet(
          "code, pre { font-family: DejaVu Sans Mono !important; "+
          "font-size: 12px !important; }"+
          "span.__conkeror_hint {"+
-         " line-height: 14px !important;"+
-         ' font-family: Dina !important; '+
-         ' padding: 1px !important;'+
+         " line-height: 1.5ems !important;"+
+         // ' font-family: Dina !important; '+
+         ' font-family: Ubuntu !important; '+
+         // 'font-weight: bold !important; '+
+         ' padding: 3px !important;'+
          // ' font-family: Tamsyn !important; '+
-         // ' font-weight: normal !important;'+
-         // ' color: green !important; '+
+         // ' font-style: italic !important;'+
+         ' font-weight: normal !important;'+
          " font-size: 12px !important;"+
          "}\n"]));
 
@@ -47,43 +49,51 @@ global_color_theme(
         ['*:not(img) {'+
          // 'h1, h2, p, a, div, span, table, td, th tr, ul, li, strong, input, select, textarea, body {'+
          'font-style: normal !important;'+ // italics is hard to read with gohu
-         'background: #303030 !important;'+
+         // 'background: #303030 !important;'+
+
+         'background: #404040 !important;'+
          'color: #cccccc !important; '+
          'text-shadow: 0px 0px 0px  black !important;'+ // fix ugly shadows
-         'letter-spacing: 0 !important;'+               // don't scrunch words
+         
+         
+         // 'letter-spacing: 0 !important;'+ // don't scrunch words
          // '*:not(img) { background: #262626 !important; '+
          // 'color: #f6f3e8 !important; '+
          // 'color: #686868 !important; '+
          // 'font-family: GohuFont, Tamsyn !important; '+
          // 'font-family: OhSnap !important; '+
-         'font-family: Dina !important; '+
+         // 'font-family: Dina !important; '+
          // 'font-family: DejaVu Sans !important; '+
          // 'font-family: Inconsolata !important; '+
          // 'font-family: MonteCarlo !important; '+
          // 'font-family: Terminus !important; '+
-         // 'font-family: Envy Code R !important; '+
+         // 'font-family: EnvyPn !important; '+
+         // 'font-family: Ubuntu Mono !important; '+
+         'font-family: Ubuntu !important; '+
+         // 'font-weight: lighter !important; '+
          // 'font-size: 10pt !important; '+
          'font-size: 12pt !important; '+
-         '-moz-border-bottom-colors: #444 #444 !important; '+
-         '-moz-border-top-colors: #444 #444  !important; '+
-         '-moz-border-right-colors: #444 #444  !important; '+
-         '-moz-border-left-colors: #444 #444  !important; '+
+         '-moz-border-bottom-colors: #505050 #505050 !important; '+
+         '-moz-border-top-colors: #505050 #505050  !important; '+
+         '-moz-border-right-colors: #505050 #505050  !important; '+
+         '-moz-border-left-colors: #505050 #505050  !important; '+
          'box-shadow: 0 0 0 black !important; '+
          '-moz-box-shadow: 0 0 0 black !important; '+
-         'border-color: #444 !important; '+
+         'border-color: #505050 !important; '+
          'text-decoration: none !important;'+
          // inventing on principles
          // 'color: #abb1ad !important; '+
          // 'background: #454545 !important;'+
          ' }',
-         'p { line-height: 100% !important; }',
+         // 'p { line-height: 1.5em !important;}',
          'code, pre, code *, pre * { color: #f6f3e8 !important; background-color: #353535 !important; }',
          ':link, :link * {  color: #8ac6f2 !important}',
          ':visited, :visited * { color: #95e454 !important}',
+         
          'h1,h2,h3,h4,h5,h6 { color: white !important}',
          '.literallink:link { color: #3afdff !important; background-color: #008b8b !important; text-decoration: none !important}',
-         '.literallink:visited { color: #ff57fd !important; background-color: darkmagenta !important; text-decoration: none !important}'             ,
-         'em { background-color: #444444 !important;}',
+         '.literallink:visited { color: #ff57fd !important; background-color: darkmagenta !important; text-decoration: none !important}',
+         'em { background-color: #505050 !important;}',
          // form elements
          'input:focus, textarea:focus { '+
          // + 'color: #dd4ca7 !important; '
@@ -162,7 +172,8 @@ global_color_theme(
          [':link img { border: dashed 1px #008b8b !important; margin: 5px !important; }',
           ':visited img { border: dashed 1px darkmagenta !important; margin: 5px !important; }'
          ], $domains = ["bbs.archlinux.org",
-                        "crunchbanglinux.org"]),
+                        "crunchbang.org",
+                       "google.com"]),
 
      make_css_data_uri(
          ['#entries { padding-left: 5px !important; padding-right: 5px !important; }', // don't add padding on left side
@@ -192,11 +203,7 @@ global_color_theme(
          ], $url_prefixes = ["http://www.google.com/reader",
                              "https://www.google.com/reader"]),
 
-     make_css_data_uri(
-         [".current { border: solid 2px #8968cd !important; }"+
-          "td.default { border :solid 2px transparent !important; }"+
-          ".current-comment > td.default { border: solid 2px #8968cd !important; }"
-         ], $domains = ["news.ycombinator.com"]),
+     hacker_news_box("#8968cd"),
 
      make_css_data_uri(
          ['.k { font-weight: bold !important }', // keyword
@@ -218,14 +225,27 @@ global_color_theme(
     [make_css_data_uri(
         ['*:not(img) { background: #edebe8 ! important; color: #2c2d32 !important; font-family: MonteCarlo !important; }',
          ':link, :link * { color: #1856ba !important }',
-         ':visited, :visited * { color: #95e454 !important }'])]);
+         ':visited, :visited * { color: #95e454 !important }']
+        , $url_prefixes = ["http", "about"])]);
 
 global_color_theme(
     "grey", "A",
     [make_css_data_uri(
         ['*:not(img) { background: #4c4c4c ! important; color: #cccccc !important }',
          ':link, :link * { color: #8ac6f2 !important }',
-         ':visited, :visited * { color: #95e454 !important }'])]);
+         ':visited, :visited * { color: #95e454 !important }']
+            , $url_prefixes = ["http", "about"])]);
+
+global_color_theme(
+    "gnome+", "M-d",
+    [make_css_data_uri(
+        ['*:not(img) { background: darkslategrey !important; color: wheat !important; }',
+         'em { color: salmon !important; }',
+         ':link, :link * { color: aquamarine !important }',
+         ':visited, :visited * { color: salmon !important }']
+        , $url_prefixes = ["http", "about"]),
+     hacker_news_box("LightSalmon")
+    ]);
 
 // global_color_theme(
 //     "grey", "A",
@@ -242,3 +262,10 @@ global_color_theme(
 //          ':visited, :visited * { color: #d75f00 !important }'])]);
 
 
+function hacker_news_box(color) {
+    return make_css_data_uri(
+         [".current { border: solid 2px " + color + " !important; }"+
+          "td.default { border :solid 2px transparent !important; }"+
+          ".current-comment > td.default { border: solid 2px " + color + " !important; }"
+         ], $domains = ["news.ycombinator.com"]);
+};
