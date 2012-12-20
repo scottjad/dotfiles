@@ -7,6 +7,8 @@ register_user_stylesheet(
         ["select,option,input { color: #bbb !important; background-color: #333 !important; }"+
          "code, pre { font-family: DejaVu Sans Mono !important; "+
          "font-size: 12px !important; }"+
+         "#minibuffer, hbox.mode-line { height: 1.3em !important; }"+
+         "#minibuffer {background-color: #444 !important; }"+
          "span.__conkeror_hint {"+
          " line-height: 1.5ems !important;"+
          // ' font-family: Dina !important; '+
