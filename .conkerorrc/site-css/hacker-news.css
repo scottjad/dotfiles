@@ -99,3 +99,9 @@ body > center > table > tbody > tr > td > table {
 table {
    width: 600px !important;
 }
+
+td img[width="0"] {
+   width: 5px !important;
+   height: 50px !important;
+   background-color: #ff6600 !important;
+}
