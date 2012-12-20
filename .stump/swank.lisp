@@ -1,4 +1,6 @@
 ;;; Load swank first in case something doesn't work.
+(pushnew #p"/home/scott/.sbcl/systems/" asdf:*central-registry* :test #'equal)
+ (push #p"/home/scott/.sbcl/systems/" asdf:*central-registry*)
 (load (home ".elisp/slime/swank-loader.lisp"))
 (swank-loader:init)
 
