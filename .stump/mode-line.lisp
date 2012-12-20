@@ -23,7 +23,8 @@
   (if (equal s "")
       ""
       (let* ((words (cl-ppcre:split "\\s+" s))
-             (ping (nth 5 words))
+             (ping (multiple-value-bind (_ ping)
+                       (cl-ppcre:scan-to-strings "([\\.\\d]+) ms" s) (elt ping 0)))
              (color (bar-zone-color (read-from-string ping)
                                     300 700 1000))
              (colored-ping (format nil "^[~A~3D^]" color ping)))
@@ -37,7 +38,7 @@
       (list
        "[^B%n^b] " ; group num
        '(:eval (color-ping (read-ml-file ".ml-wifi")))
-       "%B" ; battery
+       "%B " ; battery
        ;; "%g" ;groups
        ;; "^B%w^b" ; window list
        ;; voicemail, sms, email
@@ -59,7 +60,7 @@
        '(:eval (read-ml-file ".ml-weather")) "°F " ;; "°F "
        ;; ;; volume
        ;; '(:eval (read-file ".mode-line-volume")) " "
-       "%f"
+       "%f "
        "%c"                 ; cpu
        ;; '(:eval (read-ml-file ".ml-sensors")) " "
        ;; "%M" ; mem
