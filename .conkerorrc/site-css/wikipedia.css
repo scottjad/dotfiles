@@ -2,6 +2,6 @@ div#content {
    margin-left: 0em !important;
 }
 
-#mw-panel, #siteNotice, #mw-head, #mw-page-base, #mw-head-base {
+#mw-panel, #siteNotice, #mw-head, #mw-page-base, #mw-head-base, #footer, #mw-articlefeedback {
    display: none !important;
 }
