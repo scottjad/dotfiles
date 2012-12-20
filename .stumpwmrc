@@ -43,7 +43,7 @@
 (defvar *terminal* "urxvtcd")
 
 (set-font "-xos4-terminus-bold-r-normal--14-140-72-72-c-80-iso8859-7")
-;; (set-font "-xos4-terminus-bold-r-normal--24-*")
+;; (set-font "-xos4-terminus-medium-r-normal--32-*")
 ;; (set-font "-xos4-terminus-medium-r-normal--14-140-72-72-c-80-iso8859-7")
 ;; (set-font "-*-terminus-*-*-*")
 ;; (set-font "-*-dina-bold-r-*-*-13-*")
@@ -162,10 +162,10 @@ NONE ^0*black ^1*red ^2*green ^3*yellow ^4*blue ^5*magenta ^6*cyan ^7*white ^8*u
    (remove-split)
    (focus-all win)))
 
-(global "s-0" "remove-split")
-(global "s-1" "delete-other-windows")
-(global "s-2" "vsplit")
-(global "s-3" "hsplit")
+;; (global "s-0" "remove-split")
+;; (global "s-1" "delete-other-windows")
+;; (global "s-2" "vsplit")
+;; (global "s-3" "hsplit")
 
 (defun more-than-one-frame? ()
   (< 1 (length (group-frames (window-group (current-window))))))
@@ -369,7 +369,7 @@ NONE ^0*black ^1*red ^2*green ^3*yellow ^4*blue ^5*magenta ^6*cyan ^7*white ^8*u
   "Display color at top-left corner of region"
   (message (run-shell-command "import ppm: | convert ppm: -crop 1x1+0+0 ppm: | tail -n 1 | perl -ne 'printf(\"#%02x%02x%02x\",unpack \"CCC\")'" t)))
 
-(bind "t" "color")
+(bind "c" "color")
 
 (defcommand fix-height () ()
   "Resize the current frame height so that the current window's sides are
