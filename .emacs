@@ -41,7 +41,8 @@
 (setq delete-by-moving-to-trash t) ; slow
 (setq read-buffer-completion-ignore-case t)
 (setq read-file-name-completion-ignore-case t)
-(add-hook 'emacs-lisp-mode-hook 'eldoc-mode) 
+;; (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+;; (add-hook 'lisp-mode-hook '(lambda () (eldoc-mode -1))) 
 (setq ffap-require-prefix t) ;; C-u C-x C-f finds the file at point
 ;; so bit fonts split with vertical bar
 (setq split-height-threshold 550)
@@ -82,8 +83,8 @@
 (bind "C-c C-r" eval-region)
 (bind "C-x C-b" eval-buffer)
 
-(when window-system
-  (add-hook 'after-init-hook 'server-start t))
+;; (when window-system
+;;   (add-hook 'after-init-hook 'server-start t))
 
 (use-package ido
   :init (ido-mode t)
@@ -211,7 +212,7 @@ the dired buffer."
 
 ;;; ( and ) for hiding details
                       (eval-after-load "dired" '(use-package dired-details+))
-
+                      
                       (defun hide-dot-files ()
                         (interactive)
                         (dired-mark-files-regexp "^\\.")
@@ -458,14 +459,15 @@ be persisting emms-position"
   :commands (tsv-mode tsv-normal-mode))
 
 (use-package helm
+  :disabled t
   :load-path "~/.elisp/helm"
-  :commands helm-mini
+  :commands (helm-mini helm-mode)
   :bind ("C-;" . helm-mini)
   :config (use-package helm-config))
 
 (use-package color-theme
   :load-path "~/.elisp/color-theme"
-  :commands (color-theme-select color-theme-initialize)
+  :commands (color-theme-select color-theme-initialize color-theme-install)
   :config
   (progn
     ;; (color-theme-initialize)
@@ -496,16 +498,17 @@ be persisting emms-position"
 (use-package gunmetal
   :commands color-theme-gunmetal)
 
-(use-package folio
-  :comamnds color-theme-folio)
+;; (use-package folio
+;;   :comamnds color-theme-folio)
 
-(use-package color-theme-folio-emacs
-  :commands color-theme-folio-emacs)
+;; (use-package color-theme-folio-emacs
+;;   :commands color-theme-folio-emacs)
 
 (use-package color-theme-solarized
   :load-path "~/.elisp/emacs-color-theme-solarized/"
   :commands (color-theme-solarized-dark
-             color-theme-solarized-light))
+             color-theme-solarized-light)
+  :config (color-theme-initialize))
 
 (use-package color-theme-sanityinc-solarized
   :load-path "~/.elisp/color-theme-sanityinc-solarized/"
@@ -549,6 +552,7 @@ be persisting emms-position"
 ;; (color-theme-folio)
 
 (use-package yasnippet
+  :disabled t
   :load-path "~/.elisp/yasnippet"
   :commands (yas/minor-mode yas/expand)
   :init
@@ -706,12 +710,15 @@ be persisting emms-position"
               ;; "DejaVu Sans Mono-9"
               ;; "DejaVu Sans Mono-28"
               ;; "DejaVu Sans Mono-10"
+              "Ubuntu-12:light"
               ;; "DejaVu Sans-10"
               ;; "DejaVu Sans-16"
               "Consolas-12"
               "Courier 10 Pitch-13" ; 1 and l look the same
               ;; "Verdana-12"
 
+              "Source Code Pro-10"
+              ;; "Source Code Pro-14"
               ;; "Inconsolata-12:medium"
               "Inconsolata-14:medium"
               "Inconsolata-16:medium"
@@ -832,7 +839,24 @@ be persisting emms-position"
          ("C-c git" . magit-status))
   :init (progn (setq magit-diff-refine-hunk 'all)
                ;; C-u C-x g
-               (setq magit-repo-dirs '("~/.elisp" "~/src" "~/code" "~/c01"))))
+               (setq magit-repo-dirs '("~/.elisp" "~/src" "~/code" "~/c01")))
+  :config (progn
+            
+            ;; full screen magit-status
+
+            (defadvice magit-status (around magit-fullscreen activate)
+              (window-configuration-to-register :magit-fullscreen)
+              ad-do-it
+              (delete-other-windows))
+
+            (defun magit-quit-session ()
+              "Restores the previous window configuration and kills the magit buffer"
+              (interactive)
+              (kill-buffer)
+              (jump-to-register :magit-fullscreen))
+
+            (define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
+))
 
 (use-package magit-blame
   :commands magit-blame-mode)
@@ -1027,7 +1051,7 @@ arguments: BEG and END (region to sort)."
 
 (defun transparent ()
   (interactive)
-  (set-frame-parameter (selected-frame) 'alpha '(90 90)))
+  (set-frame-parameter (selected-frame) 'alpha '(70 70)))
 (defun opaque ()
   (interactive)
   (set-frame-parameter (selected-frame) 'alpha '(100 100)))
@@ -1077,14 +1101,17 @@ arguments: BEG and END (region to sort)."
 ;; Clojure-mode and Slime
 ;;---------------------------------------------------------
 (use-package clojure-mode
+  :defer nil
   :load-path "~/.elisp/clojure-mode"
   :commands (clojure-mode)
   :mode (("\\.clj\\'" . clojure-mode)
           ("\\.cljs\\'" . clojure-mode))
   :config
-  (progn (defun jsj-clojure-example (name)
-           (interactive "sFunction (ex. clojure.set/join): ")
-           (browse-url (concat "http://clojuredocs.org/clojure_core/" name "#examples")))
+  (progn
+
+    (defun jsj-clojure-example (name)
+      (interactive "sFunction (ex. clojure.set/join): ")
+      (browse-url (concat "http://clojuredocs.org/clojure_core/" name "#examples")))
 
          (define-key clojure-mode-map (kbd "C-c d") 'jsj-clojure-example)
 
@@ -1166,7 +1193,6 @@ put cursor at (-> foo bar| tar) and use this."
 
 ;;; clojure mode has no business messing up slime for CL
 (remove-hook 'slime-connected-hook 'clojure-slime-remote-file-name-hook)
-(eval-after-load "clojure-mode" '(add-hook 'clojure-mode-hook (paren-face-add-support clojure-font-lock-keywords)))
 (eval-after-load "slime-repl" '(add-hook 'slime-repl-mode-hook (paren-face-add-support clojure-font-lock-keywords)))
 
 (use-package elein
@@ -1223,103 +1249,105 @@ put cursor at (-> foo bar| tar) and use this."
 
 ))
 
-(use-package slime
-  :load-path ("~/.elisp/slime"
-              "~/.elisp/slime/contrib")
-  :commands (slime slime-connect)
-  :bind ("<f8>" . slime-selector)
-  :init
-  (progn
-    (add-hook
-     'slime-load-hook (lambda () (slime-setup '(slime-fancy))))
+;; (use-package slime
+;;   :load-path ("~/.elisp/slime"
+;;               "~/.elisp/slime/contrib")
+;;   :commands (slime slime-connect slime-mode)
+;;   :bind ("<f8>" . slime-selector)
+;;   :init
+;;   (progn
+
+;;     (add-hook
+;;      'slime-load-hook (lambda ()
+;;                         (slime-setup '(slime-fancy))))
     
-    (defmacro slime-local-connect (name port)
-      `(defun ,name ()
-         (interactive)
-         (slime-connect "127.0.0.1" ,port)))
+;;     (defmacro slime-local-connect (name port)
+;;       `(defun ,name ()
+;;          (interactive)
+;;          (slime-connect "127.0.0.1" ,port)))
 
-    (slime-local-connect sl5 4005)
-    (slime-local-connect sl6 4006)
-    (slime-local-connect sl7 4007)
-    (slime-local-connect sl8 4008)
-    (slime-local-connect sl9 4009)
+;;     (slime-local-connect sl5 4005)
+;;     (slime-local-connect sl6 4006)
+;;     (slime-local-connect sl7 4007)
+;;     (slime-local-connect sl8 4008)
+;;     (slime-local-connect sl9 4009)
 
-    (slime-local-connect sl-stump 4006)
-    (slime-local-connect sl-clojure 4005)
-    )
-  :config
-  (progn
+;;     (slime-local-connect sl-stump 4006)
+;;     (slime-local-connect sl-clojure 4005)
+;;     )
+;;   :config
+;;   (progn
 
-    (setq slime-net-coding-system 'utf-8-unix)
+;;     (setq slime-net-coding-system 'utf-8-unix)
 
-    (def-slime-selector-method ?j
-      "most recently visited clojure-mode buffer."
-      (slime-recently-visited-buffer 'clojure-mode))
-
-
-         (define-key slime-mode-map (kbd "C-c p")
-           'slime-pprint-eval-last-expression)
-
-         (eval-after-load 'slime-repl
-           '(define-key slime-repl-mode-map (kbd "C-c p")
-              'slime-pprint-eval-last-expression))
-
-         (define-key slime-mode-map (kbd "C-c C-s") nil)
+;;     (def-slime-selector-method ?j
+;;       "most recently visited clojure-mode buffer."
+;;       (slime-recently-visited-buffer 'clojure-mode))
 
 
-;;; michael blais
-         (defun slime-eval-at-register (reg)
-           "Take the cursor to a register's location and eval
-  the expression there. Useful for testing stuff without
-  having to 'go there' first."
-           (interactive "cEval at register: ")
-           (save-excursion
-             (jump-to-register reg)
-             (slime-eval-last-expression)))
+;;     (define-key slime-mode-map (kbd "C-c p")
+;;       'slime-pprint-eval-last-expression)
 
-         ;; Note: slime-interactive-eval is also available on C-c :,
-         ;; so we override it for something that looks like C-x C-e.
-         (define-key slime-mode-map "\C-c\C-e" 'slime-eval-at-register)
+;;     (eval-after-load 'slime-repl
+;;       '(define-key slime-repl-mode-map (kbd "C-c p")
+;;          'slime-pprint-eval-last-expression))
 
-;;; really need a slime-eval-last-register or slime-eval-last-expression
-
-         ;; Clojure stack trace change
-         (defface esk-clojure-trace-face
-           '((((class color) (background dark))
-              (:foreground "grey50"))
-             (((class color) (background light))
-              (:foreground "grey55")))
-           "Face used to dim parentheses."
-           :group 'starter-kit-faces)
-
-         (setq esk-clojure-trace-face 'esk-clojure-trace-face)
-
-         ;; This will make relevant lines stand out more in stack traces
-         (defun sldb-font-lock ()
-           (font-lock-add-keywords nil
-                                   '(("[0-9]+: \\(clojure\.\\(core\\|lang\\).*\\)"
-                                      1 esk-clojure-trace-face)
-                                     ("[0-9]+: \\(java.*\\)"
-                                      1 esk-clojure-trace-face)
-                                     ("[0-9]+: \\(swank.*\\)"
-                                      1 esk-clojure-trace-face)
-                                     ("\\[\\([A-Z]+\\)\\]"
-                                      1 font-lock-function-name-face))))
-
-         (add-hook 'sldb-mode-hook 'sldb-font-lock)
-
-         (use-package ac-slime
-           :load-path "~/.elisp/ac-slime"
-           :init (progn (add-hook 'slime-mode-hook 'set-up-slime-ac)
-                        (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)))
-
-         (add-hook 'slime-inspector-mode-hook
-                   (lambda ()
-                     (font-lock-add-keywords nil '(("\\(\\w+\\)(" 1
-                                                    font-lock-function-name-face)))))
+;;     (define-key slime-mode-map (kbd "C-c C-s") nil)
 
 
-         ))
+;;     ;; michael blais
+;;     (defun slime-eval-at-register (reg)
+;;       "Take the cursor to a register's location and eval
+;;   the expression there. Useful for testing stuff without
+;;   having to 'go there' first."
+;;       (interactive "cEval at register: ")
+;;       (save-excursion
+;;         (jump-to-register reg)
+;;         (slime-eval-last-expression)))
+
+;;     ;; Note: slime-interactive-eval is also available on C-c :,
+;;     ;; so we override it for something that looks like C-x C-e.
+;;     (define-key slime-mode-map "\C-c\C-e" 'slime-eval-at-register)
+
+;;     ;; really need a slime-eval-last-register or slime-eval-last-expression
+
+;;     ;; Clojure stack trace change
+;;     (defface esk-clojure-trace-face
+;;       '((((class color) (background dark))
+;;          (:foreground "grey50"))
+;;         (((class color) (background light))
+;;          (:foreground "grey55")))
+;;       "Face used to dim parentheses."
+;;       :group 'starter-kit-faces)
+
+;;     (setq esk-clojure-trace-face 'esk-clojure-trace-face)
+
+;;     ;; This will make relevant lines stand out more in stack traces
+;;     (defun sldb-font-lock ()
+;;       (font-lock-add-keywords nil
+;;                               '(("[0-9]+: \\(clojure\.\\(core\\|lang\\).*\\)"
+;;                                  1 esk-clojure-trace-face)
+;;                                 ("[0-9]+: \\(java.*\\)"
+;;                                  1 esk-clojure-trace-face)
+;;                                 ("[0-9]+: \\(swank.*\\)"
+;;                                  1 esk-clojure-trace-face)
+;;                                 ("\\[\\([A-Z]+\\)\\]"
+;;                                  1 font-lock-function-name-face))))
+
+;;     (add-hook 'sldb-mode-hook 'sldb-font-lock)
+    
+;;     (use-package ac-slime
+;;       :load-path "~/.elisp/ac-slime"
+;;       :init (progn (add-hook 'slime-mode-hook 'set-up-slime-ac)
+;;                    (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)))
+    
+;;     (add-hook 'slime-inspector-mode-hook
+;;               (lambda ()
+;;                 (font-lock-add-keywords nil '(("\\(\\w+\\)(" 1
+;;                                                font-lock-function-name-face)))))
+
+
+;;     ))
 
              
 (defun backward-up-list+ ()
@@ -1551,35 +1579,35 @@ and evaling there."
 (bind "<M-wheel-up>" text-scale-increase)
 (bind "<M-wheel-down>" text-scale-decrease)
 
-;; (load "indent-yank")
+(load "indent-yank")
 
 (use-package js2-mode
   :commands js2-mode
   :load-path "~/.elisp/js2-mode/"
   :mode ("\\.js$" . js2-mode))
 
-(use-package auto-complete-config
-  :load-path "~/.elisp/auto-complete"
-  :init (global-auto-complete-mode t)
-  :config
-  (progn (use-package pos-tip
-           :config
-           (progn (setq pos-tip-foreground-color "white")
-                  (setq pos-tip-background-color "black")))
+;; (use-package auto-complete-config
+;;   :load-path "~/.elisp/auto-complete"
+;;   :init (global-auto-complete-mode t)
+;;   :config
+;;   (progn (use-package pos-tip
+;;            :config
+;;            (progn (setq pos-tip-foreground-color "white")
+;;                   (setq pos-tip-background-color "black")))
 
-         (add-to-list 'ac-dictionary-directories "~/.elisp/auto-complete/dict")
-         (ac-config-default)
-         (bind "<M-tab>" ac-start)
+;;          (add-to-list 'ac-dictionary-directories "~/.elisp/auto-complete/dict")
+;;          (ac-config-default)
+;;          (bind "<M-tab>" ac-start)
 
-         (use-package auto-complete-etags)
-         (ac-flyspell-workaround)
-         (ac-set-trigger-key "TAB")
+;;          (use-package auto-complete-etags)
+;;          (ac-flyspell-workaround)
+;;          (ac-set-trigger-key "TAB")
 
-         (define-key ac-mode-map
-           (kbd "C-c H")
-           'ac-last-help)
+;;          (define-key ac-mode-map
+;;            (kbd "C-c H")
+;;            'ac-last-help)
 
-         (setq-default ac-sources '(ac-source-functions ac-source-abbrev ac-source-yasnippet ac-source-dictionary ac-source-words-in-buffer ac-source-words-in-same-mode-buffers))))
+;;          (setq-default ac-sources '(ac-source-functions ac-source-abbrev ac-source-yasnippet ac-source-dictionary ac-source-words-in-buffer ac-source-words-in-same-mode-buffers))))
 
 (defun jsj-transpose-sexps ()
   (interactive)
@@ -1672,9 +1700,9 @@ and evaling there."
 (use-package comment-uncomment-line-or-region
   :bind ("C-c c" . comment-uncomment-line-or-region))
 
-(use-package browse-kill-ring
-  :bind ("M-y" . browse-kill-ring)
-  :config (browse-kill-ring-default-keybindings))
+;; (use-package browse-kill-ring
+;;   :bind ("M-y" . browse-kill-ring)
+;;   :config (browse-kill-ring-default-keybindings))
 
 ;; (add-hook 'gnus-article-mode-hook 'longlines-mode)
 ;; (refill-mode)
@@ -1756,6 +1784,8 @@ Also moves point to the beginning of the text you just yanked."
   :bind ("C-c v" . org-velocity-read)
   :config (eval-after-load "org-mode" '(setq org-velocity-bucket (concat org-directory "/bucket.org"))))
 
+(defadvice man (after switch-to-man-buffer-ad activate)
+  (other-window 1))
 (bind "C-h u" man)
 
 (defun isearch-other-window ()
@@ -1792,6 +1822,7 @@ slime to get javascript back"
            :config (add-hook 'ruby-mode-hook (lambda () (ruby-electric-mode t))))))
 
 (use-package rainbow-mode
+  :disabled t
   :commands rainbow-mode
   :init (add-hook 'emacs-lisp-mode-hook (lambda () (rainbow-mode t))))
 
@@ -1945,6 +1976,9 @@ slime to get javascript back"
 
 (use-package parenface
   :load-path "~/.elisp/parenface"
+  :init
+  (progn
+    (eval-after-load "clojure-mode" '(add-hook 'clojure-mode-hook (paren-face-add-support clojure-font-lock-keywords))))
   :config (progn
             (set-face-foreground 'paren-face "#888")
             (set-face-foreground 'punctuation-face "#999")
@@ -2140,7 +2174,7 @@ slime to get javascript back"
  '(notmuch-search-oldest-first nil)
  '(notmuch-show-logo nil)
  '(nxhtml-skip-welcome t)
- '(org-agenda-files (quote ("~/org/strangeloop.org" "~/org/books.org" "~/org/goals.org" "~/org/birthdays.org" "~/org/workout.org" "~/org/recipes.org" "~/org/someday.org" "~/org/quotes.org" "~/org/todo.org" "~/org/calendar.org" "~/org/shopping.org")))
+ '(org-agenda-files (quote ("~/org/strangeloop.org" "~/org/goals.org" "~/org/birthdays.org" "~/org/workout.org" "~/org/recipes.org" "~/org/someday.org" "~/org/quotes.org" "~/org/todo.org" "~/org/calendar.org" "~/org/shopping.org")))
  '(org-agenda-window-frame-fractions (quote (0.1 . 0.75)))
  '(org-atom-publish-content t)
  '(org-export-with-section-numbers nil)
@@ -2154,7 +2188,7 @@ slime to get javascript back"
  '(session-locals-include (quote (overwrite-mode buffer-undo-list)))
  '(show-paren-mode t)
  '(slime-autodoc-delay 0.1)
- '(slime-compilation-finished-hook (quote (slime-show-compilation-log durendal-hide-successful-compile slime-goto-first-note)))
+ '(slime-compilation-finished-hook (quote (slime-show-compilation-log slime-goto-first-note)))
  '(slime-complete-symbol*-fancy t)
  '(slime-complete-symbol-function (quote slime-fuzzy-complete-symbol))
  '(smex-auto-update t)
@@ -2189,20 +2223,17 @@ slime to get javascript back"
 
 (bind "C-x j" insert-javadoc-call)
 
-;;; must open file normally first, then run this
-(defun find-alternative-file-with-sudo ()
+(defun djcb-find-file-as-root ()
+  "Like `ido-find-file, but automatically edit the file with
+root-privileges (using tramp/sudo), if the file is not writable by
+user."
   (interactive)
-  (let ((fname (or buffer-file-name
-                   dired-directory)))
-    (when fname
-      (if (string-match "^/sudo:root@localhost:" fname)
-          (setq fname (replace-regexp-in-string
-                       "^/sudo:root@localhost:" ""
-                       fname))
-        (setq fname (concat "/sudo:root@localhost:" fname)))
-      (find-alternate-file fname))))
-
-(global-set-key (kbd "C-x C-r") 'find-alternative-file-with-sudo)
+  (let ((file (ido-read-file-name "Edit as root: ")))
+    (unless (file-writable-p file)
+      (setq file (concat "/sudo:root@localhost:" file)))
+    (find-file file)))
+;; or some other keybinding...
+(global-set-key (kbd "C-x F") 'djcb-find-file-as-root)
 
 ;;; use print
 ;; (setq slime-message-function 'osd-slime-message)
@@ -2211,9 +2242,9 @@ slime to get javascript back"
   (shell-command (concat "notify-send -t 1000 -i clojure Clojure " (apply #'format format-string args) ""))
   (apply #'message format-string args ))
 
-(use-package flex-isearch
-    :load-path "~/.elisp/flex-isearch/"
-    :init (flex-isearch-mode))
+;; (use-package flex-isearch
+;;     :load-path "~/.elisp/flex-isearch/"
+;;     :init (flex-isearch-mode))
 
 (use-package winner-mode
   :init (winner-mode 1))
@@ -2639,7 +2670,7 @@ about what flexible matching means in this context."
   :config (setq regadhoc-register-char-list (list ?a ?s ?d ?f ?j ?k ?l)))
 
 (use-package scpaste
-  :commands scpaste scpaste-region
+  :commands (scpaste scpaste-region)
   :config (setq scpaste-http-destination "http://jaderholm.com/paste"
                 scpaste-scp-destination "jaderholm.com:www/jaderholm.com/paste"))
 
@@ -2724,7 +2755,8 @@ about what flexible matching means in this context."
 
 (setq eval-expression-print-length 50)
 
-(use-package djcb-cursor)
+(use-package djcb-cursor
+  :disabled t)
 
 (use-package re-builder
   :commands re-builder
@@ -2732,13 +2764,6 @@ about what flexible matching means in this context."
 
 (use-package pomodoro
   :commands pomodoro)
-
-(defun sudo-edit (&optional arg)
-  (interactive "p")
-  (if (or arg (not buffer-file-name))
-      (find-file (concat "/sudo:root@localhost:" (ido-read-file-name "File: ")))
-    (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
-(bind "C-x C-r" sudo-edit)
 
 ;;---------------------------------------------------------
 ;; durendal
@@ -2766,7 +2791,7 @@ about what flexible matching means in this context."
        (newline-and-indent))
     (t (save-excursion (paredit-newline)))))
 
-(define-key global-map (kbd "C-o") 'jsj-open-line)
+;; (define-key global-map (kbd "C-o") 'jsj-open-line)
 
 (defun jsj-open-line-after ()
   (interactive)
@@ -2943,8 +2968,8 @@ because it doesn't mess with text on current line"
 ;; (require 'deft)
 ;; (setq deft-directory "~/Desktop/Dropbox/notes/")
 
-(use-package eval-sexp-fu
-  :config (eval-sexp-fu-flash-mode 1))
+(require 'eval-sexp-fu)
+(eval-sexp-fu-flash-mode 1)
 
 ;; (setq inferior-lisp-program "script/repl")
 
@@ -3045,8 +3070,8 @@ because it doesn't mess with text on current line"
 
 (setq redisplay-dont-pause t)
 
-;; (add-to-list 'load-path "~/.elisp/eproject/")
-;; (require 'eproject)
+(add-to-list 'load-path "~/.elisp/eproject/")
+(require 'eproject)
 
 ;; not actually in the old version of slime I use w/ clojure
 (setq slime-repl-history-remove-duplicates t
@@ -3180,7 +3205,7 @@ because it doesn't mess with text on current line"
   :bind (("C-c g d" . ack-with-dir)
          ("C-c g g" . ack))
   :config
-  (progn (setq ack-command "ack ")
+  (progn (setq ack-command "agg ")
 
          (defun ack-with-dir ()
            (interactive)
@@ -3200,11 +3225,11 @@ because it doesn't mess with text on current line"
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
-)
+ )
 
 (use-package ace-jump-mode
   :load-path "~/.elisp/ace-jump-mode/"
-  :bind ("C-." . ace-jump-mode))
+  :bind ("<escape>" . ace-jump-mode))
 
 ;;; to use call M-x global-command-log-mode and M-x clm/open-command-log-buffer
 (add-to-list 'load-path "~/.elisp/command-log-mode/")
@@ -3327,12 +3352,12 @@ This is to update existing buffers after a Git pull of their underlying files."
 ;; (add-hook 'compilation-finish-functions
 ;;           'test-case-compilation-finish-run-all)
 
-(use-package nrepl
-  :load-path "~/.elisp/nrepl.el/"
-  :commands (nrepl)
-  :config (progn (setq nrepl-lein-command "lein2")
-                 (add-hook 'nrepl-interaction-mode-hook
-                           'nrepl-turn-on-eldoc-mode)))
+;; (use-package nrepl
+;;   :load-path "~/.elisp/nrepl.el/"
+;;   :commands (nrepl)
+;;   :config (progn (setq nrepl-lein-command "lein2")
+;;                  (add-hook 'nrepl-interaction-mode-hook
+;;                            'nrepl-turn-on-eldoc-mode)))
 
 (setq ido-auto-merge-delay-time 0.5)
 
@@ -3354,8 +3379,6 @@ This is to update existing buffers after a Git pull of their underlying files."
   :commands dictionary-search
   :load-path "~/.elisp/dictionary-el/"
   :bind ("C-c d" . dictionary-search))
-
-
 
 (defun odds (a b)
   "convert ratio given on betting sites to a percentage chance of
@@ -3413,19 +3436,19 @@ he bookie's cut."
               (clojure-mode)
               (paredit-mode))))
 
-(add-hook 'slime-popup-buffer-mode-hook
-          (lambda ()
-            (when (string-match "<clojure>\\*$"
-                                (buffer-name))
-              (setq font-lock-defaults
-                    '(clojure-font-lock-keywords ; keywords
-                      nil nil
-                      (("+-*/.<>=!?$%_&~^:@" . "w")) ; syntax alist
-                      nil
-                      (font-lock-mark-block-function . mark-defun)
-                      (font-lock-syntactic-face-function
-                       . lisp-font-lock-syntactic-face-function)))
-              (font-lock-fontify-buffer))))
+;; (add-hook 'slime-popup-buffer-mode-hook
+;;           (lambda ()
+;;             (when (string-match "<clojure>\\*$"
+;;                                 (buffer-name))
+;;               (setq font-lock-defaults
+;;                     '(clojure-font-lock-keywords ; keywords
+;;                       nil nil
+;;                       (("+-*/.<>=!?$%_&~^:@" . "w")) ; syntax alist
+;;                       nil
+;;                       (font-lock-mark-block-function . mark-defun)
+;;                       (font-lock-syntactic-face-function
+;;                        . lisp-font-lock-syntactic-face-function)))
+;;               (font-lock-fontify-buffer))))
 
 (use-package hi-lock
   :bind (("M-o l" . highlight-lines-matching-regexp)
@@ -3472,3 +3495,210 @@ he bookie's cut."
                  (message "Loading %s...done (%.3fs) [after-init]"
                           ,load-file-name elapsed)))
             t))
+
+(defadvice split-window-below (after balance-after-split activate) (balance-windows))
+(defadvice split-window-right (after balance-after-split activate) (balance-windows))
+
+(add-to-list 'load-path "~/.elisp/enhanced-ruby-mode/")
+(setq enh-ruby-program "ruby")
+(autoload 'enh-ruby-mode "enh-ruby-mode" "Major mode for ruby files" t)
+(add-to-list 'auto-mode-alist '("\\.rb$" . enh-ruby-mode))
+(add-to-list 'interpreter-mode-alist '("ruby" . enh-ruby-mode))
+
+(add-to-list 'load-path "~/.elisp/ampc")
+(add-to-list 'exec-path "~/.elisp/ampc")
+(autoload 'ampc "ampc" nil t)
+
+(setq ampc-tagger-music-directories '("/media/blobs/music/"))
+(add-hook 'ampc-tagger-stored-hook 'jsj-ampc-tagger-rename-artist-title)
+
+(defun jsj-ampc-tagger-rename-artist-title (_changed-tags data)
+  "Rename music file according to its tags.
+This function is meant to be inserted into
+`ampc-tagger-stored-hook'.  The new file name is
+artist/album/track title.extension."
+  (let* ((artist (or (cdr (assq 'Artist (cdr data))) "Unknown"))
+         (album (or (cdr (assq 'Album (cdr data))) "None"))
+         (title (or (cdr (assq 'Title (cdr data))) ""))
+         (track (or (format "%02d " (string-to-int (cdr (assq 'Track (cdr data))))) ""))
+         (new-file (concat
+                    (first ampc-tagger-music-directories)
+                    artist "/" album "/" track title
+                    (file-name-extension (car data) t))))
+    (when (equal new-file "")
+      (setf new-file (file-name-nondirectory (car data))))
+    (unless (equal (car data) (expand-file-name
+                               new-file (file-name-directory (car data))))
+      (cl-loop for file = new-file then
+               (replace-regexp-in-string "\\(\\(?:\\..+\\)?\\)$"
+                                         (format "%d_\\1" index)
+                                         new-file)
+               for index from 1
+               for expanded = (expand-file-name file (file-name-directory
+                                                      (car data)))
+               while (file-exists-p expanded)
+               finally do (setf new-file expanded))
+      (ampc-tagger-log "Renaming file " (abbreviate-file-name (car data))
+                       " to " (abbreviate-file-name new-file) "\n")
+      (mkdir (file-name-directory new-file))
+      (rename-file (car data) new-file)
+      (setf (car data) new-file))))
+
+;; (add-to-list 'load-path "~/.elisp/ac-nrepl/")
+;; (require 'ac-nrepl)
+;; (add-hook 'nrepl-mode-hook 'ac-nrepl-setup)
+;; (add-hook 'nrepl-interaction-mode-hook 'ac-nrepl-setup)
+;; (eval-after-load "auto-complete"
+;;   '(add-to-list 'ac-modes 'nrepl-mode))
+
+(defun toggle-window-split ()
+  (interactive)
+  (if (= (count-windows) 2)
+      (let* ((this-win-buffer (window-buffer))
+             (next-win-buffer (window-buffer (next-window)))
+             (this-win-edges (window-edges (selected-window)))
+             (next-win-edges (window-edges (next-window)))
+             (this-win-2nd (not (and (<= (car this-win-edges)
+                                         (car next-win-edges))
+                                     (<= (cadr this-win-edges)
+                                         (cadr next-win-edges)))))
+             (splitter
+              (if (= (car this-win-edges)
+                     (car (window-edges (next-window))))
+                  'split-window-horizontally
+                'split-window-vertically)))
+        (delete-other-windows)
+        (let ((first-win (selected-window)))
+          (funcall splitter)
+          (if this-win-2nd (other-window 1))
+          (set-window-buffer (selected-window) this-win-buffer)
+          (set-window-buffer (next-window) next-win-buffer)
+          (select-window first-win)
+          (if this-win-2nd (other-window 1))))))
+
+(defun rotate-windows ()
+  "Rotate your windows"
+  (interactive)
+  (cond ((not (> (count-windows)1))
+         (message "You can't rotate a single window!"))
+        (t
+         (setq i 1)
+         (setq numWindows (count-windows))
+         (while  (< i numWindows)
+           (let* (
+                  (w1 (elt (window-list) i))
+                  (w2 (elt (window-list) (+ (% i numWindows) 1)))
+
+                  (b1 (window-buffer w1))
+                  (b2 (window-buffer w2))
+
+                  (s1 (window-start w1))
+                  (s2 (window-start w2))
+                  )
+             (set-window-buffer w1  b2)
+             (set-window-buffer w2 b1)
+             (set-window-start w1 s2)
+             (set-window-start w2 s1)
+             (setq i (1+ i)))))))
+
+(defun build-ctags ()
+  (interactive)
+  (message "building project tags")
+  (let ((root (eproject-root)))
+    (shell-command (concat "ctags -e -R --extra=+fq --exclude=db --exclude=test --exclude=.git --exclude=public -f " root "TAGS " root)))
+  (visit-project-tags)
+  (message "tags built successfully"))
+
+;; (defun my-find-tag ()
+;;   (interactive)
+;;   (if (file-exists-p (concat (eproject-root) "TAGS"))
+;;       (visit-project-tags)
+;;     (build-ctags))
+;;   (etags-select-find-tag-at-point))
+
+;; (global-set-key (kbd "M-.") 'my-find-tag)
+
+;; (define-key (current-global-map) [remap find-tag] 'my-find-tag)
+
+(defun twitch (channel)
+  (interactive "sChannel: ")
+  (erc :server (concat channel ".jtvirc.com")
+       :nick twitch-username
+       :password twitch-password)
+  (erc-join-channel (concat "#" channel)))
+
+(modify-syntax-entry ?_ "w")
+
+(setq dired-guess-shell-alist-user
+      '(("\\.mpe?g\\'\\|\\.avi\\'\\|\\.mp4\\'" "mplayer")
+        ("\\.pdf\\'" "zathura")))
+
+(add-to-list 'load-path "~/.elisp/gnuplot-mode/")
+(require 'gnuplot)
+
+(use-package deft
+  :commands (deft)
+  :load-path "~/.elisp/deft/")
+
+(use-package git-gutter-fringe
+  :load-path ("~/.elisp/emacs-git-gutter-fringe"
+              "~/.elisp/emacs-git-gutter")
+  :init (progn
+          (global-git-gutter-mode t)
+
+          (fringe-helper-define 'git-gutter-fr:added nil
+            "........"
+            "...XX..."
+            "...XX..."
+            ".XXXXXX."
+            ".XXXXXX."
+            "...XX..."
+            "...XX..."
+            "........")
+
+          (fringe-helper-define 'git-gutter-fr:deleted nil
+            "........"
+            "........"
+            "........"
+            ".XXXXXX."
+            ".XXXXXX."
+            "........"
+            "........"
+            "........")
+
+          (fringe-helper-define 'git-gutter-fr:modified nil
+            "........"
+            "..XXXX.."
+            "..XXXX.."
+            "..XXXX.."
+            "..XXXX.."
+            "..XXXX.."
+            "..XXXX.."
+            "........")))
+
+
+(global-set-key (kbd "C-c E")
+                (lambda ()
+                  "Bring up a full-screen eshell or restore previous config."
+                  (interactive)
+                  (if (string= "eshell-mode" major-mode)
+                      (jump-to-register :eshell-fullscreen)
+                    (progn
+                      (window-configuration-to-register :eshell-fullscreen)
+                      (eshell)
+                      (delete-other-windows)))))
+
+
+(add-to-list 'load-path "~/.elisp/scala-mode2/")
+(require 'scala-mode2)
+(add-to-list 'load-path "~/.elisp/ensime/dist/elisp")
+(require 'ensime)
+(add-to-list 'exec-path '"~/src/scala-2.10.0/bin")
+
+;; C-h C-f : find-function
+;; C-h C-k : find-function-on-key
+;; C-h C-v : find-variable
+;; C-h C-l : find-library
+
+(require 'org-protocol)
+
