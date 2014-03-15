@@ -867,4 +867,4 @@ function insert-selecta-path-in-command-line() {
 # Create the zle widget
 zle -N insert-selecta-path-in-command-line
 # Bind the key to the newly created widget
-bindkey "^S" "insert-selecta-path-in-command-line"
+bindkey "^[e" "insert-selecta-path-in-command-line"
