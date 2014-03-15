@@ -1,0 +1,264 @@
+# -*- comment-start: "#" -*-
+
+[global]
+font = "Terminus Bold"
+
+# The format of the message. Possible variables are:
+#   %a  appname
+#   %s  summary
+#   %b  body
+#   %i  iconname (including its path)
+#   %I  iconname (without its path)
+format = "%s %b"
+
+# Sort messages by urgency
+sort = no
+
+# Show how many messages are currently hidden (because of geometry)
+indicate_hidden = yes
+
+# alignment of message text.
+# Possible values are "left", "center" and "right"
+alignment = left
+
+# show age of message if message is older than show_age_threshold seconds.
+# set to -1 to disable
+show_age_threshold = 60;
+
+# split long notifications into multiple lines
+word_wrap = yes
+
+# the geometry of the window
+# geometry [{width}]x{height}][+/-{x}+/-{y}]
+# The geometry of the message window.
+# The height is measured in lines everything else in pixels. If the width
+# is omitted but the height is given ("-geometry x2"), the message window
+# expands over the whole screen (dmenu-like). If width is 0,
+# the window expands to the longest message displayed.
+# A positive x is measured from the left, a negative from the
+# right side of the screen.  Y is measured from the top and down respectevly.
+# geometry = "0x3-30+20"
+geometry = "0x20-0+18"
+
+# Don't remove messages, if the user is idle (no mouse or keyboard input)
+# for longer than idle_threshold seconds.
+# Set to 0 to disable.
+idle_threshold = 120
+
+# Which monitor should the notifications be displayed one
+monitor = 0
+
+# Display notification on focused monitor. Possible modes are:
+# mouse: follow mouse pointer
+# keyboard: follow window with keyboard focus
+# none: don't follow anything
+#
+# "keyboard" needs a windowmanager that exports the _NET_ACTIVE_WINDOW property.
+# This should be the case for almost all modern windowmanagers.
+#
+# If this option is set to mouse or keyboard, the monitor option will be
+# ignored.
+follow = none
+
+# should a notification popped up from history be sticky or
+# timeout as if it would normally down
+sticky_history = yes
+
+horizontal_padding = 2
+
+separator_height = 0
+padding = 0
+
+show_indicators = no
+transparency = 5
+
+# Align icons left/right/off.
+icon_position = off
+
+# Paths to default icons. Make sure these exist on your system.
+icon_folders = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/
+[shortcuts]
+# shortcuts are specified as [modifier+][modifier+]...key
+# available modifiers are 'ctrl', 'mod1' (the alt-key), 'mod2', 'mod3'
+# and 'mod4' (windows-key)
+# xev might be helpful to find names for keys
+
+# close notification
+close = mod4+bracketleft
+
+# close all notifications
+close_all = mod4+shift+bracketleft
+
+# redisplay last message(s)
+# On the US keyboard layout 'grave' is normally above TAB and left of '1'.
+history = mod4+bracketright
+
+[urgency_low]
+# IMPORTANT: colors have to be defined in quotation marks.
+# Otherwise the '#' and following  would be interpreted as a comment.
+background = "#333333"
+foreground = "#cccccc"
+timeout = 3
+    
+[urgency_normal]
+background = "#595959"
+foreground = "#ffffff"
+timeout = 5
+    
+[urgency_critical]
+# green on grey
+background = "#404040"
+foreground = "#00F705"
+# notify -h string:bgcolor:\#404040 -h string:fgcolor:\#00F705 "This is a test"
+timeout = 10
+
+
+# Every section that isn't one of the above is interpreted as a rules
+# to override settings for certain messages.
+# Messages can be matched by 'appname', 'summary', 'body' or 'icon'
+# and you can override the 'timeout', 'urgency', 'foreground', 'background'
+# and 'format'.
+# Shell-like globbing will get expanded.
+
+[network]
+appname = NetworkManager
+urgency = critical
+
+[zsh_error]
+appname = zsh-error
+background = "#ff0000"
+foreground = "#ffff00"
+timeout = 2
+urgency = critical
+
+[zsh_finished]
+appname = zsh-finished
+urgency = low
+background = "#1a1a1a"
+foreground = "#999999"
+
+[torrent_complete]
+appname = Transmission
+summary = "Torrent Complete"
+urgency = critical
+# background = purple3
+background = "#8a2be2"
+foreground = "#00ffff"
+
+[torrent_added]
+appname = Transmission
+summary = "Torrent Added"
+# background = purple3
+background = "#595959"
+foreground = "#00ffff"
+
+[download_successful]
+summary = "Download Successful"
+urgency = critical
+background = "#1D765A"
+foreground = "#84CB9C"
+# foreground = "#dcf0e3"
+
+[download_failed]
+summary = "Download Failed"
+urgency = critical
+background = "#ff2034"
+# foreground = "#9f0000"
+# foreground = "#000000"
+foreground = "#eeeeee
+
+#[signed_off]
+#    appname = Pidgin
+#    summary = *signed off*
+#    urgency = low
+#
+
+#[says]
+#    appname = Pidgin
+#    summary = *says*
+#    urgency = critical
+#
+
+#[twitter]
+#    appname = Pidgin
+#    summary = *twitter.com*
+#    urgency = normal
+
+# test pass
+# fg yellow
+# bg forestgreen
+
+[test_failed]
+summary = "Test failed"
+background = "#8a1c3b"
+foreground = "#ffadad"
+# notify -h string:bgcolor:\#8a1c3b -h string:fgcolor:\#ffadad "Test failed" 
+
+[test_passed]
+summary = "Test passed"
+background = "#228b22"
+foreground = "#ffff00"
+#notify -h string:bgcolor:\#228b22 -h string:fgcolor:\#ffff00 "Test passed"
+
+[ml-email]
+appname = ml-email
+# script = mbsync-inbox
+background = "#8b008b"
+foreground = "#ff57fd"
+
+[twitch]
+summary = "Twitch * just went live"
+script = /home/scott/bin/twitch-notification-handler.sh
+
+[irssi-notifications]
+appname = irssi-notifications
+# green on blue
+background = "#27408B"
+foreground = "#7CEF34"
+# notify -h string:bgcolor:\#27408B -h string:fgcolor:\#7CEF34 "This is a test"
+
+[apt]
+appname = apt
+# black on tan
+background = "#D2B48C"
+foreground = "#000000"
+# notify -h string:bgcolor:\#D2B48C -h string:fgcolor:\#000000 "This is a test"
+
+# tron orange
+# background = "#8b7500"
+# foreground = "#fce94f"
+
+# tan on slate blue
+# background = "#6A5ACD"
+# foreground = "#F4D4BC"
+# notify -h string:bgcolor:\#6A5ACD -h string:fgcolor:\#F4D4BC "This is a test"
+
+# purple on almost black
+# background = "#202020"
+# foreground = "#AE81FF"
+# notify -h string:bgcolor:\#202020 -h string:fgcolor:\#ae81ff "This is a test"
+
+# tan on offwhite
+# background = "#ECEBE4"
+# foreground = "#B76820"
+
+
+# untested idea
+# black on pink
+# foreground = "#ffffff"
+# background = "#C06AB0"
+
+# untested idea
+# white (or try light pink) on darker pink
+# foreground = "#000000"
+# background = "#913D81"
+
+# tooltip style
+# background = "#F5F5B5"
+# foreground = "#000000"
+
+# light blue on slightly darker blue
+
+# another
+# background = "#ddeedd"
+# foreground = "#002200"
